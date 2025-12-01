@@ -1,0 +1,28 @@
+Projektarbeit Ideen:
+
+1) 	LLMs als "Blackbox" in Programmierung von Websiten und Apps für Nicht-programmierer
+	=> Bsp: Wix, Base44
+	===> Gesamter Code wird generiert, kein Programmierer benötigt
+	===> SwiftUI?
+
+2) 	LLMs mit "90%-Lösungen" aber dennoch für Programmierer und komplexere Themen
+	=> Bsp: Cursor
+	===> Großteil des Codes wird generiert und dann von Programmierer angepasst und getestet
+
+3) 	LLMs als Reviewer/Qualitätssicherung und Unterstützung nebenher
+	=> Github Copilot, Amazon CodeWhisperer
+	===> Testgenerierung, Refactoring und Dokumentation
+
+
+Statische/dynamische codegenerierung?
+
+Zusätzlich: Computersprachen und Anwendungsbereiche, Frameworks etc als Klassifikation und Sichtung des aktuellen Stands mit Ausblick auf Zukunft
+
+Als Start: Experimente sammeln und dokumentieren und in Gruppe vorstellen
+
+Technischer Test der 3 Kategorien an selbem Beispiel
+Tiefe Analyse eines Bereichs und Problemanalyse und Ursachen erforschen
+Sichtung des aktuellen Stands in der Industrie
+Ausblick auf Zukunft
+
+Base44 Test: https://pixel-palette-d8dd4301.base44.app
