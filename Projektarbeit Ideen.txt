@@ -1,3 +1,5 @@
+Zoom: https://h-ka-de.zoom-x.de/my/carsten.sinz?pwd=N0tPRFBQQXRsQVhJRGpFOGU2dWZ6UT09
+
 Projektarbeit Ideen:
 
 1) 	LLMs als "Blackbox" in Programmierung von Websiten und Apps für Nicht-programmierer
@@ -24,5 +26,6 @@ Technischer Test der 3 Kategorien an selbem Beispiel
 Tiefe Analyse eines Bereichs und Problemanalyse und Ursachen erforschen
 Sichtung des aktuellen Stands in der Industrie
 Ausblick auf Zukunft
+
 
 Base44 Test: https://pixel-palette-d8dd4301.base44.app
