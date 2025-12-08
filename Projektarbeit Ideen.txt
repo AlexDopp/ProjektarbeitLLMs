@@ -36,7 +36,7 @@ Base44 Test: https://pixel-palette-d8dd4301.base44.app
 
 0. Einleitung LLMs
 1. Appdevelopment in beliebiger Sprache
-	1.1 Einfaches Beispiel nach Whitepaper 
+	1.1 Einfaches Beispiel nach Whitepaper
 		1.1.1 Beispiel erklären
 		1.1.2 ChatGPT 5.1 (auf neuem Acc)	(2 Seiten Text pro LLM?)
 			1.1.2.1 Anwendung testen
@@ -55,7 +55,7 @@ Base44 Test: https://pixel-palette-d8dd4301.base44.app
 			1.1.5.2 Programmsprachenwahl
 			1.1.5.3 Fehleranalyse
 		1.1.6 Vergleich der Ergebnisse
-		(GithubCopilot/AmazonCodewhisperer?)
+		(GithubCopilot/AmazonCodewhisperer/Claude3.7?)
 
 2. Komplexes Development mit 2 fixen Sprachen
 	2.1 Beispiel erklären
@@ -79,6 +79,7 @@ Base44 Test: https://pixel-palette-d8dd4301.base44.app
 	3.1 Aktuelle LLMs im B2B Verkauf	
 	3.2 Frameworks in Verwendung
 	3.3 Ausblick auf Zukunft
+
 
 
 
