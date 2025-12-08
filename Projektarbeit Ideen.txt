@@ -27,5 +27,8 @@ Tiefe Analyse eines Bereichs und Problemanalyse und Ursachen erforschen
 Sichtung des aktuellen Stands in der Industrie
 Ausblick auf Zukunft
 
+Tests: 	Einfaches Beispiel, freie Codelanguage von LLM zu wählen und einfache App
+		Schweres Beispiel mit harten Rahmenbedingungen und festgelegter Language
 
 Base44 Test: https://pixel-palette-d8dd4301.base44.app
+
