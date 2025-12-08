@@ -22,13 +22,42 @@ Zusätzlich: Computersprachen und Anwendungsbereiche, Frameworks etc als Klassif
 
 Als Start: Experimente sammeln und dokumentieren und in Gruppe vorstellen
 
-Technischer Test der 3 Kategorien an selbem Beispiel
-Tiefe Analyse eines Bereichs und Problemanalyse und Ursachen erforschen
+1. Technischer Test der 3 Kategorien an selbem Beispiel
+	1.1 Einfaches Beispiel nach Whitepaper 
+		1.1.1 Beispiel erklären
+		1.1.2 ChatGPT 5.1 (auf neuem Acc)	(2 Seiten Text pro LLM?)
+			1.1.2.1 Anwendung testen
+			1.1.2.2 Programmsprachenwahl
+			1.1.2.3 Fehleranalyse
+		1.1.3 DeepSeek (Selfhosted)
+			1.1.3.1 Anwendung testen
+			1.1.3.2 Programmsprachenwahl
+			1.1.3.3 Fehleranalyse
+		1.1.4 Base44
+			1.1.4.1 Anwendung testen
+			1.1.4.2 Programmsprachenwahl
+			1.1.4.3 Fehleranalyse
+		1.1.5 Cursor
+			1.1.5.1 Anwendung testen
+			1.1.5.2 Programmsprachenwahl
+			1.1.5.3 Fehleranalyse
+		(GithubCopilot/AmazonCodewhisperer?)
+	1.2 Schweres Beispiel
+		1.2.1 Beispiel erklären
+		1.2.2 ChatGPT 5.1 (auf neuem Acc)	(2-3 Seiten Text pro LLM?)
+			1.2.2.1 Anwendung testen
+			1.2.2.2 Sprachanalyse und Fehleranalyse
+		1.2.3 Cursor (oder eine andere programmierfokussierte LLM)
+			1.2.3.1 Anwendung testen
+			1.2.3.2 Sprachanalyse und Fehleranalyse
+
+(Tiefe Analyse eines Bereichs und Problemanalyse und Ursachen erforschen)
 Sichtung des aktuellen Stands in der Industrie
 Ausblick auf Zukunft
 
-Tests: 	Einfaches Beispiel, freie Codelanguage von LLM zu wählen und einfache App
-		Schweres Beispiel mit harten Rahmenbedingungen und festgelegter Language
+Tests: 	Einfaches Beispiel, freie Codelanguage von LLM zu wählen und einfache App => Wer nimmt welche Sprache und warum?
+		Schweres Beispiel mit harten Rahmenbedingungen und festgelegter Language => Python/Java vs Rust/CLU/Assembler?
 
 Base44 Test: https://pixel-palette-d8dd4301.base44.app
+
 
