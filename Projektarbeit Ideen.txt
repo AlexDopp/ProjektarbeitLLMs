@@ -22,7 +22,20 @@ Zusätzlich: Computersprachen und Anwendungsbereiche, Frameworks etc als Klassif
 
 Als Start: Experimente sammeln und dokumentieren und in Gruppe vorstellen
 
-1. Technischer Test der 3 Kategorien an selbem Beispiel
+
+(Tiefe Analyse eines Bereichs und Problemanalyse und Ursachen erforschen)
+Sichtung des aktuellen Stands in der Industrie
+Ausblick auf Zukunft
+
+Tests: 	Einfaches Beispiel, freie Codelanguage von LLM zu wählen und einfache App => Wer nimmt welche Sprache und warum?
+		Schweres Beispiel mit harten Rahmenbedingungen und festgelegter Language => Python/Java vs Rust/CLU/Assembler?
+
+Base44 Test: https://pixel-palette-d8dd4301.base44.app
+
+
+
+0. Einleitung LLMs
+1. Appdevelopment in beliebiger Sprache
 	1.1 Einfaches Beispiel nach Whitepaper 
 		1.1.1 Beispiel erklären
 		1.1.2 ChatGPT 5.1 (auf neuem Acc)	(2 Seiten Text pro LLM?)
@@ -41,23 +54,31 @@ Als Start: Experimente sammeln und dokumentieren und in Gruppe vorstellen
 			1.1.5.1 Anwendung testen
 			1.1.5.2 Programmsprachenwahl
 			1.1.5.3 Fehleranalyse
+		1.1.6 Vergleich der Ergebnisse
 		(GithubCopilot/AmazonCodewhisperer?)
-	1.2 Schweres Beispiel
-		1.2.1 Beispiel erklären
-		1.2.2 ChatGPT 5.1 (auf neuem Acc)	(2-3 Seiten Text pro LLM?)
-			1.2.2.1 Anwendung testen
-			1.2.2.2 Sprachanalyse und Fehleranalyse
-		1.2.3 Cursor (oder eine andere programmierfokussierte LLM)
-			1.2.3.1 Anwendung testen
-			1.2.3.2 Sprachanalyse und Fehleranalyse
 
-(Tiefe Analyse eines Bereichs und Problemanalyse und Ursachen erforschen)
-Sichtung des aktuellen Stands in der Industrie
-Ausblick auf Zukunft
+2. Komplexes Development mit 2 fixen Sprachen
+	2.1 Beispiel erklären
+	2.2 ChatGPT 5.1
+		2.2.1 Python/Java?
+			2.2.1.1 Anwendung testen
+			2.2.1.2 Sprachanalyse und Fehleranalyse
+		2.2.2 Rust/CLU/Assembler?
+			2.2.2.1 Anwendung testen
+			2.2.2.2 Sprachanalyse und Fehleranalyse
+	2.3 Cursor?
+		2.3.1 Python/Java?
+			2.3.1.1 Anwendung testen
+			2.3.1.2 Sprachanalyse und Fehleranalyse
+		2.3.2 Rust/CLU/Assembler?
+			2.3.2.1 Anwendung testen
+			2.3.2.2 Sprachanalyse und Fehleranalyse
+	2.4 Vergleich der Ergebnisse
 
-Tests: 	Einfaches Beispiel, freie Codelanguage von LLM zu wählen und einfache App => Wer nimmt welche Sprache und warum?
-		Schweres Beispiel mit harten Rahmenbedingungen und festgelegter Language => Python/Java vs Rust/CLU/Assembler?
+3. Sichtung des aktuellen Stands in der Industrie
+	3.1 Aktuelle LLMs im B2B Verkauf	
+	3.2 Frameworks in Verwendung
+	3.3 Ausblick auf Zukunft
 
-Base44 Test: https://pixel-palette-d8dd4301.base44.app
 
 
