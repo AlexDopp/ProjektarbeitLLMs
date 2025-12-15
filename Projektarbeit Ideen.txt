@@ -63,14 +63,14 @@ Base44 Test: https://pixel-palette-d8dd4301.base44.app
 		2.2.1 Python/Java?
 			2.2.1.1 Anwendung testen
 			2.2.1.2 Sprachanalyse und Fehleranalyse
-		2.2.2 Rust/CLU/Assembler?
+		2.2.2 Rust/CLU/WebAssembly?
 			2.2.2.1 Anwendung testen
 			2.2.2.2 Sprachanalyse und Fehleranalyse
 	2.3 Cursor?
 		2.3.1 Python/Java?
 			2.3.1.1 Anwendung testen
 			2.3.1.2 Sprachanalyse und Fehleranalyse
-		2.3.2 Rust/CLU/Assembler?
+		2.3.2 Rust/CLU/WebAssembly?
 			2.3.2.1 Anwendung testen
 			2.3.2.2 Sprachanalyse und Fehleranalyse
 	2.4 Vergleich der Ergebnisse
@@ -80,6 +80,7 @@ Base44 Test: https://pixel-palette-d8dd4301.base44.app
 	3.2 Frameworks in Verwendung
 	3.3 Ausblick auf Zukunft
 
+https://webassembly.org/getting-started/developers-guide/
 
 
 
