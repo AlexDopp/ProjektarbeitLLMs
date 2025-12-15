@@ -24,6 +24,7 @@ Funktionale Anforderungen:
    - Prozent gelernter Karten pro Thema
    - Gesamtfortschritt über alle Themen
 6. Zeitaufwand und Kartenaktivität werden getracked und übersichtlich im UI dargestellt (täglich / wöchentlich).
+7. Ungewöhnliche Darstellung als Boxplot? Damit nicht kopierbar von anderen Projekten...
 
 Technische Anforderungen:
 - Eine einzelne HTML-Datei mit eingebettetem JavaScript und CSS.
@@ -52,7 +53,8 @@ Anki-Deck-JSON-Format:
 
 Antworte ausschließlich mit dem vollständigen Code.
 Stelle keine Rückfragen.
-
+Variante 1: Suche existierende App als Grundlage, die bereits ein solches Problem behandelt.
+Variante 2: Erstelle komplette App selbst ohne Verwendung bereits existierender Apps.
 
 Mögliche Testcases:
 
@@ -154,4 +156,5 @@ Speicher Test
     }
   ]
 }
+
 
