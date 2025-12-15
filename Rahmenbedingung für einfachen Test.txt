@@ -1,0 +1,54 @@
+Rahmenbedingung für Testapp:
+
+In einem einzelnen Prompt beschreibbar
+Wenige/Keine externen Abhängigkeiten
+Klarer Funktionsumfang und messbares Ergebniss
+Code-zentriert
+
+
+
+
+Prompt:
+
+Erstelle eine lokale Web-App zur Verwaltung von Lernfortschritt in Verbindung mit Anki-Decks:
+
+Funktionale Anforderungen:
+1. Nutzer kann Lernziele und Unterthemen anlegen.
+2. Nutzer kann Anki-Decks importieren (JSON-Format, wie unten dargestellt).
+3. Nach Import werden folgende Daten angezeigt:
+   - Anzahl Karten
+   - Karten pro Thema
+   - Kartenstatus (neu, gelernt, fällig, überfällig) als Graph
+4. Nutzer kann Lernsessions starten und stoppen und diese Themen oder Decks zuordnen.
+5. Der Lernfortschritt wird berechnet als:
+   - Prozent gelernter Karten pro Thema
+   - Gesamtfortschritt über alle Themen
+6. Zeitaufwand und Kartenaktivität werden getracked und übersichtlich im UI dargestellt (täglich / wöchentlich).
+
+Technische Anforderungen:
+- Eine einzelne HTML-Datei mit eingebettetem JavaScript und CSS.
+- Keine externen Libraries.
+- Saubere Trennung von:
+  - Datenmodell
+  - Logik
+  - UI
+- Lokale Persistenz via LocalStorage.
+- Robuste Fehlerbehandlung bei Importen.
+
+Anki-Deck-JSON-Format:
+{
+  "deckName": "Beispiel-Deck",
+  "cards": [
+    {
+      "id": "1",
+      "front": "Frage",
+      "back": "Antwort",
+      "topic": "Grundlagen",
+      "status": "learned",
+      "lastReviewed": "2024-01-10"
+    }
+  ]
+}
+
+Antworte ausschließlich mit dem vollständigen Code.
+Stelle keine Rückfragen.
