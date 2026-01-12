@@ -1,0 +1,21 @@
+Erstelle in einer beliebigen Programmiersprache, einen einfachen Raytracer zur Darstellung einer Cornelbox.
+
+Dieser sollte diese Anforderungen erfüllen:
+
+	Allgemein:
+		1. Es gibt keine Speicherlecks. 
+		2. Es wird minimal importiert.
+		3. Es werden keine externen Seiten verwendet.
+		4. Der Code ist wohlstrukturiert
+		5. Der Code muss vollständig implementiert werden und ohne Addition weiteren Codes ausführbar sein
+
+	Raytracer spezifisch:
+
+		1. Die grafischen Primitiven sind freiwählbar.
+		2. Es wird ein Bild einer Variante der Cornelbox unter Verwendung des Raytracers erstellt und gespeichert)
+		3. Schatten, Shading und Lichtquellen müssen implementiert werden.
+		4. Es sollen keine Post-Processing-Effekte angewandt werden
+		5. Das Raytracing, die Mathematik und die Geografie sollten im Code unabhängig (modular) verwendbar sein
+    6. Schatten konvergieren gegen schwarz
+    7. Reflexion muss implementiert werden.
+    8. Shading muss als Lambertian-Shading implementiert werden
