@@ -1,0 +1,38 @@
+ChatGPT HTML Example Dokumentation:
+
+Funktionale Anforderungen:
+1. Nutzer kann ein oder mehrere Anki-Decks importieren (JSON-Format, wie unten dargestellt) und danach die enthaltenen Anki-Karten erlernen,
+   indem er die Vorderseite gezeigt bekommt, danach zur Lösung umdrehen kann und dann kategorisiert, 
+   wie schwer er diese Karte fand in 4 Kategorien: new, hard, easy, learned.
+   Dabei werden die Karten in zufälliger Reihenfolge gezeigt.
+2. Nutzer kann Lernziele anlegen und beliebig viele importierte Decks einem Lernziel zuordnen.
+3. Nach Import werden folgende Daten angezeigt:
+   - Anzahl Karten
+   - Karten pro Thema
+   - Kartenstatus (neu, gelernt, fällig, überfällig) als Graph mit Legende
+4. Nutzer kann Lernsessions starten und stoppen und diese Decks zuordnen.
+5. Der Lernfortschritt wird berechnet als:
+   - Prozent gelernter Karten pro Thema
+   - Gesamtfortschritt über alle Themen
+6. Zeitaufwand und Kartenaktivität werden getracked und übersichtlich im UI dargestellt (täglich / wöchentlich) mit Beschriftung.
+7. Darstellung als Boxplot mit Beschriftung, sortiert nach Themen und farblich unterteilt mit Legende.
+
+
+
+ChatGPT liefert 295 Zeilen in einem Dokument als Ergebnis. Dieses lässt sich direkt per Browser ausführen und zeigt eine sehr einfache UI auf.
+Dabei hat der User die Möglichkeit eigene Lernziele hinzu zufügen. Außerdem kann wie gefordert ein Anki-Deck importiert werden mit einer Anzeige zur Deck-Übersicht.
+Die enthaltenen Karten können dann wie gewünscht in einer Lernsession erlernt werden. 
+Dabei wird der vorgegebene Ablauf mit "Frage anzeigen -> Lösung umdrehen -> Schwierigkeit bewerten" eingehalten. 
+Zusätzlich wird eine Fortschrittsübersicht mit Lernfortschritt und Aktivität gezeigt.
+
+Nun kommen wir zum eigentlichen Testen der Funktionen.
+Lernziele erstellen funktioniert, allerdings scheinen diese keinen weiteren Nutzen in der App zu haben.
+Somit fällt auch das zuordnen dieser Lernziele zu importierten Decks weg, obwohl dies in Anforderung 2 benannt wurde.
+Die Deck-Übersicht aus Anforderung 3 erscheint nach Import in Textform, mit Gesamtanzahl der Karten und Unterteilung in vorhandene Themen.
+Der Graph dazu wird in "Lernfortschritt & Aktivität" angezeigt und enthält die geforderte Legende, Themenunterteilung und Farbcodierung je nach Kategorie.
+Allerdings ist er ohne Achse zur Mengenerkennung aber mehr Gimmick als nützliches Tool. Die Anforderung wurde hier oberflächlich erfüllt, verfehlt aber ihren Zweck.
+Nun zuletzt zu den Lernsessions, diese können auf ein ausgewähltes Deck gestartet werden und zeigen daraufhin alle geforderten Funktionen zum erlernen der Karten.
+Nachdem eine Session gestoppt wird, wird zusätzlich der Boxplot aktualisiert um den neuen Fortschritt anzuzeigen. 
+Mit einem korrekten Beispieldeck funktioniert dies einwandfrei.
+
+Als nächstes möchte ich mit verschiedenen fehlerhaften Decks die Robustheit des Systems auf die Probe stellen.
