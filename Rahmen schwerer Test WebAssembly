@@ -30,7 +30,7 @@ Funktionale Anforderungen:
 Technische Anforderungen:
 - Die App nutzt eine einzelne HTML-Datei, die CSS, das Frontend-Javascript sowie ein eingebettetes WebAssembly-Modul enthält.
 - Wasm-Core: Die rechenintensiven Aufgaben (Fortschrittsberechnung, Sortierung der Boxplot-Daten, Status-Filterung...) müssen
-    im WebAssembly-Modul, geschrieben in Rust oder AsssemblyScript, implementiert sein.
+    im WebAssembly-Modul, geschrieben in Rust, implementiert sein.
 - JavaScript-Glue: JavaScript dient ausschließlich als Brücke für die DOM-Manipulation, 
     das Event-Handling und den Datentransfer zwischen LocalStorage und dem Wasm-Speicher.
 - Keine externen Libraries.
@@ -40,3 +40,21 @@ Technische Anforderungen:
   - UI
 - Lokale Persistenz: Speicherung des Status in LocalStorage und beim Laden wird der State zur Verarbeitung an das Wasm-Modul übergeben.
 - Robuste Fehlerbehandlung bei Importen.
+
+Anki-Deck-JSON-Format:
+{
+  "deckName": "Beispiel-Deck",
+  "cards": [
+    {
+      "id": "1",
+      "front": "Frage",
+      "back": "Antwort",
+      "topic": "Grundlagen",
+      "status": "learned",
+      "lastReviewed": "2024-01-10"
+    }
+  ]
+}
+
+Antworte ausschließlich mit dem vollständigen Code.
+Stelle keine Rückfragen.
