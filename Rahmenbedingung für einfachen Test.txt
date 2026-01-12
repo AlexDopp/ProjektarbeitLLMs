@@ -10,11 +10,13 @@ Code-zentriert
 
 Prompt:
 
-Erstelle eine lokale Web-App zur Verwaltung von Lernfortschritt in Verbindung mit Anki-Decks:
+Erstelle eine lokale Web-App zur Verwenund von Ankikarten und Verwaltung von Lernfortschritt in Verbindung mit Anki-Decks:
 
 Funktionale Anforderungen:
 1. Nutzer kann Lernziele und Unterthemen anlegen.
-2. Nutzer kann Anki-Decks importieren (JSON-Format, wie unten dargestellt).
+2. Nutzer kann Anki-Decks importieren (JSON-Format, wie unten dargestellt) und danach die enthaltenen Anki-Karten erlernen,
+   indem er die Vorderseite gezeigt bekommt, danach zur Lösung umdrehen kann und dann kategorisiert, 
+   wie schwer er diese Karte fand in 4 Kategorien: new, hard, easy, learned.
 3. Nach Import werden folgende Daten angezeigt:
    - Anzahl Karten
    - Karten pro Thema
@@ -23,8 +25,8 @@ Funktionale Anforderungen:
 5. Der Lernfortschritt wird berechnet als:
    - Prozent gelernter Karten pro Thema
    - Gesamtfortschritt über alle Themen
-6. Zeitaufwand und Kartenaktivität werden getracked und übersichtlich im UI dargestellt (täglich / wöchentlich).
-7. Ungewöhnliche Darstellung als Boxplot? Damit nicht kopierbar von anderen Projekten...
+6. Zeitaufwand und Kartenaktivität werden getracked und übersichtlich im UI dargestellt (täglich / wöchentlich) mit Beschriftung.
+7. Darstellung als Boxplot mit Beschriftung, sortiert nach Themen und farblich unterteilt.
 
 Technische Anforderungen:
 - Eine einzelne HTML-Datei mit eingebettetem JavaScript und CSS.
@@ -53,6 +55,8 @@ Anki-Deck-JSON-Format:
 
 Antworte ausschließlich mit dem vollständigen Code.
 Stelle keine Rückfragen.
+
+
 Variante 1: Suche existierende App als Grundlage, die bereits ein solches Problem behandelt.
 Variante 2: Erstelle komplette App selbst ohne Verwendung bereits existierender Apps.
 
@@ -156,5 +160,6 @@ Speicher Test
     }
   ]
 }
+
 
 
