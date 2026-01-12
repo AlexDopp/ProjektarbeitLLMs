@@ -10,7 +10,7 @@ Code-zentriert
 
 Prompt:
 
-Erstelle eine lokale Web-App zur Verwenund von Ankikarten und Verwaltung von Lernfortschritt in Verbindung mit Anki-Decks:
+Erstelle eine lokale Web-App zur Verwendung von Ankikarten und Verwaltung von Lernfortschritten in Verbindung mit Anki-Decks:
 
 Funktionale Anforderungen:
 1. Nutzer kann ein oder mehrere Anki-Decks importieren (JSON-Format, wie unten dargestellt) und danach die enthaltenen Anki-Karten erlernen,
@@ -161,6 +161,7 @@ Speicher Test
     }
   ]
 }
+
 
 
 
