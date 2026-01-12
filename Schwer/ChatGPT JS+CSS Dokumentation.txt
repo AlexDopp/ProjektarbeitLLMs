@@ -17,7 +17,11 @@ Funktionale Anforderungen:
 6. Zeitaufwand und Kartenaktivität werden getracked und übersichtlich im UI dargestellt (täglich / wöchentlich) mit Beschriftung.
 7. Darstellung als Boxplot mit Beschriftung, sortiert nach Themen und farblich unterteilt mit Legende.
 
+Verbesserungen:
+Variante 1: Prompt sehr detailliert und spezifisch wegen Fehleranalyse
+Variante 2: Schriftliche Beschreibung und LLM soll eigenständlich Absicherung verbessern (iterativ)
 
+WICHTIG: Versionsupdates und Grund zum Update dokumentieren!!!
 
 ChatGPT liefert 295 Zeilen in einem Dokument als Ergebnis. Dieses lässt sich direkt per Browser ausführen und zeigt eine sehr einfache UI auf.
 Dabei hat der User die Möglichkeit eigene Lernziele hinzuzufügen. Außerdem kann wie gefordert ein Anki-Deck importiert werden, mit einer Anzeige zur Deck-Übersicht.
