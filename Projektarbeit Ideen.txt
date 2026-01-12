@@ -36,7 +36,7 @@ Base44 Test: https://pixel-palette-d8dd4301.base44.app
 => Frage: Kann eine LLm einen Junior App Developer vollständig ersetzen?
 0. Einleitung LLMs
 1. Appdevelopment in beliebiger Sprache
-	1.1 Einfaches Beispiel nach Whitepaper
+	1.1 Einfaches Beispiel nach Textprompt
 		1.1.1 Beispiel erklären
 		1.1.2 ChatGPT 5.1 (auf neuem Acc)	(2 Seiten Text pro LLM?)
 			1.1.2.1 Anwendung testen
@@ -50,25 +50,25 @@ Base44 Test: https://pixel-palette-d8dd4301.base44.app
 			1.1.4.1 Anwendung testen
 			1.1.4.2 Programmsprachenwahl
 			1.1.4.3 Fehleranalyse
-		1.1.5 Cursor
+		1.1.5 Cursor auf Basis von Gemini 3.0
 			1.1.5.1 Anwendung testen
 			1.1.5.2 Programmsprachenwahl
 			1.1.5.3 Fehleranalyse
 		1.1.6 Vergleich der Ergebnisse + AIBenchmark (Blackbenchmark?)
 		(GithubCopilot/AmazonCodewhisperer/Claude3.7?)
 
-=> Frage: Wie kommen LLMs mit unbekannteren Sprachen klar
+=> Frage: Wie kommen LLMs mit unbekannteren Programmiersprachen und Aufgabenstellungen klar
 2. Komplexes Development mit 2 fixen Sprachen
 	2.1 Beispiel erklären
 	2.2 ChatGPT 5.1
-		2.2.1 Python/Java?
+		2.2.1 Javascript+CSS+HTML
 			2.2.1.1 Anwendung testen
 			2.2.1.2 Sprachanalyse und Fehleranalyse
 		2.2.2 (Rust/CLU/)WebAssembly
 			2.2.2.1 Anwendung testen
 			2.2.2.2 Sprachanalyse und Fehleranalyse
-	2.3 Cursor?
-		2.3.1 Python/Java?
+	2.3 Cursor auf Basis von Gemini 3.0
+		2.3.1 Javascript+CSS+HTML
 			2.3.1.1 Anwendung testen
 			2.3.1.2 Sprachanalyse und Fehleranalyse
 		2.3.2 (Rust/CLU)WebAssembly
@@ -82,6 +82,7 @@ Base44 Test: https://pixel-palette-d8dd4301.base44.app
 	3.3 Ausblick auf Zukunft
 
 https://webassembly.org/getting-started/developers-guide/
+
 
 
 
