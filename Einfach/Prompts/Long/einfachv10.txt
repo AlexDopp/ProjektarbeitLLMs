@@ -1,0 +1,24 @@
+Erstelle in einer beliebigen Programmiersprache einen einfachen Raytracer zur Darstellung einer Cornelbox.
+
+Allgemein:
+1. Die Speicherverwaltung soll sicher und robust sein.
+2. Es sollen nur notwendige Imports verwendet werden.
+3. Es werden keine externen Seiten oder externen Inhalte verwendet.
+4. Der Code ist klar strukturiert und logisch aufgebaut.
+5. Der Code muss vollständig implementiert werden und ohne Addition weiteren Codes ausführbar sein.
+
+Raytracer spezifisch:
+1. Die grafischen Primitiven sind frei wählbar, müssen jedoch eindeutig im Code definiert sein.
+2. Es wird ein einzelnes Bild einer Cornelbox-Variante unter Verwendung des Raytracers erzeugt und als Datei gespeichert.
+3. Schatten, Reflexionen, Shading und mindestens eine explizite Lichtquelle müssen implementiert sein.
+4. Es dürfen keine Post-Processing-Effekte angewandt werden; alle visuellen Effekte müssen direkt aus dem Raytracing resultieren.
+5. Raytracing-Logik, mathematische Grundlagen (Vektoren, Strahlen, Schnittberechnungen) und Szenengeometrie sollen im Code modular und unabhängig voneinander verwendbar sein.
+
+Ausgabe- und Vergleichbarkeit:
+1. Das erzeugte Bild muss eine feste Auflösung von 512 × 512 Pixel besitzen.
+2. Das Bild ist aus einer statischen Kameraposition innerhalb der Szene zu rendern, die die gesamte Cornelbox sichtbar macht.
+3. Die Szene soll mindestens zwei unterschiedlich gefärbte Wände, einen Boden, eine Rückwand sowie mindestens ein Objekt im Inneren enthalten.
+4. Die Lichtquelle soll innerhalb der Box platziert sein und sichtbare Schatten auf Objekte und Wände werfen.
+5. Der Dateiname des erzeugten Bildes ist fest definiert (z. B. „cornellbox.png“), sodass Ergebnisse zwischen verschiedenen Implementierungen direkt vergleichbar sind.
+
+Die konkrete Wahl der Programmiersprache, der Datenstrukturen und der internen Architektur bleibt frei, solange die oben genannten Anforderungen erfüllt werden.
