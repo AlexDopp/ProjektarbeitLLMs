@@ -1,0 +1,274 @@
+Alles klar — hier ist ein **vollständig eigenständig lauffähiger Raytracer in Python**, der **eine Cornellbox-Variante rendert** und **als `cornellbox.png` (512×512)** speichert.
+
+✔ **Keine externen Bibliotheken**
+✔ **Nur Standardbibliothek** (`math`, `struct`, `zlib`)
+✔ **Klare Trennung** von
+
+* Mathematik
+* Raytracing-Logik
+* Szenenbeschreibung
+* Bildausgabe
+  ✔ **Licht, Schatten, Shading und Spiegelungen**
+  ✔ **Eine feste Szene, eine feste Kamera, ein Bild**
+
+---
+
+## ▶ Ausführen
+
+```bash
+python cornellbox.py
+```
+
+Danach liegt die Datei **`cornellbox.png`** im selben Verzeichnis.
+
+---
+
+## 📦 Vollständiger Code: `cornellbox.py`
+
+```python
+import math
+import struct
+import zlib
+
+
+# ------------------------------------------------------------
+# Mathematische Grundlagen
+# ------------------------------------------------------------
+
+class Vec3:
+    def __init__(self, x, y, z):
+        self.x, self.y, self.z = x, y, z
+
+    def __add__(self, o):
+        return Vec3(self.x + o.x, self.y + o.y, self.z + o.z)
+
+    def __sub__(self, o):
+        return Vec3(self.x - o.x, self.y - o.y, self.z - o.z)
+
+    def __mul__(self, s):
+        return Vec3(self.x * s, self.y * s, self.z * s)
+
+    def dot(self, o):
+        return self.x * o.x + self.y * o.y + self.z * o.z
+
+    def norm(self):
+        l = math.sqrt(self.dot(self))
+        return self * (1.0 / l) if l > 0 else self
+
+
+# ------------------------------------------------------------
+# Rays & Materialien
+# ------------------------------------------------------------
+
+class Ray:
+    def __init__(self, origin, direction):
+        self.origin = origin
+        self.direction = direction.norm()
+
+
+class Material:
+    def __init__(self, color, reflectivity=0.0):
+        self.color = color
+        self.reflectivity = reflectivity
+
+
+# ------------------------------------------------------------
+# Geometrie
+# ------------------------------------------------------------
+
+class Sphere:
+    def __init__(self, center, radius, material):
+        self.center = center
+        self.radius = radius
+        self.material = material
+
+    def intersect(self, ray):
+        oc = ray.origin - self.center
+        b = oc.dot(ray.direction)
+        c = oc.dot(oc) - self.radius * self.radius
+        disc = b * b - c
+        if disc < 0:
+            return None
+        t = -b - math.sqrt(disc)
+        if t < 0:
+            return None
+        hit = ray.origin + ray.direction * t
+        normal = (hit - self.center).norm()
+        return t, hit, normal, self.material
+
+
+class Plane:
+    def __init__(self, point, normal, material):
+        self.point = point
+        self.normal = normal.norm()
+        self.material = material
+
+    def intersect(self, ray):
+        denom = self.normal.dot(ray.direction)
+        if abs(denom) < 1e-6:
+            return None
+        t = (self.point - ray.origin).dot(self.normal) / denom
+        if t < 0:
+            return None
+        hit = ray.origin + ray.direction * t
+        return t, hit, self.normal, self.material
+
+
+# ------------------------------------------------------------
+# Szene & Licht
+# ------------------------------------------------------------
+
+class Light:
+    def __init__(self, position, intensity):
+        self.position = position
+        self.intensity = intensity
+
+
+class Scene:
+    def __init__(self):
+        self.objects = []
+        self.light = None
+
+
+# ------------------------------------------------------------
+# Raytracer
+# ------------------------------------------------------------
+
+class RayTracer:
+    def __init__(self, scene):
+        self.scene = scene
+        self.max_depth = 2
+
+    def trace(self, ray, depth):
+        if depth <= 0:
+            return Vec3(0, 0, 0)
+
+        hit_data = None
+        for obj in self.scene.objects:
+            res = obj.intersect(ray)
+            if res and (hit_data is None or res[0] < hit_data[0]):
+                hit_data = res
+
+        if not hit_data:
+            return Vec3(0, 0, 0)
+
+        _, hit, normal, mat = hit_data
+        light_dir = (self.scene.light.position - hit).norm()
+
+        # Schatten
+        shadow_ray = Ray(hit + normal * 1e-4, light_dir)
+        for obj in self.scene.objects:
+            if obj.intersect(shadow_ray):
+                return mat.color * 0.1
+
+        # Diffuses Shading
+        diff = max(normal.dot(light_dir), 0)
+        color = mat.color * diff * self.scene.light.intensity
+
+        # Reflexion
+        if mat.reflectivity > 0:
+            refl_dir = ray.direction - normal * 2 * ray.direction.dot(normal)
+            refl_ray = Ray(hit + normal * 1e-4, refl_dir)
+            refl_color = self.trace(refl_ray, depth - 1)
+            color = color * (1 - mat.reflectivity) + refl_color * mat.reflectivity
+
+        return color
+
+
+# ------------------------------------------------------------
+# PNG-Ausgabe (minimal, eigenständig)
+# ------------------------------------------------------------
+
+def write_png(filename, width, height, pixels):
+    def chunk(tag, data):
+        return (struct.pack(">I", len(data)) +
+                tag +
+                data +
+                struct.pack(">I", zlib.crc32(tag + data) & 0xffffffff))
+
+    raw = b''
+    for y in range(height):
+        raw += b'\x00'
+        for x in range(width):
+            r, g, b = pixels[y][x]
+            raw += struct.pack("BBB", r, g, b)
+
+    with open(filename, "wb") as f:
+        f.write(b'\x89PNG\r\n\x1a\n')
+        f.write(chunk(b'IHDR', struct.pack(">IIBBBBB",
+                                           width, height, 8, 2, 0, 0, 0)))
+        f.write(chunk(b'IDAT', zlib.compress(raw, 9)))
+        f.write(chunk(b'IEND', b''))
+
+
+# ------------------------------------------------------------
+# Hauptprogramm
+# ------------------------------------------------------------
+
+def main():
+    W, H = 512, 512
+    camera = Vec3(0, 0, -3)
+    scene = Scene()
+
+    # Materialien
+    red = Material(Vec3(1, 0.2, 0.2))
+    green = Material(Vec3(0.2, 1, 0.2))
+    white = Material(Vec3(0.9, 0.9, 0.9))
+    mirror = Material(Vec3(0.9, 0.9, 0.9), 0.6)
+
+    # Cornellbox (Wände)
+    scene.objects += [
+        Plane(Vec3(0, -1, 0), Vec3(0, 1, 0), white),   # Boden
+        Plane(Vec3(0, 1, 0), Vec3(0, -1, 0), white),  # Decke
+        Plane(Vec3(-1, 0, 0), Vec3(1, 0, 0), red),    # Links
+        Plane(Vec3(1, 0, 0), Vec3(-1, 0, 0), green),  # Rechts
+        Plane(Vec3(0, 0, 2), Vec3(0, 0, -1), white)   # Rückwand
+    ]
+
+    # Objekt
+    scene.objects.append(Sphere(Vec3(0, -0.5, 1), 0.5, mirror))
+
+    # Licht
+    scene.light = Light(Vec3(0, 0.9, 0.5), 1.2)
+
+    tracer = RayTracer(scene)
+    pixels = [[(0, 0, 0) for _ in range(W)] for _ in range(H)]
+
+    for y in range(H):
+        for x in range(W):
+            u = (x / W) * 2 - 1
+            v = (1 - y / H) * 2 - 1
+            ray = Ray(camera, Vec3(u, v, 1))
+            col = tracer.trace(ray, tracer.max_depth)
+            pixels[y][x] = (
+                min(255, int(col.x * 255)),
+                min(255, int(col.y * 255)),
+                min(255, int(col.z * 255))
+            )
+
+    write_png("cornellbox.png", W, H, pixels)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+---
+
+## 🧠 Was enthalten ist
+
+* **Ray–Objekt-Schnitt**
+* **Diffuse Beleuchtung**
+* **Harte Schatten**
+* **Spiegelnde Reflexion**
+* **Innenliegende Lichtquelle**
+* **Klassische Cornellbox-Farbgebung**
+
+Wenn du willst, kann ich dir im nächsten Schritt:
+
+* 🔬 die Mathematik erklären
+* 🎥 eine zweite Kameraansicht bauen
+* ⚡ Performance verbessern
+* 🧱 Boxen statt Kugeln implementieren
+
+Sag einfach Bescheid.
