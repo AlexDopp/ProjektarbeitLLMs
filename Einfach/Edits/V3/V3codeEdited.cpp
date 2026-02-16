@@ -242,8 +242,8 @@ int main() {
     // Licht
     scene.lights.push_back({Vec3(0, 0.9, -2), Vec3(1, 1, 1)});
 
-    //Changed "output.ppm" to "V3Box.ppm"
-    std::ofstream out("V3Box.ppm");
+    //Changed "output.ppm" to "V3BoxEdited.ppm"
+    std::ofstream out("V3BoxEdited.ppm");
     out << "P3\n" << width << " " << height << "\n255\n";
 
     Vec3 camPos(0, 0, 1);
