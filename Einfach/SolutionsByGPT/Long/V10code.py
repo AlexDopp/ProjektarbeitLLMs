@@ -207,7 +207,8 @@ def main():
             ray = Ray(cam, Vec3(u, v, -1))
             pixels.append(trace(ray, scene, 3))
 
-    write_png("cornellbox.png", W, H, pixels)
+    # Changed "cornellbox.png" to "V10Box.png" to simplyfy and avoid confusion with previous versions
+    write_png("V10Box.png", W, H, pixels)
 
 
 if __name__ == "__main__":

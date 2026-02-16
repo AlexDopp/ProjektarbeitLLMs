@@ -218,7 +218,8 @@ def main():
                 min(255, int(col.z * 255))
             )
 
-    write_png("cornellbox.png", W, H, pixels)
+    # Changed "cornellbox.png" to "V12Box.png" to simplyfy and avoid confusion with previous versions
+    write_png("V12Box.png", W, H, pixels)
 
 
 if __name__ == "__main__":

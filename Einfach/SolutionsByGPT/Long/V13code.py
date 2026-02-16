@@ -207,6 +207,7 @@ for y in range(HEIGHT):
         color = tracer.trace(ray, tracer.max_depth)
         pixels.append(color)
 
-save_ppm("cornellbox.ppm", pixels, WIDTH, HEIGHT)
+#Changed "cornellbox.ppm" to "V13Box.ppm" to simplyfy and avoid confusion with previous versions
+save_ppm("V13Box.ppm", pixels, WIDTH, HEIGHT)
 
 print("Rendering abgeschlossen: cornellbox.ppm")
