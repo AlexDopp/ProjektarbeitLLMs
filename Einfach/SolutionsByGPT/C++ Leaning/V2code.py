@@ -177,11 +177,11 @@ class RayTracer:
 
             shadow_ray = Ray(hit.point + hit.normal * 1e-4, to_light)
             shadow_hit = self.scene.intersect(shadow_ray)
-            if shadow_hit:
+            if not shadow_hit:
                 continue
 
             diff = max(0.0, hit.normal.dot(to_light))
-            view = (-ray.direction).normalized()
+            view = (ray.direction).__mul__(-1).normalized()
             half = (to_light + view).normalized()
             spec = max(0.0, hit.normal.dot(half)) ** 32
 
@@ -250,7 +250,7 @@ def render():
                 int(255 * clamp(col.z)),
             ))
 
-    #Changed "cornell_box.ppm" to "V2Box.ppm"
+    #Changed 
     with open("V2Box.ppm", "w") as f:
         f.write("P3\n{} {}\n255\n".format(width, height))
         for r, g, b in pixels:

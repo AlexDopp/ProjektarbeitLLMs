@@ -234,10 +234,10 @@ def render():
     # Objects
     scene.objects += [
         Sphere(Vec3(-0.4, -0.6, -1.5), 0.4, mirror),
-        Sphere(Vec3(0.4, -0.7, -2.0), 0.3, white),
+        Sphere(Vec3(0.4, -0.7, -2.0), 0.3, red),
     ]
 
-    scene.lights.append(Light(Vec3(0, 0.9, -1.5), 1.5))
+    scene.lights.append(Light(Vec3(0, 0.9, -1.5), 5.0))
 
     tracer = RayTracer(scene)
 

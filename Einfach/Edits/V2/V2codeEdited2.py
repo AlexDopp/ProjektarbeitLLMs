@@ -144,9 +144,12 @@ class Scene:
         self.objects = []
         self.lights = []
 
-    def intersect(self, ray):
+    def intersect(self, ray, ignore_object=None):
         closest = None
         for obj in self.objects:
+            if obj == ignore_object:
+                continue
+
             hit = obj.intersect(ray)
             if hit and (closest is None or hit.t < closest.t):
                 closest = hit
@@ -175,13 +178,14 @@ class RayTracer:
         for light in self.scene.lights:
             to_light = (light.position - hit.point).normalized()
 
-            shadow_ray = Ray(hit.point + hit.normal * 1e-4, to_light)
-            shadow_hit = self.scene.intersect(shadow_ray)
+            shadow_ray = Ray(hit.point + hit.normal * 1e-3, to_light)
+            shadow_hit = self.scene.intersect(shadow_ray, ignore_object=hit.material)
+
             if shadow_hit:
                 continue
 
             diff = max(0.0, hit.normal.dot(to_light))
-            view = (-ray.direction).normalized()
+            view = (ray.direction).__mul__(-1).normalized()
             half = (to_light + view).normalized()
             spec = max(0.0, hit.normal.dot(half)) ** 32
 
@@ -196,8 +200,7 @@ class RayTracer:
             refl_dir = ray.direction.reflect(hit.normal)
             refl_ray = Ray(hit.point + hit.normal * 1e-4, refl_dir)
             refl_col = self.trace(refl_ray, depth - 1)
-            color = color * (1 - hit.material.reflection) + \
-                    refl_col * hit.material.reflection
+            color = color * (1 - hit.material.reflection) + refl_col * hit.material.reflection
 
         return color
 
@@ -229,10 +232,10 @@ def render():
     # Objects
     scene.objects += [
         Sphere(Vec3(-0.4, -0.6, -1.5), 0.4, mirror),
-        Sphere(Vec3(0.4, -0.7, -2.0), 0.3, white),
+        Sphere(Vec3(0.4, -0.7, -2.0), 0.3, red),
     ]
 
-    scene.lights.append(Light(Vec3(0, 0.9, -1.5), 5.0))
+    scene.lights.append(Light(Vec3(0, 0.9, -1.5), 1.5))
 
     tracer = RayTracer(scene)
 
@@ -250,8 +253,7 @@ def render():
                 int(255 * clamp(col.z)),
             ))
 
-    #Changed "cornell_box.ppm" to "V2BoxEdited2.ppm"
-    with open("V2BoxEdited2.ppm", "w") as f:
+    with open("V2BoxY.ppm", "w") as f:
         f.write("P3\n{} {}\n255\n".format(width, height))
         for r, g, b in pixels:
             f.write(f"{r} {g} {b}\n")
