@@ -184,7 +184,6 @@ Vec3 trace(const Ray& ray, const Scene& scene, int depth) {
         for (const auto& obj : scene.objects) {
             Hit shadowHit;
             if (obj->intersect(shadowRay, shadowHit)) {
-                // Check if the hit object is not a wall (plane at scene boundaries)
                 const Plane* plane = dynamic_cast<const Plane*>(obj.get());
                 if (!plane || shadowHit.t < (light.position - closestHit.position).normalize().dot(light.position - closestHit.position)) {
                     inShadow = true;

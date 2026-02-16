@@ -101,6 +101,28 @@ expecting same error
 
 it is. It seems to be a common error, that the AI cant not realise, that if it has a single class for both the objects in the world
 and the borders of the world, the shadow rays have to ignore the walls, since otherwise the rays will always say "yes im in the shadow".
+This seems to indicate, that ChatGPT does not get its code from one central source but is using a lot of different code bases, each one having implemented the shadow rays OR the planes in a different way. Since when it grabs the Shadow Ray from one where the Planes and objects are in different super classes and grabs the classes and main function from one where they are together, they will work together, but the result will just be a black print.
 
 in this case its just a single line since its different structure:
 if (dynamic_cast<Plane*>(o)) continue;
+(Returns nullptr)
+
+Version 6:
+
+same (also fixed with v5)
+
+Version 8:
+
+
+same problem different solution
+
+shadow_hit = scene.trace(shadow_ray)
+  if shadow_hit:
+    dist_to_light = (light.pos - point).length()
+    if shadow_hit[0] < dist_to_light:
+      continue
+
+look if the distance to light is actually bigger than the distance point to obstruction (if not its a plane behind the light)
+
+Version 9:
+

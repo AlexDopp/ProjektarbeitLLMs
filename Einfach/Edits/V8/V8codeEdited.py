@@ -122,12 +122,11 @@ def shade(scene, ray, depth):
         shadow_ray = Ray(point + normal*0.001, to_light)
         shadow_hit = scene.trace(shadow_ray)
         
-        # Check if shadow hit is actually blocking the light
         if shadow_hit:
             dist_to_light = (light.pos - point).length()
             if shadow_hit[0] < dist_to_light:
-                continue  # shadow
-
+                continue
+        
         # Diffuse
         diff = max(normal.dot(to_light), 0)
         color += mat.color * diff
