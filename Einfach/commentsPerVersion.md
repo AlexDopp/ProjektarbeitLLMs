@@ -126,3 +126,32 @@ look if the distance to light is actually bigger than the distance point to obst
 
 Version 9:
 
+Same Error.
+
+different solution code (same idea as v8):
+
+light_distance = (light.p - p).dot(light.p - p)
+  if hit and hit[0] * hit[0] < light_distance:
+
+
+Version 10:
+
+same error
+
+        t_light = (light.pos - p).norm().dot((light.pos - p).norm()) 
+if hit:
+                t_obj = hit[0]  
+                if 0 < t_obj < (light.pos - p).norm().dot((light.pos - p).norm()):
+                    shadow = True
+                    break
+
+different solution (same as 9):
+
+shadow = False
+shadow_ray = Ray(p + n * 1e-4, ldir)
+dist_to_light = (light.pos - p).norm().dot(light.pos - p)
+for o in scene.objects:
+    hit = o.intersect(shadow_ray)
+    if hit and hit[0] < dist_to_light:
+        shadow = True
+        break
