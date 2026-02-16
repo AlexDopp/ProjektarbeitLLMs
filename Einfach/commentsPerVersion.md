@@ -68,3 +68,39 @@ if shadow_hit:
         continue
 
 find out if hit is a wall (Plane) and if yes ignore the Shadow ray cast. If not use the ray.
+
+(Dont know if the - error i have (-ray to .__mul__(-1)) is my my or AIs fault)
+
+Version 3: 
+
+Expecting same error
+
+Found same error
+
+dont know how to fix that in c++
+(Fixed By Copilot)
+
+for (const auto& obj : scene.objects) {
+  Hit shadowHit;
+  if (obj->intersect(shadowRay, shadowHit)) {
+  const Plane* plane = dynamic_cast<const Plane*>(obj.get());
+  if (!plane || shadowHit.t < (light.position - closestHit.position).normalize().dot(light.position - closestHit.position)) {
+    inShadow = true;
+    break;
+    }
+  }
+}
+
+afaik for every obj we check if the object we see as the interacting is the object we are doing the check for rn
+then if our obj is a wall we ignore else we say in shadow
+
+
+Version 5:
+
+expecting same error
+
+it is. It seems to be a common error, that the AI cant not realise, that if it has a single class for both the objects in the world
+and the borders of the world, the shadow rays have to ignore the walls, since otherwise the rays will always say "yes im in the shadow".
+
+in this case its just a single line since its different structure:
+if (dynamic_cast<Plane*>(o)) continue;
