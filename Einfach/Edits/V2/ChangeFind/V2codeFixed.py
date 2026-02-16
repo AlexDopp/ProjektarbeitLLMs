@@ -144,9 +144,12 @@ class Scene:
         self.objects = []
         self.lights = []
 
-    def intersect(self, ray):
+    def intersect(self, ray, ignore_object=None):
         closest = None
         for obj in self.objects:
+            if obj == ignore_object:
+                continue
+
             hit = obj.intersect(ray)
             if hit and (closest is None or hit.t < closest.t):
                 closest = hit
@@ -178,10 +181,19 @@ class RayTracer:
             shadow_ray = Ray(hit.point + hit.normal * 1e-4, to_light)
             shadow_hit = self.scene.intersect(shadow_ray)
             if shadow_hit:
-                continue
+                occluder = None
+                for obj in self.scene.objects:
+                    h = obj.intersect(shadow_ray)
+                    if h and abs(h.t - shadow_hit.t) < 1e-6:
+                        occluder = obj
+                        break
+                if occluder is not None and not isinstance(occluder, Plane):
+                    dist_to_light = (light.position - hit.point).norm()
+                    if shadow_hit.t < dist_to_light:
+                        continue
 
             diff = max(0.0, hit.normal.dot(to_light))
-            view = (-ray.direction).normalized()
+            view = (ray.direction).__mul__(-1).normalized()
             half = (to_light + view).normalized()
             spec = max(0.0, hit.normal.dot(half)) ** 32
 
@@ -196,8 +208,7 @@ class RayTracer:
             refl_dir = ray.direction.reflect(hit.normal)
             refl_ray = Ray(hit.point + hit.normal * 1e-4, refl_dir)
             refl_col = self.trace(refl_ray, depth - 1)
-            color = color * (1 - hit.material.reflection) + \
-                    refl_col * hit.material.reflection
+            color = color * (1 - hit.material.reflection) + refl_col * hit.material.reflection
 
         return color
 
@@ -229,7 +240,7 @@ def render():
     # Objects
     scene.objects += [
         Sphere(Vec3(-0.4, -0.6, -1.5), 0.4, mirror),
-        Sphere(Vec3(0.4, -0.7, -2.0), 0.3, white),
+        Sphere(Vec3(0.4, -0.7, -2.0), 0.3, red),
     ]
 
     scene.lights.append(Light(Vec3(0, 0.9, -1.5), 1.5))
@@ -242,7 +253,7 @@ def render():
         for x in range(width):
             px = (2 * (x + 0.5) / width - 1) * math.tan(fov / 2)
             py = (1 - 2 * (y + 0.5) / height) * math.tan(fov / 2)
-            ray = Ray(Vec3(0, 0, 1), Vec3(px, py, -1))
+            ray = Ray(Vec3(0, 0, 1), Vec3(px, py, -1).normalized())
             col = tracer.trace(ray, tracer.max_depth)
             pixels.append((
                 int(255 * clamp(col.x)),
@@ -250,8 +261,7 @@ def render():
                 int(255 * clamp(col.z)),
             ))
 
-    #Changed to "V2Box.ppm""
-    with open("V2Box.ppm", "w") as f:
+    with open("V2BoxFixed.ppm", "w") as f:
         f.write("P3\n{} {}\n255\n".format(width, height))
         for r, g, b in pixels:
             f.write(f"{r} {g} {b}\n")

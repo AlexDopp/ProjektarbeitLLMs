@@ -51,3 +51,20 @@ what does it hit?
 all pxl do this
 Shadow hit at <__main__.Vec3 object at 0x000001f3d806ebc0>
 
+Problem: Walls and Spheres are both treated as objects in the World, so the shadow_ray always hits (since the walls are around the whole World) which means hit =/= none -> continue is forced pixel stays same as line 173.
+
+Fix:
+
+if shadow_hit:
+  occluder = None
+  for obj in self.scene.objects:
+    h = obj.intersect(shadow_ray)
+    if h and abs(h.t - shadow_hit.t) < 1e-6:
+      occluder = obj
+      break
+    if occluder is not None and not isinstance(occluder, Plane):
+      dist_to_light = (light.position - hit.point).norm()
+      if shadow_hit.t < dist_to_light:
+        continue
+
+find out if hit is a wall (Plane) and if yes ignore the Shadow ray cast. If not use the ray.
