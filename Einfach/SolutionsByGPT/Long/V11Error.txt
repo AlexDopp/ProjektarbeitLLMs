@@ -1,0 +1,15 @@
+g++ -std=c++17 -O2 V11code.cpp -o raytracer
+./raytracer
+
+V11code.cpp: In function 'int main()':
+V11code.cpp:240:25: error: 'M_PI' was not declared in this scope
+  240 |     double fov = 60.0 * M_PI / 180.0;
+      |                         ^~~~
+./raytracer : Die Benennung "./raytracer" wurde nicht als Name eines Cmdlet, einer Funktion, einer Skriptdatei oder eines 
+ausführbaren Programms erkannt. Überprüfen Sie die Schreibweise des Namens, oder ob der Pfad korrekt ist (sofern enthalten), und   
+wiederholen Sie den Vorgang.
+In Zeile:2 Zeichen:1
++ ./raytracer
++ ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (./raytracer:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException

@@ -6,6 +6,7 @@ Allgemein:
 3. Externe Seiten oder externe Datenquellen sind nicht erlaubt.
 4. Die Struktur des Codes soll sauber und nachvollziehbar sein.
 5. Die Lösung muss komplett implementiert und sofort ausführbar sein.
+6. Der benötigte Speicher soll minimal sein.
 
 Raytracer spezifisch:
 1. Die grafischen Primitive können frei definiert werden.

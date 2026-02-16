@@ -6,6 +6,7 @@ Allgemein:
 3. Externe Webseiten oder externe Inhalte sind nicht erlaubt.
 4. Die Codebasis soll klar strukturiert und sauber organisiert sein.
 5. Die Implementierung muss ohne zusätzliche Code-Erweiterungen lauffähig sein.
+6. Der Code soll möglichst kurz sein. 
 
 Raytracer spezifisch:
 1. Die grafischen Primitive sind frei wählbar.

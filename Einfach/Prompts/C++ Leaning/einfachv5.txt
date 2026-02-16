@@ -6,6 +6,7 @@ Allgemein:
 3. Die Nutzung externer Webseiten oder Ressourcen ist nicht gestattet.
 4. Der Code soll übersichtlich, modular und gut strukturiert sein.
 5. Der Raytracer muss vollständig implementiert und ohne Ergänzungen ausführbar sein.
+6. Die Erstellung Soll möglichst schnell sein. Das Programm soll möglichst schnell laufen.
 
 Raytracer spezifisch:
 1. Die Auswahl der grafischen Primitive ist freigestellt.
