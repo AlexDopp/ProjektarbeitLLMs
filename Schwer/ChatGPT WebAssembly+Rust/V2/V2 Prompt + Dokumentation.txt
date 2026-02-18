@@ -1,0 +1,16 @@
+V2 Prompt + Dokumentation:
+Wenn ich diese Datei in Mozilla Firefox ausführe kann ich zwar die grundlegende UI 
+und einige Elemente sehen und nutzen, aber es treten viele Fehler auf: 
+Zuerst wird auf der Konsole folgender Fehler geworfen 
+"Uncaught (in promise) CompileError: wasm validation error: at offset 25: byte size mismatch in memory section".
+Außerdem kann ich beim Starten einer Lernsession zwar eine Karte sehen, habe aber keine 4 Buttons, 
+um nach meinem Beantworten die Schwierigkeit dieser anzupassen, oder einen Button um sie überhaupt umzudrehen 
+und die Lösung zu sehen. 
+Passe deine Antwort dahingehend weiter an und gib den vollständigen angepassten Code zurück. 
+Antworte nur mit Code.
+
+Dokumentation:
+Der Fehler tritt nicht mehr auf.
+Innerhalb einer Lernsession kann man jetzt wie gefordert die Karten neu bewertet und umdrehen.
+Aber die Deck-Übersicht bleibt weiterhin leer, der Lernfortschritt ist eine nutzlose % Zahl
+und die "Aktivität & Boxplot" bleibt leer.

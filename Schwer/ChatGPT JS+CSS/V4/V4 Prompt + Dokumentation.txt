@@ -1,15 +1,5 @@
 V4 Prompt:
-Die neuen Fehlererkennungen klappen ganz okay, aber kontrolliere auch noch ob allgemein die Karten unvollständig sind 
-und ob der Text einer Karte zu groß für die Darstellungen ist. Baue dann eigenständig Zeilenumbrüche ein oder ab einer zu hohen Anzahl,
-lehne das ganze Deck beim Import ab mit entpsrechender Fehlermeldung. Außerdem ist nicht ganz eindeutig, wann der Boxplot geupdated wird
-und wann eine Session beendet wird. Erweitere eine laufende Session um einen Timer und lasse sie endlos die Fragen durchlaufen
-und nur durch "Session stoppen" kann die Session wirklich beendet werden und auch nur dann wird der Boxplot geupdated. 
-Passe deinen Code dahingehend an und gib den vollständigen verbesserten Code zurück. Antworte nur mit Code.
+Die neuen Fehlererkennungen klappen ganz okay, aber kontrolliere auch noch ob allgemein die Karten unvollständig sind und ob der Text einer Karte zu groß für die Darstellungen ist, baue dann eigenständig Zeilenumbrüche ein oder ab einer zu hohen Anzahl lehne das ganze Deck beim Import ab mit entpsrechender Fehlermeldung. Außerdem ist nicht ganz eindeutig, wann der Boxplot geupdated wird und wann eine Session beendet wird. Erweitere eine laufende Session um einen Timer und lasse sie endlos die Fragen durchlaufen und nur durch "Session stoppen" kann die Session wirklich beendet werden und auch nur dann wird der Boxplot geupdated. Passe deinen Code dahingehend an und gib den vollständigen verbesserten Code zurück. Antworte nur mit Code.
 
 Kommentare:
-
-Fehlererkennung ist besser, aber ein Minimal Deck ohne Karten kommt immernoch durch. 
-Außerdem wird dann beim Verwenden dieses Decks die letzte Karte aus dem vorherigen Deck angezeigt, 
-aber kann nicht angepasst werden? Timmer wurde eingebaut, Karten werden jetzt nach ID aufsteigend durchgearbeitet und gelooped, 
-Boxplot updated nur nach manuellem Sessionstop. Kartenstatus immernoch nur gespeichert in Deck selbst, 
-somit Boxplot und Anpassungen nicht nach Lernziel sortierbar aber das ist eher Designflaw als GPTs Schuld.
+Fehlererkennung ist besser, aber ein Minimal Deck ohne Karten kommt immernoch durch. Außerdem wird dann beim Verwenden dieses Decks die letzte Karte aus dem vorherigen Deck angezeigt, aber kann nicht angepasst werden? Timmer wurde eingebaut, Karten werden jetzt nach ID aufsteigend durchgearbeitet und gelooped, Boxplot updated nur nach manuellem Sessionstop. Kartenstatus immernoch nur gespeichert in Deck selbst, somit Boxplot und Anpassungen nicht nach Lernziel sortierbar aber das ist eher Designflaw als GPTs Schuld.

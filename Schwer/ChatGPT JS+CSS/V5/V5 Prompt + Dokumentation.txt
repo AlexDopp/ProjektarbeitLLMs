@@ -1,13 +1,5 @@
 V5 Prompt:
-Erweitere deine Fehlererkennung darum, dass leere Decks nicht importiert werden können und es dazu eine Fehlermeldung gibt.
-Tracke außerdem wieviel Zeit pro Lernziel gelernt wurde und zeige diese bei der Lernzielanzeige an. 
-Addiere dabei die Zeit mehrerer Sessions aus. Und ändere das Anzeigen der Karten wieder dahingehend an, 
-dass sie in zufälliger Reihenfolge gezeigt werden bis jede Karte einmal gezeigt wurde und dann wiederholend. 
-Passe deinen Code dahingehend an und gib den vollständigen verbesserten Code zurück. Antworte nur mit Code.
+Erweitere deine Fehlererkennung darum, dass leere Decks nicht importiert werden können und es dazu eine Fehlermeldung gibt. Tracke außerdem wieviel Zeit pro Lernziel gelernt wurde und zeige diese bei der Lernzielanzeige an. Addiere dabei die Zeit mehrerer Sessions aus. Und ändere das Anzeigen der Karten wieder dahingehend an, dass sie in zufälliger Reihenfolge gezeigt werden bis jede Karte einmal gezeigt wurde und dann wiederholend. Passe deinen Code dahingehend an und gib den vollständigen verbesserten Code zurück. Antworte nur mit Code.
 
 Kommentare:
-
-Fehlererkennung funktioniert Top. Decks werden aussortiert, Single Card Deck weiterhin erlaubt was ok ist. 
-Im Reiter Lernziele wurde eine neue "Lernzeit:" hinzugefügt, updated nach jedem Sessionstop und addiert richtig auf bei mehreren Sessions. 
-Ein sehr dummer Bug existiert noch, denn es kann während einer Session eine zweite gestartet werden, was das Programm killt, 
-da diese Session "Unstoppbar" wird und der Timer damit dauerhaft läuft.
+Fehlererkennung funktioniert Top. Decks werden aussortiert, Single Card Deck weiterhin erlaubt was ok ist. Im Reiter Lernziele wurde eine neue "Lernzeit:" hinzugefügt, updated nach jedem Sessionstop und addiert richtig auf bei mehreren Sessions. Ein sehr dummer Bug existiert noch, denn es kann während einer Session eine zweite gestartet werden, was das Programm killt.
