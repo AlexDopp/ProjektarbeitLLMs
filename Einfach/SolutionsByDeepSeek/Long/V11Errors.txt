@@ -1,0 +1,4 @@
+line 392, in main
+    color = color / samples_per_pixel
+            ~~~~~~^~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for /: 'Color' and 'int'

@@ -1,0 +1,1 @@
+Does not meet requirements since it forces pip install Pillow to print the image

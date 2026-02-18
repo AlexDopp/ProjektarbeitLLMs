@@ -1,0 +1,408 @@
+import math
+from dataclasses import dataclass
+from typing import Optional, List, Tuple
+import struct
+
+# ============================================================================
+# Mathematische Grundlagen
+# ============================================================================
+
+@dataclass
+class Vec3:
+    """3D-Vektor mit grundlegenden Operationen"""
+    x: float = 0.0
+    y: float = 0.0
+    z: float = 0.0
+    
+    def __add__(self, other):
+        return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
+    
+    def __sub__(self, other):
+        return Vec3(self.x - other.x, self.y - other.y, self.z - other.z)
+    
+    def __mul__(self, scalar):
+        return Vec3(self.x * scalar, self.y * scalar, self.z * scalar)
+    
+    def __rmul__(self, scalar):
+        return self.__mul__(scalar)
+    
+    def __truediv__(self, scalar):
+        return Vec3(self.x / scalar, self.y / scalar, self.z / scalar)
+    
+    def dot(self, other):
+        return self.x * other.x + self.y * other.y + self.z * other.z
+    
+    def cross(self, other):
+        return Vec3(
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x
+        )
+    
+    def norm(self):
+        return math.sqrt(self.dot(self))
+    
+    def normalize(self):
+        n = self.norm()
+        return self / n if n > 0 else self
+
+@dataclass
+class Ray:
+    """Strahl mit Ursprung und Richtung"""
+    origin: Vec3
+    direction: Vec3
+    
+    def point_at(self, t: float) -> Vec3:
+        return self.origin + self.direction * t
+
+@dataclass
+class Color:
+    """RGB-Farbe mit Werten zwischen 0 und 1"""
+    r: float = 0.0
+    g: float = 0.0
+    b: float = 0.0
+    
+    def __mul__(self, scalar):
+        return Color(self.r * scalar, self.g * scalar, self.b * scalar)
+    
+    def __rmul__(self, scalar):
+        return self.__mul__(scalar)
+    
+    def __add__(self, other):
+        return Color(self.r + other.r, self.g + other.g, self.b + other.b)
+    
+    def clamp(self):
+        return Color(
+            max(0.0, min(1.0, self.r)),
+            max(0.0, min(1.0, self.g)),
+            max(0.0, min(1.0, self.b))
+        )
+    
+    def to_rgb888(self) -> Tuple[int, int, int]:
+        c = self.clamp()
+        return (int(c.r * 255), int(c.g * 255), int(c.b * 255))
+
+# ============================================================================
+# Szenengeometrie
+# ============================================================================
+
+@dataclass
+class HitRecord:
+    """Informationen über einen Schnittpunkt"""
+    t: float
+    point: Vec3
+    normal: Vec3
+    material: 'Material'
+    front_face: bool = True
+
+class Material:
+    """Basisklasse für Materialien"""
+    def scatter(self, ray: Ray, hit: HitRecord) -> Tuple[bool, Ray, Color]:
+        raise NotImplementedError()
+
+class Lambertian(Material):
+    """Diffuses Material"""
+    def __init__(self, albedo: Color):
+        self.albedo = albedo
+    
+    def scatter(self, ray: Ray, hit: HitRecord) -> Tuple[bool, Ray, Color]:
+        scatter_direction = hit.normal + random_unit_vector()
+        if scatter_direction.norm() < 0.001:
+            scatter_direction = hit.normal
+        
+        scattered = Ray(hit.point, scatter_direction.normalize())
+        return True, scattered, self.albedo
+
+class Metal(Material):
+    """Reflektierendes Material"""
+    def __init__(self, albedo: Color, fuzz: float = 0.0):
+        self.albedo = albedo
+        self.fuzz = min(fuzz, 1.0)
+    
+    def scatter(self, ray: Ray, hit: HitRecord) -> Tuple[bool, Ray, Color]:
+        reflected = reflect(ray.direction.normalize(), hit.normal)
+        scattered = Ray(hit.point, reflected + random_unit_vector() * self.fuzz)
+        return scattered.direction.dot(hit.normal) > 0, scattered, self.albedo
+
+class Hittable:
+    """Basisklasse für alle Objekte, die von Strahlen getroffen werden können"""
+    def hit(self, ray: Ray, t_min: float, t_max: float) -> Optional[HitRecord]:
+        raise NotImplementedError()
+
+class Sphere(Hittable):
+    """Kugel-Objekt"""
+    def __init__(self, center: Vec3, radius: float, material: Material):
+        self.center = center
+        self.radius = radius
+        self.material = material
+    
+    def hit(self, ray: Ray, t_min: float, t_max: float) -> Optional[HitRecord]:
+        oc = ray.origin - self.center
+        a = ray.direction.dot(ray.direction)
+        b = oc.dot(ray.direction)
+        c = oc.dot(oc) - self.radius * self.radius
+        discriminant = b * b - a * c
+        
+        if discriminant > 0:
+            sqrt_disc = math.sqrt(discriminant)
+            t = (-b - sqrt_disc) / a
+            if t_min < t < t_max:
+                point = ray.point_at(t)
+                normal = (point - self.center) / self.radius
+                front_face = ray.direction.dot(normal) < 0
+                return HitRecord(t, point, normal if front_face else normal * -1, 
+                               self.material, front_face)
+            
+            t = (-b + sqrt_disc) / a
+            if t_min < t < t_max:
+                point = ray.point_at(t)
+                normal = (point - self.center) / self.radius
+                front_face = ray.direction.dot(normal) < 0
+                return HitRecord(t, point, normal if front_face else normal * -1, 
+                               self.material, front_face)
+        
+        return None
+
+class Quad(Hittable):
+    """Rechteck-Objekt für Wände"""
+    def __init__(self, corner: Vec3, u: Vec3, v: Vec3, material: Material):
+        self.corner = corner
+        self.u = u
+        self.v = v
+        self.material = material
+        self.normal = u.cross(v).normalize()
+        self.d = self.normal.dot(corner)
+        self.w = v.cross(u) / u.cross(v).dot(u.cross(v))
+        self.area = u.cross(v).norm()
+    
+    def hit(self, ray: Ray, t_min: float, t_max: float) -> Optional[HitRecord]:
+        denom = self.normal.dot(ray.direction)
+        if abs(denom) < 1e-8:
+            return None
+        
+        t = (self.d - self.normal.dot(ray.origin)) / denom
+        if t < t_min or t > t_max:
+            return None
+        
+        point = ray.point_at(t)
+        planar_hit = point - self.corner
+        alpha = self.w.dot(planar_hit.cross(self.v))
+        beta = self.w.dot(self.u.cross(planar_hit))
+        
+        if alpha < 0 or alpha > 1 or beta < 0 or beta > 1:
+            return None
+        
+        front_face = denom < 0
+        return HitRecord(t, point, self.normal if front_face else self.normal * -1,
+                        self.material, front_face)
+
+class HittableList(Hittable):
+    """Liste von hittbaren Objekten"""
+    def __init__(self):
+        self.objects: List[Hittable] = []
+    
+    def add(self, obj: Hittable):
+        self.objects.append(obj)
+    
+    def hit(self, ray: Ray, t_min: float, t_max: float) -> Optional[HitRecord]:
+        hit_record = None
+        closest_t = t_max
+        
+        for obj in self.objects:
+            hit = obj.hit(ray, t_min, closest_t)
+            if hit:
+                closest_t = hit.t
+                hit_record = hit
+        
+        return hit_record
+
+# ============================================================================
+# Hilfsfunktionen
+# ============================================================================
+
+def random_in_unit_sphere() -> Vec3:
+    """Zufälliger Vektor in einer Einheitssphäre"""
+    while True:
+        p = Vec3(random_double() * 2 - 1, 
+                random_double() * 2 - 1, 
+                random_double() * 2 - 1)
+        if p.dot(p) < 1:
+            return p
+
+def random_unit_vector() -> Vec3:
+    """Zufälliger Einheitsvektor"""
+    return random_in_unit_sphere().normalize()
+
+def reflect(v: Vec3, n: Vec3) -> Vec3:
+    """Reflektierten Vektor berechnen"""
+    return v - n * 2 * v.dot(n)
+
+def random_double() -> float:
+    """Zufallszahl zwischen 0 und 1"""
+    return (hash(str(random_state)) % 10000) / 10000.0
+
+random_state = 0
+def set_random_state(state: int):
+    global random_state
+    random_state = state
+
+# ============================================================================
+# Raytracing-Algorithmus
+# ============================================================================
+
+class Camera:
+    """Kamera für den Raytracer"""
+    def __init__(self, lookfrom: Vec3, lookat: Vec3, vup: Vec3, 
+                 vfov: float, aspect_ratio: float):
+        theta = math.radians(vfov)
+        h = math.tan(theta/2)
+        viewport_height = 2.0 * h
+        viewport_width = aspect_ratio * viewport_height
+        
+        w = (lookfrom - lookat).normalize()
+        u = vup.cross(w).normalize()
+        v = w.cross(u)
+        
+        self.origin = lookfrom
+        self.horizontal = u * viewport_width
+        self.vertical = v * viewport_height
+        self.lower_left_corner = self.origin - self.horizontal/2 - self.vertical/2 - w
+    
+    def get_ray(self, u: float, v: float) -> Ray:
+        return Ray(self.origin, 
+                  (self.lower_left_corner + self.horizontal * u + self.vertical * v - self.origin).normalize())
+
+def ray_color(ray: Ray, world: Hittable, depth: int) -> Color:
+    """Berechnet die Farbe für einen Strahl"""
+    if depth <= 0:
+        return Color(0, 0, 0)
+    
+    hit = world.hit(ray, 0.001, float('inf'))
+    if hit:
+        scattered_ok, scattered, attenuation = hit.material.scatter(ray, hit)
+        if scattered_ok:
+            return attenuation * ray_color(scattered, world, depth - 1)
+        return Color(0, 0, 0)
+    
+    # Hintergrund (Himmel)
+    unit_direction = ray.direction.normalize()
+    t = 0.5 * (unit_direction.y + 1.0)
+    return Color(1.0, 1.0, 1.0) * (1.0 - t) + Color(0.5, 0.7, 1.0) * t
+
+# ============================================================================
+# Szenenaufbau
+# ============================================================================
+
+def create_cornell_box() -> HittableList:
+    """Erstellt eine Cornell-Box-ähnliche Szene"""
+    world = HittableList()
+    
+    # Materialien
+    red = Lambertian(Color(0.8, 0.2, 0.2))
+    green = Lambertian(Color(0.2, 0.8, 0.2))
+    white = Lambertian(Color(0.8, 0.8, 0.8))
+    light_material = Lambertian(Color(0.9, 0.9, 0.9))
+    metal_material = Metal(Color(0.7, 0.6, 0.5), 0.1)
+    
+    # Box (5 Wände, offen zur Kamera)
+    # Rückwand
+    world.add(Quad(Vec3(-1.5, -1, -2), Vec3(3, 0, 0), Vec3(0, 2, 0), white))
+    # Linke Wand (rot)
+    world.add(Quad(Vec3(-1.5, -1, -2), Vec3(0, 2, 0), Vec3(0, 0, 1.5), red))
+    # Rechte Wand (grün)
+    world.add(Quad(Vec3(1.5, -1, -2), Vec3(0, 2, 0), Vec3(0, 0, 1.5), green))
+    # Decke
+    world.add(Quad(Vec3(-1.5, 1, -2), Vec3(3, 0, 0), Vec3(0, 0, 1.5), white))
+    # Boden
+    world.add(Quad(Vec3(-1.5, -1, -0.5), Vec3(3, 0, 0), Vec3(0, 0, 1.5), white))
+    
+    # Lichtquelle an der Decke
+    world.add(Quad(Vec3(-0.5, 0.99, -1.2), Vec3(1, 0, 0), Vec3(0, 0, 0.8), light_material))
+    
+    # Objekte im Inneren
+    # Große Kugel (rechts)
+    world.add(Sphere(Vec3(0.8, -0.5, -1.2), 0.5, white))
+    # Kleine Kugel (links)
+    world.add(Sphere(Vec3(-0.8, -0.3, -1.4), 0.3, metal_material))
+    
+    return world
+
+# ============================================================================
+# Bildausgabe
+# ============================================================================
+
+def write_ppm(filename: str, width: int, height: int, pixels: List[Color]):
+    """Schreibt das Bild als PPM-Datei"""
+    with open(filename, 'wb') as f:
+        # PPM Header
+        f.write(f'P6\n{width} {height}\n255\n'.encode())
+        
+        # Pixel Daten
+        for y in range(height-1, -1, -1):
+            for x in range(width):
+                r, g, b = pixels[y * width + x].to_rgb888()
+                f.write(struct.pack('BBB', r, g, b))
+
+def write_png(filename: str, width: int, height: int, pixels: List[Color]):
+    """Schreibt das Bild als einfaches PPM (für maximale Kompatibilität)"""
+    # Da wir keine externen Bibliotheken verwenden dürfen, nutzen wir PPM
+    # Das kann einfach in PNG konvertiert werden oder mit entsprechenden Tools betrachtet werden
+    write_ppm(filename.replace('.png', '.ppm'), width, height, pixels)
+    print(f"Bild gespeichert als {filename.replace('.png', '.ppm')}")
+
+# ============================================================================
+# Hauptprogramm
+# ============================================================================
+
+def main():
+    # Bildparameter
+    aspect_ratio = 1.0  # 1:1 für 512x512
+    width = 512
+    height = 512
+    samples_per_pixel = 50
+    max_depth = 20
+    
+    # Kamera
+    lookfrom = Vec3(0, 0, 3)
+    lookat = Vec3(0, 0, -1)
+    vup = Vec3(0, 1, 0)
+    camera = Camera(lookfrom, lookat, vup, 60, aspect_ratio)
+    
+    # Szene
+    world = create_cornell_box()
+    
+    # Rendering
+    print(f"Rendere Cornell-Box mit {width}x{height} Pixeln...")
+    pixels = []
+    
+    for j in range(height-1, -1, -1):
+        for i in range(width):
+            color = Color(0, 0, 0)
+            
+            # Anti-Aliasing mit mehreren Samples pro Pixel
+            for s in range(samples_per_pixel):
+                set_random_state(i + j * width + s * 1000)
+                u = (i + random_double()) / (width - 1)
+                v = (j + random_double()) / (height - 1)
+                
+                ray = camera.get_ray(u, v)
+                color = color + ray_color(ray, world, max_depth)
+            
+            # Durchschnitt der Samples
+            color = color / samples_per_pixel
+            
+            # Gamma-Korrektur (gamma 2)
+            color = Color(math.sqrt(color.r), math.sqrt(color.g), math.sqrt(color.b))
+            
+            pixels.append(color)
+        
+        # Fortschritt anzeigen
+        if (height - j) % 50 == 0:
+            print(f"Fortschritt: {height - j}/{height} Zeilen")
+    
+    # Bild speichern
+    write_png("cornellbox.png", width, height, pixels)
+    print("Fertig!")
+
+if __name__ == "__main__":
+    main()

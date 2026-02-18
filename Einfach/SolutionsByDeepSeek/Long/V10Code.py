@@ -1,0 +1,378 @@
+import math
+from dataclasses import dataclass
+from typing import Optional, Tuple, List
+import colorsys
+
+# Vektormathematik
+@dataclass
+class Vec3:
+    x: float
+    y: float
+    z: float
+    
+    def __add__(self, other):
+        return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
+    
+    def __sub__(self, other):
+        return Vec3(self.x - other.x, self.y - other.y, self.z - other.z)
+    
+    def __mul__(self, scalar):
+        return Vec3(self.x * scalar, self.y * scalar, self.z * scalar)
+    
+    def __truediv__(self, scalar):
+        return Vec3(self.x / scalar, self.y / scalar, self.z / scalar)
+    
+    def dot(self, other):
+        return self.x * other.x + self.y * other.y + self.z * other.z
+    
+    def cross(self, other):
+        return Vec3(
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x
+        )
+    
+    def normalize(self):
+        length = math.sqrt(self.dot(self))
+        if length > 0:
+            return self / length
+        return self
+    
+    def length(self):
+        return math.sqrt(self.dot(self))
+
+# Strahl-Definition
+@dataclass
+class Ray:
+    origin: Vec3
+    direction: Vec3
+    
+    def point_at(self, t: float) -> Vec3:
+        return self.origin + self.direction * t
+
+# Materialien
+@dataclass
+class Material:
+    color: Tuple[float, float, float]
+    emissive: bool = False
+    reflectivity: float = 0.0
+
+# Basisklasse für Objekte
+class Hittable:
+    def hit(self, ray: Ray, t_min: float, t_max: float) -> Optional[Tuple[float, Vec3, Material]]:
+        pass
+
+# Kugel-Objekt
+class Sphere(Hittable):
+    def __init__(self, center: Vec3, radius: float, material: Material):
+        self.center = center
+        self.radius = radius
+        self.material = material
+    
+    def hit(self, ray: Ray, t_min: float, t_max: float) -> Optional[Tuple[float, Vec3, Material]]:
+        oc = ray.origin - self.center
+        a = ray.direction.dot(ray.direction)
+        b = 2.0 * oc.dot(ray.direction)
+        c = oc.dot(oc) - self.radius * self.radius
+        discriminant = b * b - 4 * a * c
+        
+        if discriminant < 0:
+            return None
+        
+        sqrt_disc = math.sqrt(discriminant)
+        
+        # Nächste gültige Schnittstelle finden
+        t = (-b - sqrt_disc) / (2.0 * a)
+        if t_min < t < t_max:
+            point = ray.point_at(t)
+            normal = (point - self.center).normalize()
+            return t, normal, self.material
+        
+        t = (-b + sqrt_disc) / (2.0 * a)
+        if t_min < t < t_max:
+            point = ray.point_at(t)
+            normal = (point - self.center).normalize()
+            return t, normal, self.material
+        
+        return None
+
+# Quadrat-Objekt (für Wände)
+class Square(Hittable):
+    def __init__(self, corner: Vec3, u: Vec3, v: Vec3, material: Material):
+        self.corner = corner
+        self.u = u
+        self.v = v
+        self.normal = u.cross(v).normalize()
+        self.material = material
+        self.area = u.cross(v).length()
+        
+    def hit(self, ray: Ray, t_min: float, t_max: float) -> Optional[Tuple[float, Vec3, Material]]:
+        denom = ray.direction.dot(self.normal)
+        if abs(denom) < 1e-6:
+            return None
+            
+        t = (self.corner - ray.origin).dot(self.normal) / denom
+        
+        if t < t_min or t > t_max:
+            return None
+            
+        point = ray.point_at(t)
+        relative = point - self.corner
+        
+        # Prüfen, ob Punkt innerhalb des Quadrats liegt
+        u_coord = relative.dot(self.u) / (self.u.dot(self.u))
+        v_coord = relative.dot(self.v) / (self.v.dot(self.v))
+        
+        if 0 <= u_coord <= 1 and 0 <= v_coord <= 1:
+            return t, self.normal, self.material
+        
+        return None
+
+# Kamera
+class Camera:
+    def __init__(self, lookfrom: Vec3, lookat: Vec3, vup: Vec3, vfov: float, aspect: float):
+        self.lookfrom = lookfrom
+        self.lookat = lookat
+        self.vup = vup
+        
+        theta = vfov * math.pi / 180
+        half_height = math.tan(theta / 2)
+        half_width = aspect * half_height
+        
+        w = (lookfrom - lookat).normalize()
+        u = vup.cross(w).normalize()
+        v = w.cross(u)
+        
+        self.origin = lookfrom
+        self.lower_left = lookfrom - u * half_width - v * half_height - w
+        self.horizontal = u * (2 * half_width)
+        self.vertical = v * (2 * half_height)
+    
+    def get_ray(self, u: float, v: float) -> Ray:
+        return Ray(self.origin, (self.lower_left + self.horizontal * u + self.vertical * v - self.origin).normalize())
+
+# Szene
+class Scene:
+    def __init__(self):
+        self.objects: List[Hittable] = []
+        self.lights: List[Sphere] = []
+    
+    def add_object(self, obj: Hittable):
+        self.objects.append(obj)
+        if isinstance(obj, Sphere) and obj.material.emissive:
+            self.lights.append(obj)
+    
+    def trace(self, ray: Ray, depth: int = 0) -> Tuple[float, float, float]:
+        if depth > 5:  # Rekursionstiefe begrenzen
+            return (0, 0, 0)
+        
+        closest_hit = None
+        closest_t = float('inf')
+        hit_normal = None
+        hit_material = None
+        
+        # Nächstes Objekt finden
+        for obj in self.objects:
+            hit_result = obj.hit(ray, 0.001, float('inf'))
+            if hit_result:
+                t, normal, material = hit_result
+                if t < closest_t:
+                    closest_t = t
+                    hit_normal = normal
+                    hit_material = material
+                    closest_hit = obj
+        
+        if closest_hit is None:
+            return (0.05, 0.05, 0.05)  # Hintergrundfarbe (dunkelgrau)
+        
+        hit_point = ray.point_at(closest_t)
+        
+        # Emissives Material (Lichtquelle)
+        if hit_material.emissive:
+            return hit_material.color
+        
+        # Beleuchtung berechnen
+        color = [0, 0, 0]
+        
+        for light in self.lights:
+            light_dir = (light.center - hit_point).normalize()
+            light_distance = (light.center - hit_point).length()
+            
+            # Schattenstrahl
+            shadow_ray = Ray(hit_point + hit_normal * 0.001, light_dir)
+            in_shadow = False
+            
+            for obj in self.objects:
+                if obj is not closest_hit and not (isinstance(obj, Sphere) and obj.material.emissive):
+                    hit_result = obj.hit(shadow_ray, 0.001, light_distance)
+                    if hit_result:
+                        in_shadow = True
+                        break
+            
+            if not in_shadow:
+                # Diffuse Beleuchtung (Lambert)
+                diff = max(0, hit_normal.dot(light_dir))
+                light_intensity = 5.0 / (light_distance * light_distance)  # Lichtabfall
+                
+                color[0] += hit_material.color[0] * light.material.color[0] * diff * light_intensity
+                color[1] += hit_material.color[1] * light.material.color[1] * diff * light_intensity
+                color[2] += hit_material.color[2] * light.material.color[2] * diff * light_intensity
+        
+        # Reflexion
+        if hit_material.reflectivity > 0 and depth < 5:
+            reflect_dir = ray.direction - hit_normal * 2 * ray.direction.dot(hit_normal)
+            reflect_ray = Ray(hit_point + hit_normal * 0.001, reflect_dir)
+            reflect_color = self.trace(reflect_ray, depth + 1)
+            
+            color[0] = color[0] * (1 - hit_material.reflectivity) + reflect_color[0] * hit_material.reflectivity
+            color[1] = color[1] * (1 - hit_material.reflectivity) + reflect_color[1] * hit_material.reflectivity
+            color[2] = color[2] * (1 - hit_material.reflectivity) + reflect_color[2] * hit_material.reflectivity
+        
+        # Farben begrenzen
+        color[0] = min(1.0, color[0])
+        color[1] = min(1.0, color[1])
+        color[2] = min(1.0, color[2])
+        
+        return (color[0], color[1], color[2])
+
+# Hauptprogramm
+def main():
+    # Szene erstellen
+    scene = Scene()
+    
+    # Cornell-Box Wände (Größe: 4x4 Einheiten)
+    # Boden (grau)
+    scene.add_object(Square(
+        Vec3(-2, -2, -2),
+        Vec3(4, 0, 0),
+        Vec3(0, 0, 4),
+        Material((0.7, 0.7, 0.7))
+    ))
+    
+    # Decke (grau)
+    scene.add_object(Square(
+        Vec3(-2, 2, -2),
+        Vec3(4, 0, 0),
+        Vec3(0, 0, 4),
+        Material((0.7, 0.7, 0.7))
+    ))
+    
+    # Rückwand (grau)
+    scene.add_object(Square(
+        Vec3(-2, -2, 2),
+        Vec3(4, 0, 0),
+        Vec3(0, 4, 0),
+        Material((0.7, 0.7, 0.7))
+    ))
+    
+    # Linke Wand (rot)
+    scene.add_object(Square(
+        Vec3(-2, -2, -2),
+        Vec3(0, 0, 4),
+        Vec3(0, 4, 0),
+        Material((0.8, 0.2, 0.2))
+    ))
+    
+    # Rechte Wand (grün)
+    scene.add_object(Square(
+        Vec3(2, -2, -2),
+        Vec3(0, 0, 4),
+        Vec3(0, 4, 0),
+        Material((0.2, 0.8, 0.2))
+    ))
+    
+    # Vordere Wand (entfernt, damit wir reinkucken können)
+    
+    # Objekte im Inneren
+    # Linke Kugel (diffus, blau)
+    scene.add_object(Sphere(
+        Vec3(-0.8, -1.2, -0.5),
+        0.8,
+        Material((0.2, 0.3, 0.8), reflectivity=0.1)
+    ))
+    
+    # Rechte Kugel (reflektierend, silber)
+    scene.add_object(Sphere(
+        Vec3(1.0, -1.0, 0.5),
+        0.6,
+        Material((0.9, 0.9, 0.9), reflectivity=0.6)
+    ))
+    
+    # Kleine Kugel vorne (rot)
+    scene.add_object(Sphere(
+        Vec3(-0.2, -1.6, -1.2),
+        0.4,
+        Material((0.9, 0.2, 0.2), reflectivity=0.3)
+    ))
+    
+    # Lichtquelle (emissive Kugel oben in der Box)
+    scene.add_object(Sphere(
+        Vec3(0.0, 1.5, 0.0),
+        0.3,
+        Material((1.0, 1.0, 1.0), emissive=True)
+    ))
+    
+    # Kamera positionieren
+    camera = Camera(
+        lookfrom=Vec3(0, 0, 5),
+        lookat=Vec3(0, 0, 0),
+        vup=Vec3(0, 1, 0),
+        vfov=60,
+        aspect=1.0
+    )
+    
+    # Bildparameter
+    width = 512
+    height = 512
+    samples = 4  # Sampling für Anti-Aliasing
+    
+    # Bild erstellen
+    from PIL import Image
+    img = Image.new('RGB', (width, height))
+    pixels = img.load()
+    
+    print("Rendere Cornell-Box...")
+    
+    for y in range(height):
+        for x in range(width):
+            color = [0, 0, 0]
+            
+            # Mehrere Samples pro Pixel für Anti-Aliasing
+            for s in range(samples):
+                u = (x + s / samples) / width
+                v = (y + s / samples) / height
+                
+                ray = camera.get_ray(u, v)
+                sample_color = scene.trace(ray)
+                
+                color[0] += sample_color[0]
+                color[1] += sample_color[1]
+                color[2] += sample_color[2]
+            
+            # Mittelwert der Samples
+            color[0] /= samples
+            color[1] /= samples
+            color[2] /= samples
+            
+            # Gamma-Korrektur
+            color[0] = math.sqrt(color[0])
+            color[1] = math.sqrt(color[1])
+            color[2] = math.sqrt(color[2])
+            
+            # In 0-255 Bereich konvertieren
+            r = int(min(255, color[0] * 255))
+            g = int(min(255, color[1] * 255))
+            b = int(min(255, color[2] * 255))
+            
+            pixels[x, height - 1 - y] = (r, g, b)
+        
+        # Fortschritt anzeigen
+        if y % 50 == 0:
+            print(f"Zeile {y}/{height} gerendert")
+    
+    # Bild speichern
+    img.save("cornellbox.png")
+    print("Bild wurde als 'cornellbox.png' gespeichert")
+
+if __name__ == "__main__":
+    main()
