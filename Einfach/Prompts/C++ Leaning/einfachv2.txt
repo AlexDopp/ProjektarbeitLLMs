@@ -1,4 +1,4 @@
-Erstelle in einer frei wählbaren Programmiersprache einen einfachen, vollständigen Raytracer zur Darstellung einer Variante der Cornelbox.
+Erstelle in einer frei wählbaren Programmiersprache einen einfachen, vollständigen Raytracer zur Darstellung einer Variante der Cornellbox.
 
 Allgemein:
 1. Der Code darf keine Speicherlecks aufweisen.
@@ -9,7 +9,7 @@ Allgemein:
 
 Raytracer spezifisch:
 1. Die verwendeten grafischen Primitive können frei gewählt werden.
-2. Der Raytracer erzeugt ein Bild einer Cornelbox-ähnlichen Szene und speichert dieses ab.
+2. Der Raytracer erzeugt ein Bild einer Cornellbox-ähnlichen Szene und speichert dieses ab.
 3. Lichtquellen, Schatten, Shading und Reflexionen müssen Bestandteil der Implementierung sein.
 4. Es dürfen keine Post-Processing-Verfahren eingesetzt werden.
 5. Raytracing-Logik, mathematische Grundlagen und Szenengeometrie sollen modular und unabhängig nutzbar sein.
