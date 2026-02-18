@@ -20,6 +20,9 @@ class Vec3:
 
     def __mul__(self, k):
         return Vec3(self.x * k, self.y * k, self.z * k)
+    
+    def __neg__(self):
+        return Vec3(-self.x, -self.y, -self.z)
 
     __rmul__ = __mul__
 
@@ -175,9 +178,14 @@ class RayTracer:
         for light in self.scene.lights:
             to_light = (light.position - hit.point).normalized()
 
+            to_light_vec = light.position - hit.point
+            light_dist = to_light_vec.norm()
+            to_light = to_light_vec.normalized()
+
             shadow_ray = Ray(hit.point + hit.normal * 1e-4, to_light)
             shadow_hit = self.scene.intersect(shadow_ray)
-            if shadow_hit:
+
+            if shadow_hit and shadow_hit.t < light_dist:
                 continue
 
             diff = max(0.0, hit.normal.dot(to_light))
@@ -193,7 +201,7 @@ class RayTracer:
             )
 
         if hit.material.reflection > 0:
-            refl_dir = ray.direction.reflect(hit.normal)
+            refl_dir = (-ray.direction).reflect(hit.normal)
             refl_ray = Ray(hit.point + hit.normal * 1e-4, refl_dir)
             refl_col = self.trace(refl_ray, depth - 1)
             color = color * (1 - hit.material.reflection) + \

@@ -1,16 +1,11 @@
 Ich habe diesen Python Code geschrieben für einen Raytracer geschrieben. Leider ist die Ausgabe "V2Box.ppm" komplett schwarz.
 Bitte gib mir genaue Anpassungen um diesen Fehler zu beheben.
 Es kann an mehreren Stellen Fehlerhaft sein.
-Es gibt Debugausgaben und Fehlermeldungen, die zur Hilfe und Findung des Problems führen, diese sind: 
+Es gibt Debugausgaben und Fehlermeldungen, die zur Hilfe und Findung des Problems führen, diese ist: 
 
-1.  in trace
-        view = (-ray.direction).normalized()
-            ^^^^^^^^^^^^^^
-    TypeError: bad operand type for unary -: 'Vec3'
+1.  returned color (0, 0, 0)
 
-2. Shadow hit at <__main__.Vec3 object at 0x000001f3d806ebc0> für alle Rays
-
-Dies scheint zu heißen, dass in der trace() methode von RayTracer 2 oder mehr Fehler zu finden sind.
+Dies setzt die Fehlerhafte Klasse als RayTracer. Es können mehr als ein Fehler enthalten sein.
 
 Der Code: 
 import math

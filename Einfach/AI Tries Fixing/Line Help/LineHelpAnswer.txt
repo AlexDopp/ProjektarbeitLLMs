@@ -1,0 +1,200 @@
+Gut, die Debug-Hinweise sind sehr aussagekräftig 👍
+Ich gehe **gezielt** auf den *komplett schwarzen Output* ein und beschreibe **konkrete Code-Änderungen**, die dieses Problem beheben.
+Andere kleine Design-Verbesserungen erwähne ich **nur**, wenn sie direkt zum Schwarz-Bug beitragen.
+
+---
+
+## Ursache 1: `TypeError` bei `view = (-ray.direction).normalized()`
+
+### Problem
+
+Deine Klasse `Vec3` unterstützt **kein unäres Minus** (`-v`).
+Deshalb schlägt diese Zeile fehl oder wird von dir temporär entfernt – was wiederum das Lighting kaputt macht.
+
+```python
+view = (-ray.direction).normalized()
+```
+
+### **Fix (zwingend notwendig)**
+
+Ergänze in `class Vec3` **exakt diese Methode**:
+
+```python
+def __neg__(self):
+    return Vec3(-self.x, -self.y, -self.z)
+```
+
+📌 **Warum relevant für schwarzes Bild?**
+Ohne gültigen `view`-Vektor ist dein **Specular-Term immer 0**, und bei dir ist Diffuse allein oft nicht ausreichend → dunkles Bild.
+
+---
+
+## Ursache 2: *ALLE* Shadow Rays treffen ein Objekt
+
+> `Shadow hit at <Vec3 object ...> für alle Rays`
+
+Das ist der **Hauptgrund**, warum dein Bild komplett schwarz ist.
+
+---
+
+## Ursache 2a: Shadow-Test ist logisch falsch
+
+### Aktueller Code
+
+```python
+shadow_hit = self.scene.intersect(shadow_ray)
+if shadow_hit:
+    continue
+```
+
+### Problem
+
+Du prüfst **nur**, OB etwas getroffen wird –
+nicht **OB es zwischen Punkt und Licht liegt**.
+
+➡ Dadurch blockiert **jede Wand der Cornell Box** jedes Licht
+➡ Ergebnis: **100 % Schatten = schwarz**
+
+---
+
+### **Fix: Distanz zum Licht prüfen**
+
+Ersetze den Shadow-Block in `trace()` **vollständig** durch:
+
+```python
+to_light_vec = light.position - hit.point
+light_dist = to_light_vec.norm()
+to_light = to_light_vec * (1.0 / light_dist)
+
+shadow_ray = Ray(hit.point + hit.normal * 1e-4, to_light)
+shadow_hit = self.scene.intersect(shadow_ray)
+
+if shadow_hit and shadow_hit.t < light_dist:
+    continue
+```
+
+📌 **Warum das den Schwarz-Bug fixt**
+Jetzt zählt ein Objekt **nur dann als Schatten**, wenn es:
+
+* zwischen Oberfläche **und Lichtquelle**
+* **näher** als das Licht selbst ist
+
+➡ Licht kommt wieder an
+➡ Diffuse & Specular werden berechnet
+➡ Bild ist sichtbar
+
+---
+
+## Ursache 2b: Selbst-Schatten durch zu kleine Epsilon-Verschiebung
+
+Du hast zwar:
+
+```python
+hit.point + hit.normal * 1e-4
+```
+
+Aber bei **Planes** reicht das oft **nicht**, da sie unendlich sind.
+
+### **Empfohlene Änderung**
+
+Erhöhe das Epsilon leicht:
+
+```python
+EPS = 1e-3
+shadow_ray = Ray(hit.point + hit.normal * EPS, to_light)
+```
+
+(optional, aber sehr hilfreich)
+
+---
+
+## Ursache 3: Reflexionsstrahl zeigt in falsche Richtung
+
+### Aktueller Code
+
+```python
+refl_dir = ray.direction.reflect(hit.normal)
+```
+
+### Problem
+
+Wenn der Normalenvektor falsch herum zeigt (Planes!), reflektiert der Strahl **in das Objekt hinein** → sofortiger Shadow / Hit → schwarz
+
+---
+
+### **Fix: Normale ausrichten**
+
+Direkt nach dem Hit in `trace()`:
+
+```python
+n = hit.normal
+if n.dot(ray.direction) > 0:
+    n = n * -1
+```
+
+Und **danach überall `n` statt `hit.normal` verwenden**:
+
+```python
+diff = max(0.0, n.dot(to_light))
+refl_dir = ray.direction.reflect(n)
+```
+
+📌 Das ist **essentiell** für korrekte Beleuchtung in einer Box.
+
+---
+
+## Zusammenfassung – Änderungen, die den Schwarz-Bug beheben
+
+### ✅ **Pflicht**
+
+1. `Vec3.__neg__()` hinzufügen
+2. Shadow-Test mit **Lichtdistanz** korrigieren
+3. Normale gegen Ray ausrichten
+
+### 🔧 **Empfohlen**
+
+4. Größeres Epsilon (`1e-3`)
+5. Normale lokal speichern (`n`)
+
+---
+
+## Minimaler Patch-Überblick
+
+```diff
+class Vec3:
++   def __neg__(self):
++       return Vec3(-self.x, -self.y, -self.z)
+```
+
+```diff
+hit = self.scene.intersect(ray)
+if not hit:
+    return Vec3(0,0,0)
+
++ n = hit.normal
++ if n.dot(ray.direction) > 0:
++     n = n * -1
+```
+
+```diff
+to_light_vec = light.position - hit.point
+light_dist = to_light_vec.norm()
+to_light = to_light_vec * (1.0 / light_dist)
+
+shadow_ray = Ray(hit.point + n * 1e-3, to_light)
+shadow_hit = self.scene.intersect(shadow_ray)
+
+- if shadow_hit:
++ if shadow_hit and shadow_hit.t < light_dist:
+    continue
+```
+
+---
+
+Wenn du möchtest, kann ich dir im nächsten Schritt:
+
+* ein **korrekt beleuchtetes Referenz-Bild** beschreiben
+* oder den **fertigen, gepatchten Code** komplett ausgeben
+* oder Debug-Visualisierung (Normals / Shadows) einbauen
+
+Sag einfach Bescheid 👍

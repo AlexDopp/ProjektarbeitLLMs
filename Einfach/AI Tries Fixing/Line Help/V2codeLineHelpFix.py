@@ -20,6 +20,9 @@ class Vec3:
 
     def __mul__(self, k):
         return Vec3(self.x * k, self.y * k, self.z * k)
+    
+    def __neg__(self):
+        return Vec3(-self.x, -self.y, -self.z)
 
     __rmul__ = __mul__
 
@@ -170,20 +173,29 @@ class RayTracer:
         if not hit:
             return Vec3(0, 0, 0)
 
+        n = hit.normal
+        if n.dot(ray.direction) > 0:
+            n = n * -1
+            
         color = Vec3(0, 0, 0)
 
         for light in self.scene.lights:
             to_light = (light.position - hit.point).normalized()
 
-            shadow_ray = Ray(hit.point + hit.normal * 1e-4, to_light)
+            to_light_vec = light.position - hit.point
+            light_dist = to_light_vec.norm()
+            to_light = to_light_vec * (1.0 / light_dist)
+
+            shadow_ray = Ray(hit.point + n * 1e-4, to_light)
             shadow_hit = self.scene.intersect(shadow_ray)
-            if shadow_hit:
+
+            if shadow_hit and shadow_hit.t < light_dist:
                 continue
 
-            diff = max(0.0, hit.normal.dot(to_light))
+            diff = max(0.0, n.dot(to_light))
             view = (-ray.direction).normalized()
             half = (to_light + view).normalized()
-            spec = max(0.0, hit.normal.dot(half)) ** 32
+            spec = max(0.0, n.dot(half)) ** 32
 
             color += hit.material.color * (
                 hit.material.diffuse * diff * light.intensity
@@ -193,8 +205,8 @@ class RayTracer:
             )
 
         if hit.material.reflection > 0:
-            refl_dir = ray.direction.reflect(hit.normal)
-            refl_ray = Ray(hit.point + hit.normal * 1e-4, refl_dir)
+            refl_dir = ray.direction.reflect(n)
+            refl_ray = Ray(hit.point + n * 1e-4, refl_dir)
             refl_col = self.trace(refl_ray, depth - 1)
             color = color * (1 - hit.material.reflection) + \
                     refl_col * hit.material.reflection
