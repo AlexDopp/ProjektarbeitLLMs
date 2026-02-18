@@ -1,0 +1,425 @@
+import math
+from dataclasses import dataclass
+from typing import Optional, List, Tuple
+import colorsys
+
+# ============================================================================
+# Mathematische Grundlagen
+# ============================================================================
+
+@dataclass
+class Vec3:
+    """3D-Vektor mit grundlegenden Operationen"""
+    x: float = 0.0
+    y: float = 0.0
+    z: float = 0.0
+    
+    def __add__(self, other):
+        return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
+    
+    def __sub__(self, other):
+        return Vec3(self.x - other.x, self.y - other.y, self.z - other.z)
+    
+    def __mul__(self, scalar):
+        return Vec3(self.x * scalar, self.y * scalar, self.z * scalar)
+    
+    def __truediv__(self, scalar):
+        return Vec3(self.x / scalar, self.y / scalar, self.z / scalar)
+    
+    def dot(self, other):
+        return self.x * other.x + self.y * other.y + self.z * other.z
+    
+    def cross(self, other):
+        return Vec3(
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x
+        )
+    
+    def length(self):
+        return math.sqrt(self.dot(self))
+    
+    def normalize(self):
+        length = self.length()
+        if length > 0:
+            return self / length
+        return self
+    
+    def reflect(self, normal):
+        return self - normal * (2 * self.dot(normal))
+
+@dataclass
+class Ray:
+    """Strahl mit Ursprung und Richtung"""
+    origin: Vec3
+    direction: Vec3
+    
+    def point_at(self, t: float) -> Vec3:
+        return self.origin + self.direction * t
+
+# ============================================================================
+# Materialien
+# ============================================================================
+
+@dataclass
+class Material:
+    """Materialeigenschaften für Beleuchtung und Reflexion"""
+    color: Tuple[float, float, float]  # RGB-Werte 0-1
+    diffuse: float = 0.7
+    specular: float = 0.3
+    shininess: float = 32.0
+    reflection: float = 0.0
+    emission: float = 0.0
+
+# ============================================================================
+# Szenengeometrie
+# ============================================================================
+
+class HitRecord:
+    """Speichert Informationen über einen Schnittpunkt"""
+    def __init__(self, t: float = float('inf'), point: Vec3 = None, 
+                 normal: Vec3 = None, material: Material = None):
+        self.t = t
+        self.point = point
+        self.normal = normal
+        self.material = material
+
+class Sphere:
+    """Kugel-Primitiv"""
+    def __init__(self, center: Vec3, radius: float, material: Material):
+        self.center = center
+        self.radius = radius
+        self.material = material
+    
+    def hit(self, ray: Ray, t_min: float, t_max: float) -> Optional[HitRecord]:
+        oc = ray.origin - self.center
+        a = ray.direction.dot(ray.direction)
+        b = 2.0 * oc.dot(ray.direction)
+        c = oc.dot(oc) - self.radius * self.radius
+        discriminant = b * b - 4 * a * c
+        
+        if discriminant < 0:
+            return None
+        
+        t = (-b - math.sqrt(discriminant)) / (2.0 * a)
+        if t < t_min or t > t_max:
+            t = (-b + math.sqrt(discriminant)) / (2.0 * a)
+            if t < t_min or t > t_max:
+                return None
+        
+        record = HitRecord()
+        record.t = t
+        record.point = ray.point_at(t)
+        record.normal = (record.point - self.center) / self.radius
+        record.material = self.material
+        return record
+
+class Plane:
+    """Ebenen-Primitiv (für Wände)"""
+    def __init__(self, point: Vec3, normal: Vec3, material: Material):
+        self.point = point
+        self.normal = normal.normalize()
+        self.material = material
+    
+    def hit(self, ray: Ray, t_min: float, t_max: float) -> Optional[HitRecord]:
+        denominator = self.normal.dot(ray.direction)
+        if abs(denominator) < 1e-6:
+            return None
+        
+        t = self.normal.dot(self.point - ray.origin) / denominator
+        if t < t_min or t > t_max:
+            return None
+        
+        record = HitRecord()
+        record.t = t
+        record.point = ray.point_at(t)
+        record.normal = self.normal
+        record.material = self.material
+        return record
+
+# ============================================================================
+# Lichtquellen
+# ============================================================================
+
+@dataclass
+class Light:
+    """Punktlichtquelle"""
+    position: Vec3
+    color: Tuple[float, float, float]
+    intensity: float = 1.0
+
+# ============================================================================
+# Raytracing-Logik
+# ============================================================================
+
+class Scene:
+    """Container für die Szene mit Objekten und Lichtern"""
+    def __init__(self):
+        self.objects = []
+        self.lights = []
+        self.background_color = (0.1, 0.1, 0.2)
+    
+    def add_object(self, obj):
+        self.objects.append(obj)
+    
+    def add_light(self, light):
+        self.lights.append(light)
+    
+    def trace_ray(self, ray: Ray, depth: int = 0) -> Tuple[float, float, float]:
+        """Hauptfunktion für das Raytracing"""
+        if depth > 3:  # Rekursionstiefe begrenzen
+            return (0, 0, 0)
+        
+        # Nächstes Objekt finden
+        hit_record = self.find_closest_hit(ray, 0.001, float('inf'))
+        if not hit_record:
+            return self.background_color
+        
+        # Beleuchtung berechnen
+        color = self.compute_lighting(hit_record, ray)
+        
+        # Reflexion
+        if hit_record.material.reflection > 0:
+            reflection_dir = ray.direction.reflect(hit_record.normal)
+            reflection_ray = Ray(hit_record.point + hit_record.normal * 0.001, 
+                               reflection_dir)
+            reflection_color = self.trace_ray(reflection_ray, depth + 1)
+            
+            # Reflexion mit Materialfarbe mischen
+            color = tuple(
+                color[i] * (1 - hit_record.material.reflection) +
+                reflection_color[i] * hit_record.material.reflection
+                for i in range(3)
+            )
+        
+        return color
+    
+    def find_closest_hit(self, ray: Ray, t_min: float, t_max: float) -> Optional[HitRecord]:
+        """Findet das nächstgelegene Objekt, das vom Strahl getroffen wird"""
+        closest_hit = None
+        closest_t = t_max
+        
+        for obj in self.objects:
+            hit = obj.hit(ray, t_min, closest_t)
+            if hit:
+                closest_t = hit.t
+                closest_hit = hit
+        
+        return closest_hit
+    
+    def is_shadowed(self, point: Vec3, light: Light) -> bool:
+        """Prüft, ob ein Punkt im Schatten einer Lichtquelle liegt"""
+        shadow_ray_dir = (light.position - point).normalize()
+        shadow_ray = Ray(point + shadow_ray_dir * 0.001, shadow_ray_dir)
+        
+        hit = self.find_closest_hit(shadow_ray, 0.001, 
+                                   (light.position - point).length())
+        return hit is not None
+    
+    def compute_lighting(self, hit_record: HitRecord, view_ray: Ray) -> Tuple[float, float, float]:
+        """Berechnet die Beleuchtung für einen Schnittpunkt"""
+        result_color = [0, 0, 0]
+        
+        for light in self.lights:
+            if self.is_shadowed(hit_record.point, light):
+                continue
+            
+            # Lichtrichtung
+            light_dir = (light.position - hit_record.point).normalize()
+            
+            # Diffuse Beleuchtung (Lambert)
+            diffuse_strength = max(0, hit_record.normal.dot(light_dir))
+            
+            # Spekulare Beleuchtung (Phong)
+            view_dir = (view_ray.origin - hit_record.point).normalize()
+            reflect_dir = light_dir.reflect(hit_record.normal)
+            specular_strength = max(0, view_dir.dot(reflect_dir))
+            specular_strength = pow(specular_strength, hit_record.material.shininess)
+            
+            # Lichtfarbe beitragen
+            for i in range(3):
+                # Diffuser Anteil
+                result_color[i] += (hit_record.material.color[i] * 
+                                   hit_record.material.diffuse * 
+                                   diffuse_strength * 
+                                   light.color[i] * 
+                                   light.intensity)
+                
+                # Spekularer Anteil (weißes Licht)
+                result_color[i] += (hit_record.material.specular * 
+                                   specular_strength * 
+                                   light.color[i] * 
+                                   light.intensity)
+        
+        # Ambiente Beleuchtung
+        ambient = 0.2
+        for i in range(3):
+            result_color[i] += hit_record.material.color[i] * ambient
+        
+        # Emission (für Lichtquellen)
+        for i in range(3):
+            result_color[i] += hit_record.material.emission * hit_record.material.color[i]
+        
+        # Farben begrenzen
+        return tuple(min(1.0, max(0.0, c)) for c in result_color)
+
+# ============================================================================
+# Kamera und Rendering
+# ============================================================================
+
+class Camera:
+    """Einfache Kamera für das Raytracing"""
+    def __init__(self, look_from: Vec3, look_at: Vec3, vup: Vec3, 
+                 fov: float, aspect_ratio: float):
+        self.look_from = look_from
+        self.look_at = look_at
+        self.vup = vup
+        self.fov = fov
+        self.aspect_ratio = aspect_ratio
+        
+        # Kamerakoordinatensystem berechnen
+        self.w = (look_from - look_at).normalize()
+        self.u = vup.cross(self.w).normalize()
+        self.v = self.w.cross(self.u)
+        
+        # Bildplane-Parameter
+        theta = math.radians(fov)
+        half_height = math.tan(theta / 2)
+        half_width = half_height * aspect_ratio
+        
+        self.lower_left_corner = look_from - self.u * half_width - self.v * half_height - self.w
+        self.horizontal = self.u * (2 * half_width)
+        self.vertical = self.v * (2 * half_height)
+    
+    def get_ray(self, u: float, v: float) -> Ray:
+        """Erzeugt einen Strahl für die gegebenen Bildkoordinaten"""
+        direction = self.lower_left_corner + self.horizontal * u + self.vertical * v - self.look_from
+        return Ray(self.look_from, direction.normalize())
+
+class Renderer:
+    """Hauptrenderer-Klasse"""
+    def __init__(self, scene: Scene, camera: Camera, width: int, height: int):
+        self.scene = scene
+        self.camera = camera
+        self.width = width
+        self.height = height
+    
+    def render(self) -> List[List[Tuple[float, float, float]]]:
+        """Rendert die gesamte Szene"""
+        image = [[(0, 0, 0) for _ in range(self.width)] for _ in range(self.height)]
+        
+        for j in range(self.height):
+            for i in range(self.width):
+                u = (i + 0.5) / self.width
+                v = (j + 0.5) / self.height
+                
+                ray = self.camera.get_ray(u, v)
+                color = self.scene.trace_ray(ray)
+                image[j][i] = color
+            
+            # Fortschritt anzeigen
+            print(f"Zeile {j+1}/{self.height} gerendert", end='\r')
+        
+        print()  # Neue Zeile nach Fortschrittsanzeige
+        return image
+    
+    def save_ppm(self, image: List[List[Tuple[float, float, float]]], filename: str):
+        """Speichert das Bild als PPM-Datei"""
+        with open(filename, 'w') as f:
+            # PPM Header
+            f.write(f"P3\n{self.width} {self.height}\n255\n")
+            
+            for j in range(self.height):
+                for i in range(self.width):
+                    r, g, b = image[j][i]
+                    # In 0-255 Bereich konvertieren
+                    ir = int(255.999 * r)
+                    ig = int(255.999 * g)
+                    ib = int(255.999 * b)
+                    f.write(f"{ir} {ig} {ib} ")
+
+# ============================================================================
+# Szenenaufbau
+# ============================================================================
+
+def create_cornell_box_scene() -> Scene:
+    """Erstellt eine Cornell-Box-ähnliche Szene"""
+    scene = Scene()
+    
+    # Materialien definieren
+    red_material = Material(color=(1.0, 0.2, 0.2), diffuse=0.8, specular=0.2, shininess=32, reflection=0.1)
+    green_material = Material(color=(0.2, 1.0, 0.2), diffuse=0.8, specular=0.2, shininess=32, reflection=0.1)
+    white_material = Material(color=(0.9, 0.9, 0.9), diffuse=0.8, specular=0.2, shininess=32, reflection=0.2)
+    blue_material = Material(color=(0.2, 0.2, 1.0), diffuse=0.7, specular=0.3, shininess=64, reflection=0.3)
+    light_material = Material(color=(1.0, 1.0, 1.0), emission=0.8, diffuse=0.2)
+    
+    # Wände (Ebenen)
+    # Rückwand
+    scene.add_object(Plane(Vec3(0, 0, -5), Vec3(0, 0, 1), white_material))
+    # Vorderwand (durchsichtig für Kamera)
+    scene.add_object(Plane(Vec3(0, 0, 5), Vec3(0, 0, -1), white_material))
+    # Linke Wand (rot)
+    scene.add_object(Plane(Vec3(-3, 0, 0), Vec3(1, 0, 0), red_material))
+    # Rechte Wand (grün)
+    scene.add_object(Plane(Vec3(3, 0, 0), Vec3(-1, 0, 0), green_material))
+    # Boden
+    scene.add_object(Plane(Vec3(0, -2, 0), Vec3(0, 1, 0), white_material))
+    # Decke
+    scene.add_object(Plane(Vec3(0, 2, 0), Vec3(0, -1, 0), white_material))
+    
+    # Objekte in der Box
+    # Große Kugel
+    scene.add_object(Sphere(Vec3(-1.5, -1, -2), 1.0, blue_material))
+    # Kleine Kugel
+    scene.add_object(Sphere(Vec3(1.5, -0.5, -2), 0.5, white_material))
+    
+    # Lichtquelle (leuchtende Kugel an der Decke)
+    scene.add_object(Sphere(Vec3(0, 1.8, -1.5), 0.3, light_material))
+    scene.add_light(Light(Vec3(0, 1.8, -1.5), (1.0, 1.0, 0.9), 1.5))
+    
+    # Zusätzliche kleine Kugel als Dekoration
+    scene.add_object(Sphere(Vec3(0, -1.5, 0.5), 0.3, 
+                          Material(color=(1.0, 0.8, 0.2), diffuse=0.8, specular=0.4, reflection=0.2)))
+    
+    return scene
+
+# ============================================================================
+# Hauptprogramm
+# ============================================================================
+
+def main():
+    """Hauptfunktion zum Ausführen des Raytracers"""
+    print("Cornell Box Raytracer")
+    print("=" * 50)
+    
+    # Szene erstellen
+    print("Erstelle Szene...")
+    scene = create_cornell_box_scene()
+    
+    # Kamera einrichten
+    aspect_ratio = 4.0 / 3.0
+    width = 400
+    height = int(width / aspect_ratio)
+    
+    camera = Camera(
+        look_from=Vec3(0, 0, 8),
+        look_at=Vec3(0, 0, 0),
+        vup=Vec3(0, 1, 0),
+        fov=60,
+        aspect_ratio=aspect_ratio
+    )
+    
+    # Renderer erstellen und rendern
+    print(f"Rendere {width}x{height} Bild...")
+    renderer = Renderer(scene, camera, width, height)
+    image = renderer.render()
+    
+    # Bild speichern
+    output_filename = "cornell_box.ppm"
+    print(f"Speichere Bild als {output_filename}...")
+    renderer.save_ppm(image, output_filename)
+    
+    print("Fertig!")
+
+if __name__ == "__main__":
+    main()

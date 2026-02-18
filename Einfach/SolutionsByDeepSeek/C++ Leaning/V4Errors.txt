@@ -1,0 +1,37 @@
+V4Code.cpp: In member function 'Ray Camera::getRay(int, int) const':
+V4Code.cpp:199:46: error: 'M_PI' was not declared in this scope
+  199 |         double tanFov = std::tan(fov * 0.5 * M_PI / 180.0);
+      |                                              ^~~~
+V4Code.cpp: In function 'Vec3 shade(const HitRecord&, const Scene&, const std::vector<Light>&, int)':
+V4Code.cpp:217:41: error: no match for 'operator*' (operand types are 'const Vec3' and 'Vec3')
+  217 |     Vec3 color = record.material->color * scene.getAmbientLight();
+      |                  ~~~~~~~~~~~~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~
+      |                                   |                            |
+      |                                   const Vec3                   Vec3
+V4Code.cpp:217:41: note: there is 1 candidate
+  217 |     Vec3 color = record.material->color * scene.getAmbientLight();
+      |                  ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+V4Code.cpp:21:10: note: candidate 1: 'Vec3 Vec3::operator*(double) const'
+   21 |     Vec3 operator*(double s) const { return Vec3(x * s, y * s, z * s); }
+      |          ^~~~~~~~
+V4Code.cpp:21:27: note: no known conversion for argument 1 from 'Vec3' to 'double'
+   21 |     Vec3 operator*(double s) const { return Vec3(x * s, y * s, z * s); }
+      |                    ~~~~~~~^
+V4Code.cpp:229:52: error: no match for 'operator*' (operand types are 'const Vec3' and 'const Vec3')
+  229 |             color = color + record.material->color * light.color * light.intensity *
+      |                             ~~~~~~~~~~~~~~~~~~~~~~ ^ ~~~~~~~~~~~
+      |                                              |             |
+      |                                              const Vec3    const Vec3
+V4Code.cpp:229:52: note: there is 1 candidate
+  229 |             color = color + record.material->color * light.color * light.intensity *
+      |                             ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+V4Code.cpp:21:10: note: candidate 1: 'Vec3 Vec3::operator*(double) const'
+   21 |     Vec3 operator*(double s) const { return Vec3(x * s, y * s, z * s); }
+      |          ^~~~~~~~
+V4Code.cpp:21:27: note: no known conversion for argument 1 from 'const Vec3' to 'double'
+   21 |     Vec3 operator*(double s) const { return Vec3(x * s, y * s, z * s); }
+      |                    ~~~~~~~^
+V4Code.cpp:236:29: error: 'ray' was not declared in this scope; did you mean 'Ray'?
+  236 |         Vec3 reflectedDir = ray.direction - record.normal * 2 * ray.direction.dot(record.normal);
+      |                             ^~~
+      |                             Ray

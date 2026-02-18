@@ -1,0 +1,15 @@
+line 100, in <module>
+    @dataclass
+     ^^^^^^^^^
+  File "C:\msys64\mingw64\lib\python3.12\dataclasses.py", line 1275, in dataclass
+    return wrap(cls)
+           ^^^^^^^^^
+  File "C:\msys64\mingw64\lib\python3.12\dataclasses.py", line 1265, in wrap
+    return _process_class(cls, init, repr, eq, order, unsafe_hash,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\msys64\mingw64\lib\python3.12\dataclasses.py", line 994, in _process_class
+    cls_fields.append(_get_field(cls, name, type, kw_only))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\msys64\mingw64\lib\python3.12\dataclasses.py", line 852, in _get_field
+    raise ValueError(f'mutable default {type(f.default)} for field '
+ValueError: mutable default <class '__main__.Vec3'> for field emissive is not allowed: use default_factory

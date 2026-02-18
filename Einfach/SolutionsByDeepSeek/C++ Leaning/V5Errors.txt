@@ -1,0 +1,38 @@
+V5Code.cpp: In member function 'Vec3 RayTracer::trace(const Ray&, int) const':
+V5Code.cpp:272:34: error: no match for 'operator-' (operand type is 'const Vec3')
+  272 |             return shade(record, -ray.direction, depth);
+      |                                  ^~~~~~~~~~~~~~
+V5Code.cpp:272:34: note: there is 1 candidate
+V5Code.cpp:27:10: note: candidate 1: 'Vec3 Vec3::operator-(const Vec3&) const'
+   27 |     Vec3 operator-(const Vec3& v) const { return Vec3(x - v.x, y - v.y, z - v.z); }
+      |          ^~~~~~~~
+V5Code.cpp:27:10: note: candidate expects 1 argument, 0 provided
+V5Code.cpp: In member function 'Vec3 RayTracer::shade(const HitRecord&, const Vec3&, int) const':
+V5Code.cpp:279:46: error: no match for 'operator*' (operand types are 'Vec3' and 'const Vec3')
+  279 |         Vec3 color = scene.getAmbientLight() * record.material->color;
+      |                      ~~~~~~~~~~~~~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~
+      |                                           |                     |
+      |                                           Vec3                  const Vec3
+V5Code.cpp:279:46: note: there is 1 candidate
+  279 |         Vec3 color = scene.getAmbientLight() * record.material->color;
+      |                      ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+V5Code.cpp:28:10: note: candidate 1: 'Vec3 Vec3::operator*(double) const'
+   28 |     Vec3 operator*(double s) const { return Vec3(x * s, y * s, z * s); }
+      |          ^~~~~~~~
+V5Code.cpp:28:27: note: no known conversion for argument 1 from 'const Vec3' to 'double'
+   28 |     Vec3 operator*(double s) const { return Vec3(x * s, y * s, z * s); }
+      |                    ~~~~~~~^
+V5Code.cpp:293:49: error: no match for 'operator*' (operand types are 'const Vec3' and 'Vec3')
+  293 |                 color += record.material->color * light->color *
+      |                          ~~~~~~~~~~~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
+      |                                           |              |
+      |                                           const Vec3     Vec3
+V5Code.cpp:293:49: note: there is 1 candidate
+  293 |                 color += record.material->color * light->color *
+      |                          ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+V5Code.cpp:28:10: note: candidate 1: 'Vec3 Vec3::operator*(double) const'
+   28 |     Vec3 operator*(double s) const { return Vec3(x * s, y * s, z * s); }
+      |          ^~~~~~~~
+V5Code.cpp:28:27: note: no known conversion for argument 1 from 'Vec3' to 'double'
+   28 |     Vec3 operator*(double s) const { return Vec3(x * s, y * s, z * s); }
+      |                    ~~~~~~~^
