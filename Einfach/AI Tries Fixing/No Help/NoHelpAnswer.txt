@@ -1,0 +1,171 @@
+Danke für den vollständigen Code 👍
+Ich gehe **systematisch** vor und zeige dir **konkrete, notwendige Code-Änderungen**, mit Begründung und Hinweisen, **warum das Bild komplett schwarz wird**.
+Es sind **mehrere echte Fehler**, nicht nur einer.
+
+---
+
+## 🔴 Hauptursache 1: Schatten-Test ist logisch falsch (alles liegt im Schatten)
+
+### Problem
+
+In `RayTracer.trace()`:
+
+```python
+shadow_hit = self.scene.intersect(shadow_ray)
+if shadow_hit:
+    continue
+```
+
+➡ **JEDER Treffer zählt als Schatten**, selbst wenn das Objekt **hinter der Lichtquelle** liegt.
+
+Ergebnis:
+👉 **Kein Licht erreicht irgendeinen Punkt → komplett schwarz**
+
+---
+
+### ✅ FIX 1: Distanz zur Lichtquelle prüfen
+
+Ersetze den Schatten-Test durch **distanzbasierten Shadow-Ray-Test**:
+
+```python
+to_light_vec = light.position - hit.point
+light_dist = to_light_vec.norm()
+to_light = to_light_vec.normalized()
+
+shadow_ray = Ray(hit.point + hit.normal * 1e-4, to_light)
+shadow_hit = self.scene.intersect(shadow_ray)
+
+if shadow_hit and shadow_hit.t < light_dist:
+    continue
+```
+
+📌 **Warum das nötig ist**
+
+* Nur Objekte **zwischen Punkt und Licht** dürfen Schatten werfen
+* Ohne diese Prüfung ist **alles immer im Schatten**
+
+---
+
+## 🔴 Hauptursache 2: Kamera schaut von außerhalb der Cornell Box
+
+### Problem
+
+Die Kamera sitzt hier:
+
+```python
+ray = Ray(Vec3(0, 0, 1), Vec3(px, py, -1))
+```
+
+Aber deine Box liegt bei:
+
+```text
+z ≈ -3 bis 0
+```
+
+➡ Die Kamera steht **AUßERHALB** und schaut **durch die Wand**
+
+---
+
+### ✅ FIX 2: Kamera INS Innere setzen
+
+Ändere die Kamera-Position:
+
+```python
+ray = Ray(Vec3(0, 0, 0.5), Vec3(px, py, -1))
+```
+
+📌 Jetzt:
+
+* Kamera ist **innerhalb der Box**
+* Strahlen treffen tatsächlich Geometrie
+
+---
+
+## 🔴 Hauptursache 3: Fehlender Ambient-Anteil (physikalisch korrekt, aber schwarz)
+
+### Problem
+
+Wenn:
+
+* Licht blockiert ist
+* Reflexionen nicht greifen
+
+Dann bleibt:
+
+```python
+color = Vec3(0,0,0)
+```
+
+➡ **Physikalisch korrekt**, aber visuell schwarz
+
+---
+
+### ✅ FIX 3: Einfaches Ambient-Light hinzufügen
+
+Am Anfang von `trace()` **nach dem Hit-Test**:
+
+```python
+color = hit.material.color * 0.05
+```
+
+💡 Das simuliert indirektes Licht (Cornell Box lebt davon!)
+
+---
+
+## 🔴 Hauptursache 4: Specular-Berechnung ohne Normalisierungssicherheit
+
+### Problem
+
+```python
+half = (to_light + view).normalized()
+spec = max(0.0, hit.normal.dot(half)) ** 32
+```
+
+Wenn `to_light + view ≈ 0`, wird `half` ungültig.
+
+---
+
+### ✅ FIX 4 (robust, optional aber empfohlen)
+
+```python
+h = to_light + view
+if h.norm() > 0:
+    half = h.normalized()
+    spec = max(0.0, hit.normal.dot(half)) ** 32
+else:
+    spec = 0.0
+```
+
+---
+
+## 🟢 ZUSAMMENFASSUNG – MINDESTÄNDERUNGEN
+
+### 🔧 **Du MUSST ändern:**
+
+1. **Schatten-Ray Distanzprüfung** ← *wichtigster Bug*
+2. **Kamera innerhalb der Box**
+3. **Ambient-Anteil hinzufügen**
+
+### 🛠 Optional (Qualität & Stabilität):
+
+4. Robuste Specular-Berechnung
+
+---
+
+## ✅ Erwartetes Ergebnis danach
+
+✔ Sichtbare Cornell Box
+✔ Beleuchtete Wände
+✔ Spiegelnde Kugel
+✔ Kein schwarzes Bild mehr
+
+---
+
+Wenn du möchtest, kann ich dir:
+
+* eine **komplett korrigierte Version** posten
+* Debug-Ausgaben interpretieren
+* den Code **physikalisch korrekter (Path Tracing Light Bounce)** umbauen
+* Gamma-Korrektur hinzufügen
+
+Sag einfach Bescheid 👍

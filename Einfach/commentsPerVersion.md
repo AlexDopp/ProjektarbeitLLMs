@@ -168,3 +168,20 @@ Version 1:
 
 does not have shadows at all? at no point. 
 did not follow the prompt (ignored shadow)
+
+Version 4:
+
+perfect
+
+Version 11:
+
+
+line 234: (second sphere)
+    scene.objects.push_back(std::make_unique<Sphere>(Vec3(0.3, 0.5, -0.5), 0.2, red));
+
+line 1:
+#define _USE_MATH_DEFINES
+(could not compile due to not knowing M_PI in this scope)
+
+second sphere showing that both shadow and raytracing is technically working in this file
+

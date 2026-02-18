@@ -1,0 +1,1 @@
+At the end it found the "big" problem without any Help but did not find the -ray.direction error

@@ -1,0 +1,1 @@
+lets see if ai can find its own mistake with different levels of help, starting with no help and slowing limiting the scope "we" (in the prompt) know the problem to be. First Class, function and lastly we already know the problem and just want it fixed.

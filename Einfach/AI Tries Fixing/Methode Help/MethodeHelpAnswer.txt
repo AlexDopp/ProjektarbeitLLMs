@@ -1,0 +1,167 @@
+Du hast recht: **es sind mindestens zwei unabhängige Fehler**, und **beide zusammen führen dazu, dass alles schwarz wird**.
+Ich gehe **systematisch und konkret** vor und gebe dir **exakte Code-Änderungen**, keine Vermutungen.
+
+---
+
+## Fehler 1: `TypeError: bad operand type for unary -: 'Vec3'`
+
+### Ursache
+
+Diese Zeile in `trace()`:
+
+```python
+view = (-ray.direction).normalized()
+```
+
+Python weiß nicht, wie es ein `Vec3` **negieren** soll, weil `Vec3` **keine `__neg__`-Methode** besitzt.
+
+---
+
+### ✅ Fix 1 (zwingend notwendig)
+
+Füge **in der Klasse `Vec3`** folgende Methode hinzu:
+
+```python
+def __neg__(self):
+    return Vec3(-self.x, -self.y, -self.z)
+```
+
+📍 **Platzierung**: direkt unter `__sub__` oder egal wo in `Vec3`.
+
+➡️ Danach funktioniert:
+
+```python
+-ray.direction
+```
+
+---
+
+## Fehler 2: „Shadow hit … für alle Rays“ → alles im Schatten
+
+Das ist der **Hauptgrund für das schwarze Bild**.
+
+---
+
+### Ursache A: Schatten-Test ist logisch falsch
+
+In `trace()`:
+
+```python
+shadow_hit = self.scene.intersect(shadow_ray)
+if shadow_hit:
+    continue
+```
+
+👉 **Problem:**
+Du prüfst **nur**, *ob* etwas getroffen wird – **nicht**, *ob es zwischen Punkt und Licht liegt*.
+
+Da du dich in einer **Cornell Box** befindest, trifft **jeder Shadow-Ray irgendeine Wand** → **alles ist immer im Schatten**.
+
+---
+
+### ✅ Fix 2A: Abstand zum Licht berücksichtigen
+
+Ersetze den Schatten-Code **komplett** durch:
+
+```python
+to_light_vec = light.position - hit.point
+light_dist = to_light_vec.norm()
+to_light = to_light_vec * (1.0 / light_dist)
+
+shadow_ray = Ray(hit.point + hit.normal * 1e-4, to_light)
+shadow_hit = self.scene.intersect(shadow_ray)
+
+if shadow_hit and shadow_hit.t < light_dist:
+    continue
+```
+
+📌 **Warum das korrekt ist**
+
+* Schatten nur, **wenn ein Objekt näher ist als die Lichtquelle**
+* Wände *hinter* dem Licht blockieren es nicht mehr
+
+---
+
+## Fehler 3 (indirekt): Specular Highlight mathematisch korrekt, aber wirkungslos
+
+Nachdem Fehler 1 & 2 behoben sind, **funktioniert Specular**, ABER:
+
+```python
+spec = max(0.0, hit.normal.dot(half)) ** 32
+```
+
+Bei niedriger Lichtintensität + hoher Potenz ist der Wert oft ~0.
+
+### (Optionaler, aber sinnvoller Fix)
+
+Reduziere die Härte:
+
+```python
+spec = max(0.0, hit.normal.dot(half)) ** 16
+```
+
+---
+
+## Fehler 4 (optional, aber empfohlen): Selbst-Schatten bei Ebenen
+
+Plane-Normalen zeigen **immer in dieselbe Richtung**, egal von welcher Seite sie getroffen werden.
+
+### Problem
+
+Wenn der Ray von der „Rückseite“ kommt, ist:
+
+```python
+hit.normal.dot(to_light) < 0
+```
+
+### ✅ Fix 4: Normale ggf. umdrehen
+
+Direkt nach dem Hit in `trace()`:
+
+```python
+if hit.normal.dot(ray.direction) > 0:
+    hit.normal = -hit.normal
+```
+
+---
+
+## Zusammenfassung aller **notwendigen Änderungen**
+
+### ✅ **Pflicht**
+
+1. `Vec3.__neg__` hinzufügen
+2. Schatten-Test auf **Distanz zum Licht** prüfen
+
+### ✅ **Stark empfohlen**
+
+3. Specular-Exponent reduzieren
+4. Normalen bei Bedarf flippen
+
+---
+
+## Warum dein Bild komplett schwarz war
+
+| Ursache                    | Effekt                        |
+| -------------------------- | ----------------------------- |
+| Kein `__neg__`             | Crash oder kein Specular      |
+| Schatten-Test ohne Distanz | **ALLES im Schatten**         |
+| Cornell Box                | Shadow-Ray trifft immer etwas |
+| Ergebnis                   | RGB = (0,0,0)                 |
+
+---
+
+## Erwartetes Ergebnis nach Fixes
+
+✔ Sichtbare Cornell Box
+✔ Rote & grüne Wände
+✔ Beleuchtete Kugeln
+✔ Spiegelnde Reflexion
+✔ Kein schwarzes Bild mehr
+
+---
+
+Wenn du willst, kann ich dir im nächsten Schritt:
+
+* eine **Minimal-Diff-Version** posten
+* oder eine **Debug-Visualisierung (Normals / Shadows)** erklären
+* oder dein Raytracing **physikalisch korrekter (Lambert + Blinn-Phong)** machen
