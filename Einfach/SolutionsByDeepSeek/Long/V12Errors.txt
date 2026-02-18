@@ -1,0 +1,12 @@
+line 382, in <module>
+    main()
+  File "c:/Users/Leon//ProjektarbeitLLMs/Einfach/SolutionsByDeepSeek/Long/V12Code.py", line 363, in main
+    color = trace_ray(ray, scene, max_depth)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:/Users/Leon//ProjektarbeitLLMs/Einfach/SolutionsByDeepSeek/Long/V12Code.py", line 259, in trace_ray
+    return emitted + attenuation * incoming
+           ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+  File "c:/Users/Leon//ProjektarbeitLLMs/Einfach/SolutionsByDeepSeek/Long/V12Code.py", line 26, in __add__
+    return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
+                ~~~~~~~^~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'int' and 'Vec3'

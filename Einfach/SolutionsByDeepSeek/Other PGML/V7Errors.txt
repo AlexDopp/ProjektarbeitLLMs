@@ -1,0 +1,18 @@
+Erstelle Cornelbox-Szene...
+Initialisiere Raytracer...
+Traceback (most recent call last):
+  File "c:\Users\Leon\\ProjektarbeitLLMs\Einfach\SolutionsByDeepSeek\Other PGML\V7Code.py", line 353, in <module>
+    main()
+  File "c:\Users\Leon\\ProjektarbeitLLMs\Einfach\SolutionsByDeepSeek\Other PGML\V7Code.py", line 345, in main
+    image = raytracer.render(width, height)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "c:\Users\Leon\\ProjektarbeitLLMs\Einfach\SolutionsByDeepSeek\Other PGML\V7Code.py", line 258, in render
+    color = color + self.trace(ray)
+                    ^^^^^^^^^^^^^^^
+  File "c:\Users\Leon\\ProjektarbeitLLMs\Einfach\SolutionsByDeepSeek\Other PGML\V7Code.py", line 228, in trace
+    lighting = lighting + color * light_contrib * diffuse
+                          ~~~~~~^~~~~~~~~~~~~~~
+  File "c:\Users\Leon\\ProjektarbeitLLMs\Einfach\SolutionsByDeepSeek\Other PGML\V7Code.py", line 24, in __mul__
+    return Vec3(self.x * scalar, self.y * scalar, self.z * scalar)
+                ~~~~~~~^~~~~~~~
+TypeError: unsupported operand type(s) for *: 'float' and 'Vec3'

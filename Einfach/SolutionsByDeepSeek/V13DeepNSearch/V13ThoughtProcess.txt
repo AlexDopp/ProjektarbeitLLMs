@@ -1,0 +1,139 @@
+118 Sekunden Nachgedacht
+
+Wir müssen einen einfachen Raytracer in Python implementieren, der eine Cornell-Box-ähnliche Szene rendert. Anforderungen: modular, ohne externe Bibliotheken außer notwendigen (z.B. PIL für Bildspeicherung, numpy für Vektoren? Aber "notwendige Programmbibliotheken" – wir könnten nur PIL für Bildausgabe verwenden und Mathe selbst machen. Aber um Vektorrechnung zu vereinfachen, wäre numpy sinnvoll, aber es ist nicht unbedingt notwendig. Die Anforderung "nur notwendige Programmbibliotheken" – PIL/Pillow ist notwendig, um PNG zu speichern. Numpy ist nicht zwingend, aber hilfreich. Ich entscheide: Wir verwenden numpy für Vektoren und Matrizen, da es weit verbreitet ist und die Lesbarkeit erhöht. Aber wenn wir pur bleiben wollen, könnten wir eigene Vektor-Klassen schreiben. Ich denke, numpy ist akzeptabel, da es eine Standardbibliothek für numerisches Rechnen ist. Alternativ: Python内置的math und Tupel. Aber für Effizienz und Klarheit: numpy. Wir müssen aber darauf achten, dass der Code ohne externe Installationen läuft? Die Anweisung sagt "Die Verwendung externer Webseiten oder vorgefertigter Inhalte ist nicht gestattet." – das bezieht sich wahrscheinlich darauf, keinen Code von extern zu kopieren. Bibliotheken sind okay, solange sie notwendig sind. Also numpy und PIL (Pillow) sind üblich. Wir werden sie importieren.
+
+Wir brauchen: Vektoralgebra (Punkt, Vektor, Kreuzprodukt, Normalisierung). Wir definieren uns Klassen oder Funktionen. Für Übersichtlichkeit: Wir nutzen numpy arrays für Punkte und Vektoren.
+
+Raytracer-Konzepte: Kamera (Ort, Blickrichtung), Primitive (Kugeln, Dreiecke, Ebenen), Materialien (Farbe, Reflexion, Emission), Lichtquellen (punktuell, Flächenlicht?). In einer Cornell-Box haben wir oft eine Flächenlichtquelle an der Decke. Wir können ein emissives Material für ein Quadrat an der Decke verwenden, dann brauchen wir keine separate Punktlichtquelle. Das ist üblich. Aber die Anforderung sagt "Eine interne Lichtquelle sorgt für sichtbare Licht- und Schatteneffekte." Das kann ein emissives Objekt sein oder eine Punktlichtquelle. Wir nehmen ein emissives Quadrat an der Decke (als Teil der Box), das Licht abstrahlt. Dann beleuchtet es die Szene durch direkte Beleuchtung (wir müssen bei jedem Schnittpunkt die emittierten Lichtquellen abtasten). Aber wir müssen auch Schatten berechnen: Von jedem Punkt aus zum Lichtstrahl schicken, um zu prüfen, ob er blockiert wird.
+
+Wir implementieren einen einfachen Raytracer mit Rekursion für Reflexionen. Wir werden nur eine Reflektion zulassen (oder mehrere). Die Cornell-Box hat oft eine Kugel oder einen Würfel. Wir nehmen eine Kugel und/oder einen Quader. Aber Quader erfordert Dreiecke oder Schnitt mit AABB. Einfachere: Kugel und vielleicht ein Dreieck? Aber typische Cornell-Box hat zwei Boxen (Quader). Wir können Quader durch Ebenen oder Dreiecke darstellen. Am einfachsten: Wir definieren Dreiecke für die Wände, Decke, Boden und einen Quader (aus 12 Dreiecken). Das ist machbar. Oder wir verwenden nur eine Kugel und einen Quader aus Dreiecken. Ich denke, wir nehmen eine Kugel und einen Quader (aus Dreiecken) oder nur eine Kugel. Aber die Anforderung: "Die Szene enthält mehrere unterschiedlich gefärbte Flächen sowie mindestens ein Objekt innerhalb der Box." Also mehrere Flächen: die Boxwände sind unterschiedlich gefärbt (links rot, rechts grün, hinten weiß, Boden weiß, Decke weiß mit emissivem Quadrat?). Wir können die Decke weiß lassen und ein emissives Quadrat (Licht) als separates Objekt definieren. Oder wir machen die Decke emissiv. Dann ist die Decke eine Lichtquelle.
+
+Um modular zu sein: Wir trennen Mathematik (Vektoren, Strahlen), Geometrie (Schnitttests), Material, Szene, Raytracing-Hauptschleife.
+
+Aufbau:
+
+    vector.py: Funktionen für Vektoroperationen (add, sub, dot, cross, normalize, etc.). Wir nutzen numpy, daher sind das einfache Funktionen, die numpy arrays verwenden.
+
+    ray.py: Klasse Ray (Ursprung, Richtung).
+
+    geometry.py: Basisklasse Shape mit Methode intersect(ray) -> t, Punkt, Normale, Material. Implementierungen: Sphere, Triangle, Plane (optional).
+
+    material.py: Klasse Material (Farbe, Emission, Reflexionsfaktor).
+
+    light.py: Wir brauchen vielleicht keine separate Lichtklasse, wenn wir emissive Materialien verwenden. Dann wird die Beleuchtung über emissive Objekte in der Szene berechnet. Das ist gängig in Path Tracing, aber für einfachen Raytracer mit direkter Beleuchtung müssen wir die Lichtquellen separat abtasten. Wir können eine Liste von emissiven Objekten haben und bei jedem Punkt die Beleuchtung von diesen berechnen. Oder wir definieren eine Punktlichtquelle. Einfachere: Wir setzen eine Punktlichtquelle in die Mitte der Decke. Dann müssen wir Schattenstrahlen dorthin schicken. Das ist einfacher zu implementieren als Flächenlicht. Aber die Anforderung "Beleuchtung, Schatten, Shading und Reflexionen sollen direkt durch das Raytracing berechnet werden." – das schließt nicht aus, eine Punktlichtquelle zu verwenden. Allerdings erzeugt eine Punktlichtquelle harte Schatten, was für eine Cornell-Box mit Flächenlicht weich sein sollte. Aber wir wollen es einfach halten. Ich denke, wir verwenden eine Punktlichtquelle in der Decke. Das ist okay.
+
+Um die Cornell-Box-ähnliche Szene zu bauen: Wir definieren 5 Wände (links, rechts, hinten, unten, oben) als Quadrate, die wir in zwei Dreiecke zerlegen. Oder wir verwenden Ebenen mit Beschränkung (Rechtecke). Schnitt mit Ebenen ist einfach, aber wir müssen die Treffer auf das Rechteck begrenzen. Das erfordert zusätzliche Prüfungen. Dreiecke sind präziser. Also definieren wir Dreiecke.
+
+Aufbau der Box: Wir setzen die Box von (-1, -1, -1) bis (1, 1, 1) oder ähnlich. Kamera blickt in die Box. Wir müssen die Koordinaten so wählen, dass die Kamera außerhalb ist und in die Box schaut. Üblich: Kamera bei (0, 0, 3) blickt nach -z. Aber dann sehen wir die Rückwand. Wir wollen in den Innenraum sehen. Also setzen wir die Box z.B. von (-2, -1, -2) bis (2, 3, 2) oder so, mit Öffnung für Kamera? Nein, Cornell-Box hat eine Öffnung für die Kamera? Eigentlich ist eine Seite offen oder die Kamera ist innerhalb? Normalerweise ist eine Seite entfernt, damit man hineinschauen kann. In der klassischen Cornell-Box fehlt die vordere Wand, und die Kamera schaut von außen durch die Öffnung. Das ist einfacher: Wir definieren 5 Wände (links, rechts, hinten, unten, oben) und lassen die Vorderseite offen. Dann positionieren wir die Kamera außerhalb, blickend nach innen. Das ist üblich.
+
+Also: Box-Grenzen: x von -2 bis 2, y von -1 bis 3, z von -4 bis 0 (oder so). Wichtig: Die Rückwand ist bei z = -4 (hinten), die Öffnung vorne bei z = 0. Kamera bei (0, 1, 5) blickt nach -z. Aber dann müssen wir die Perspektive so einstellen, dass die Box ins Bild passt.
+
+Wir definieren Dreiecke für jede Wand:
+
+    Boden: y = -1, x von -2 bis 2, z von -4 bis 0. Als zwei Dreiecke.
+
+    Decke: y = 3, gleiche x,z.
+
+    Linke Wand: x = -2, y von -1 bis 3, z von -4 bis 0.
+
+    Rechte Wand: x = 2.
+
+    Rückwand: z = -4, x von -2 bis 2, y von -1 bis 3.
+
+Farben: links rot, rechts grün, hinten weiß, Boden weiß, Decke weiß (oder hellgrau). Wir platzieren eine Kugel in der Box: Mittelpunkt (0, 0.5, -2), Radius 0.5. Material: diffus, Farbe blau oder gelb. Und einen Quader (z.B. Würfel) als zweites Objekt? Wir können eine kleinere Box (Quader) aus Dreiecken hinzufügen. Aber das erhöht die Komplexität. Vielleicht reicht eine Kugel. Aber die Anforderung sagt "mindestens ein Objekt innerhalb der Box". Also eine Kugel genügt. Wir können auch eine Kugel und einen Quader nehmen, um mehr Reflexionen zu zeigen. Ich denke, wir nehmen eine Kugel und einen kleinen Quader (z.B. Würfel auf dem Boden). Das ist machbar.
+
+Lichtquelle: Eine Punktlichtquelle nahe der Decke, z.B. bei (0, 2.5, -2). Oder wir machen ein emissives Quadrat in der Decke. Punktlicht ist einfacher: Wir definieren eine Lichtposition und Farbe. Dann berechnen wir für jeden Schnittpunkt die direkte Beleuchtung mit Schattenstrahl.
+
+Shading: Wir verwenden einfaches Lambert (diffus) plus Ambient. Aber wir wollen auch Reflexionen. Für Reflexionen schicken wir rekursiv einen Reflexionsstrahl. Wir begrenzen die Rekursionstiefe (z.B. 3). Materialien haben einen Reflexionsfaktor (z.B. 0 für diffus, 0.5 für spiegelnd). Für die Kugel können wir einen leichten Glanz geben.
+
+Wir müssen auch Schatten berechnen: Von Punkt in Richtung Lichtquelle einen Strahl schicken, wenn dieser ein Objekt vor der Lichtquelle trifft (t < distanz zum Licht), dann ist der Punkt im Schatten.
+
+Implementierung:
+
+    main.py: Setzt Szene auf, Kamera, ruft Render auf, speichert Bild.
+
+    renderer.py: Enthält die Render-Funktion: Für jeden Pixel erzeuge Primärstrahl, trace(ray) gibt Farbe zurück.
+
+    trace(ray, depth): Finde nächstes Objekt (Schnittpunkt). Wenn keins, Hintergrundfarbe (schwarz). Sonst: Berechne Farbe durch Beleuchtung + Reflexion.
+
+Beleuchtung: Für jeden Punkt mit Normal und Material: Summe über Lichtquellen. Bei Punktlichtquelle: Richtung zum Licht, Distanz. Schattenstrahl. Wenn nicht im Schatten, berechne diffus = max(0, dot(normal, lichtrichtung)) * materialfarbe * lichtfarbe. Für spekulare? Können wir weglassen oder Phong hinzufügen. Wir halten es einfach: nur diffus + ambient + Emission (falls Material emittiert). Für Reflexion: Wenn Material reflexionsfaktor > 0, berechne Reflexionsrichtung (R = Richtung - 2 * dot(richtung, normal) * normal) und rufe trace mit depth-1 auf, addiere Faktor * reflektierte Farbe.
+
+Kamera: Wir verwenden eine einfache Pinhole-Kamera: Ursprung = Kameraposition. Blickrichtung: Für jeden Pixel berechnen wir den Strahl durch das Bildplane. Wir definieren Bildplane in der Welt: z.B. in Entfernung 1 vor der Kamera, mit Größe entsprechend Sichtfeld. Üblich: Kamera bei (0,1,5), Blickrichtung (0,0,-1). Oben (0,1,0). Dann berechnen wir für Pixel (i,j) den Richtungsvektor: ( (i - 255.5)/256 * aspect_ratio * viewport_width, (255.5 - j)/256 * viewport_height, -1 ) und normieren. Oder wir setzen viewport_height = 2, aspect_ratio = 1 (512x512 quadratisch). Also viewport_width = 2.
+
+Wir müssen die Szene so skalieren, dass sie ins Bild passt. Mit Kamera bei (0,1,5) und Richtung -z, viewport in z=4 (also 1 Einheit vor Kamera? Wenn Kamera bei z=5, dann Bildebene bei z=4 (1 Einheit vor der Kamera). Dann erfasst der Strahl den Bereich von x in [-1,1] und y in [-1,1] (da viewport 2x2). Die Box erstreckt sich von x -2..2, y -1..3, z -4..0. Das sollte passen: Die Box ist in x breiter, aber wir sehen vielleicht die Ränder. Mit viewport von -1..1 in x bei z=4, die Strahlen divergieren: Ein Strahl durch (1,0,4) in Richtung (1,0,-1) läuft weiter. Bei z=0 (Vorderseite der Box) hat x = 1 + (4)*? Rechnen: Strahlparameter t: Punkt = (0,1,5) + t*(dx,dy,dz). Für Pixel (i,j) mit dx = (i-255.5)/256 * 2, dy = (255.5-j)/256 * 2, dz = -1. Bei z=4 (Bildebene) t=1 (weil von 5 nach 4). Bei z=0 (Vorderseite) t=5 (weil dz=-1, delta z = -5). Dann x = 0 + 5*dx = 5*dx. dx max = 1, also x max 5, das ist viel zu groß. Also müssen wir den viewport kleiner machen oder die Kamera weiter weg stellen. Um die Box von -2..2 in x zu erfassen, bei z=0, sollte der maximale x-Wert des Strahls 2 sein. Also 5*dx_max = 2 => dx_max = 0.4. Also viewport halbe Breite = 0.4, viewport_width = 0.8. Ähnlich für y: y Bereich -1..3, also von -1 bis 3, Mitte 1, Höhe 4. Bei z=0, y = 1 + 5*dy. Um y_min=-1 zu erreichen: 1+5*dy_min=-1 => dy_min=-0.4; y_max=3 => dy_max=0.4. Also viewport halbe Höhe = 0.4. Also viewport_height = 0.8. Das ist sinnvoll. Oder wir verschieben die Kamera weiter weg: Kamera bei (0,1,10) dann t=10 bis z=0, dx_max = 2/10=0.2, viewport 0.4. Das ist auch okay. Wählen wir Kamera bei (0,1,8) und viewport 1? Rechnen: Kamera (0,1,8), Bildebene bei z=7 (t=1). Bei z=0, t=8, dann x=8*dx. Für x=2 => dx=0.25. Also viewport halbe Breite 0.25, viewport_width=0.5. Das ist auch gut. Wir nehmen Kamera (0,1,8) und viewport_width=0.5, viewport_height=0.5 (da Bild quadratisch, aber y-Bereich ist 4 Einheiten, also brauchen wir dy_max=0.5? y bei z=0: 1+8*dy = 3 => dy=0.25; = -1 => dy=-0.25. Also viewport halbe Höhe 0.25, nicht 0.5. Wenn wir viewport_height=0.5, dann wäre halbe Höhe 0.25, passt. Also viewport_width und viewport_height auf 0.5 setzen (halbe Größe 0.25). Dann dx von -0.25 bis 0.25, dy von -0.25 bis 0.25. Das erfasst genau den Bereich: x max = 8*0.25=2, y max=1+8*0.25=3, y min=1-8*0.25=-1. Passt. Also Kamera (0,1,8), viewport_size = 0.5 (viewport_width = viewport_height = 0.5). Bildebene bei z=7 (Abstand 1). Das ist gut.
+
+Wir setzen Hintergrundfarbe schwarz (0,0,0).
+
+Jetzt implementieren wir die Dreiecke. Für Dreieck-Schnitt verwenden wir den Möller-Trumbore Algorithmus. Wir speichern Dreiecke mit drei Punkten und Normalen (wir berechnen die Normale aus Kreuzprodukt). Für glatte Schattierung brauchen wir vielleicht interpolierte Normale, aber wir können pro Dreieck eine einheitliche Normale verwenden (flach shading). Das ist okay.
+
+Material: Wir definieren eine Klasse mit Attributen: diffuse_color (tuple), emission (tuple), reflectivity (float). Für die Wände setzen wir reflectivity = 0 (matt). Für die Kugel können wir reflectivity = 0.2 setzen. Für den Quader vielleicht 0.1. Lichtquelle: Wir verwenden Punktlicht, also kein emissives Material. Aber wir könnten auch eine emissive Fläche verwenden, dann müssten wir bei der Beleuchtung die Flächenlichtquellen integrieren. Das ist komplizierter. Wir bleiben bei Punktlicht.
+
+Lichtposition: z.B. (0, 2.8, -2) (nahe Decke). Lichtfarbe: weiß (1,1,1). Intensität: normal.
+
+Schatten: Wir schicken einen Strahl vom Punkt zum Licht. Aber wir müssen vermeiden, dass das Licht durch das eigene Objekt verdeckt wird. Wir verwenden einen kleinen epsilon-Wert, um den Ursprung leicht in Richtung Normale zu verschieben, um Selbstverschattung zu vermeiden.
+
+Rekursionstiefe: 3.
+
+Wir speichern das Bild mit PIL. Dazu erstellen wir ein Image im Modus "RGB" und setzen Pixel.
+
+Struktur:
+
+    vector.py: Funktionen vec3, add, sub, mul, dot, cross, normalize, etc. Aber mit numpy arrays ist es einfach: import numpy as np; Punkt = np.array([x,y,z]).
+
+    ray.py: class Ray: def init(self, origin, direction): self.origin = origin; self.direction = direction / np.linalg.norm(direction) (normieren).
+
+    shapes.py: Basisklasse Shape mit intersect Methode, die (t, point, normal, material) zurückgibt oder None. Implementierungen: Sphere, Triangle.
+
+    material.py: class Material: def init(self, diffuse, emission=(0,0,0), reflectivity=0).
+
+    scene.py: Klasse Scene: enthält Liste von Shapes, Liste von Lights (Punktlicht mit Position und Farbe). Oder Licht als spezielles Shape mit Emission. Wir machen Punktlicht separat.
+
+    camera.py: Klasse Camera: position, look_at, up, fov, etc. Aber wir setzen fest.
+
+    renderer.py: Funktion render(scene, camera, width, height) -> Image.
+
+Wir müssen aufpassen, dass wir keine externen Webseiten nutzen (kein Copy-Paste). Aber wir können Standardalgorithmen selbst implementieren.
+
+Schreiben wir den Code.
+
+Wir müssen auch überlegen, wie wir die Cornell-Box als Dreiecke definieren. Jede Wand als zwei Dreiecke. Wir müssen die Eckpunkte definieren.
+
+Koordinaten: Wir setzen:
+
+    Links: x = -2, y von -1 bis 3, z von -4 bis 0.
+
+    Rechts: x = 2.
+
+    Hinten: z = -4, x von -2 bis 2, y von -1 bis 3.
+
+    Boden: y = -1, x von -2 bis 2, z von -4 bis 0.
+
+    Decke: y = 3.
+
+Für jede Wand wählen wir zwei Dreiecke. Z.B. für Boden: Punkte A(-2,-1,-4), B(2,-1,-4), C(2,-1,0), D(-2,-1,0). Dreiecke: A,B,C und A,C,D. Normale (0,1,0) für Boden, (0,-1,0) für Decke, (1,0,0) für rechts (x=2) mit Normale (1,0,0) (zeigt nach innen), links (-1,0,0), hinten (0,0,1) (zeigt nach innen, weil z=-4, Richtung +z). Aber Achtung: Die Normale muss nach innen zeigen, also in die Box. Für linke Wand bei x=-2, die Innenseite zeigt in +x Richtung, also Normale (1,0,0)? Nein, die Innenseite zeigt nach rechts, also positive x. Für Punkte auf x=-2, die Normale der Fläche zeigt nach außen? Wenn wir die Fläche als unendliche Ebene betrachten, ist die Normale definiert durch die Reihenfolge der Punkte (im Uhrzeigersinn oder gegen). Wir müssen sicherstellen, dass die Normale in den Raum zeigt. Für linke Wand: Punkte: z.B. (-2,-1,-4), (-2,-1,0), (-2,3,0), (-2,3,-4). Wenn wir die Punkte gegen den Uhrzeigersinn von außen betrachten, zeigt die Normale nach außen. Aber wir wollen die Innenseite, also müssen wir die Orientierung umkehren. Einfacher: Wir definieren die Dreiecke mit einer bestimmten Reihenfolge, und berechnen die Normale aus Kreuzprodukt (v1-v0) x (v2-v0). Dann normalisieren. Wenn die Normale in die falsche Richtung zeigt, können wir sie umkehren, indem wir die Reihenfolge tauschen. Wir müssen also darauf achten, dass die Normale in den Raum zeigt. Für die Box: Die Innenseite ist die Seite, die zum Inneren zeigt. Also für Boden: Normale sollte (0,1,0) sein (nach oben), weil der Boden von unten beleuchtet wird? Aber die Innenseite des Bodens zeigt nach oben, also (0,1,0) ist korrekt. Für Decke: Normale sollte (0,-1,0) sein (nach unten). Für linke Wand: Innenseite zeigt nach rechts (positive x), also Normale (1,0,0). Für rechte Wand: Innenseite zeigt nach links (negative x), also Normale (-1,0,0). Für Rückwand: Innenseite zeigt nach vorne (positive z), also Normale (0,0,1). Aber die Rückwand ist bei z=-4, die Innenseite zeigt in +z Richtung, also Normale (0,0,1). Das passt.
+
+Wir müssen die Dreiecke so definieren, dass die Reihenfolge der Punkte die gewünschte Normale ergibt. Mit der Rechte-Hand-Regel: Wenn die Punkte im Gegenuhrzeigersinn (von außen gesehen) sind, zeigt die Normale nach außen. Also müssen wir für die Innenseite die Punkte im Uhrzeigersinn (von außen) anordnen, damit die Normale nach innen zeigt. Wir können auch nach der Berechnung das Vorzeichen der Normale überprüfen und ggf. invertieren, indem wir die Reihenfolge ändern. In der Implementierung können wir bei der Dreieckserzeugung die Normale explizit angeben oder aus den Punkten berechnen und dann überprüfen, ob sie in die gewünschte Richtung zeigt. Wir machen es einfach: Wir berechnen die Normale aus Kreuzprodukt (B-A) x (C-A) und normalisieren. Dann prüfen wir, ob sie ungefähr in die gewünschte Richtung zeigt (z.B. mit dot(gewünscht, normale) < 0 dann tauschen wir zwei Punkte). Aber das ist aufwändig. Stattdessen definieren wir die Dreiecke manuell mit korrekter Orientierung.
+
+Beispiel für linke Wand (x=-2): Wir wollen Normale (1,0,0). Die Fläche liegt in der yz-Ebene. Ein Dreieck: Punkte A(-2,-1,-4), B(-2,-1,0), C(-2,3,0). Dann Vektoren: B-A = (0,0,4), C-A = (0,4,4). Kreuzprodukt (B-A) x (C-A) = (0*4 - 4*4, 4*0-0*4, 0*4-0*0) = (-16, 0, 0). Das ist (-16,0,0), also negative x-Richtung. Das wäre die falsche Richtung. Also müssen wir die Reihenfolge umkehren: A, C, B. Dann C-A = (0,4,4), B-A = (0,0,4), Kreuzprodukt = (4*4-4*0, 4*0-0*4, 0*0-4*0) = (16,0,0). Passt. Also für linke Wand: Dreieck1: (-2,-1,-4), (-2,3,0), (-2,-1,0). Dreieck2: (-2,-1,-4), (-2,3,-4), (-2,3,0). Für Dreieck2: Punkte (-2,-1,-4), (-2,3,-4), (-2,3,0). Reihenfolge prüfen: (-2,-1,-4) -> (-2,3,-4): (0,4,0); (-2,-1,-4) -> (-2,3,0): (0,4,4); Kreuz = (4*4-0*0, 0*0-0*4, 0*0-4*0) = (16,0,0). Passt. Also Orientierung: Für jede Wand müssen wir die korrekte Reihenfolge finden.
+
+Wir werden die Dreiecke manuell im Code definieren.
+
+Für die Kugel: Einfach.
+
+Für den Quader: Wir können einen kleinen Würfel auf dem Boden setzen, z.B. von (-0.5, -1, -1.5) bis (0.5, 0, -0.5) (also Höhe 1, Breite 1, Tiefe 1). Das ergibt 6 Seiten, jede Seite 2 Dreiecke. Das sind 12 Dreiecke. Wir definieren sie ähnlich mit korrekter Orientierung (Normale zeigen nach außen vom Würfel, also von innen nach außen). Aber da der Würfel in der Box steht, soll seine Oberfläche sichtbar sein. Normale sollten nach außen zeigen, damit das Licht von außen auf die Fläche trifft. Also müssen wir die Dreiecke so orientieren, dass die Normale vom Würfel weg zeigt. Für die Oberseite (y=0) Normale (0,1,0) (nach oben). Für Unterseite (y=-1) Normale (0,-1,0). Für Vorderseite (z=-0.5) Normale (0,0,1) (nach vorne, d.h. in +z). Für Rückseite (z=-1.5) Normale (0,0,-1) (nach hinten). Für linke Seite (x=-0.5) Normale (-1,0,0). Für rechte Seite (x=0.5) Normale (1,0,0). Wir müssen die Punkte entsprechend setzen.
+
+Wir können das später machen. Zuerst das Grundgerüst.
+
+Implementierung in Python:
+
+Wir erstellen eine Datei cornellbox.py (oder mehrere). Aber der Code soll übersichtlich sein. Wir können alles in eine Datei packen, aber mit Klassen getrennt.
+
+Ich werde den Code in einer einzelnen Datei schreiben, aber mit klaren Abschnitten und Klassen.
+
+Wichtig: "Die Lösung muss vollständig implementiert und direkt ausführbar sein." Also müssen wir alles in einer ausführbaren Datei haben. Wir können am Ende ein if __name__ == "__main__": haben, das die Szene aufbaut und rendert.
+
+Jetzt fange ich an, den Code zu strukturieren.
+
+Ich werde numpy und PIL importieren. Falls numpy nicht installiert ist, müssen wir das erwähnen. Aber wir nehmen an, dass es installiert ist. In der Aufgabenstellung wird nicht explizit gesagt, dass wir nur Standardbibliotheken verwenden dürfen, also ist numpy in Ordnung.
+
+Schreiben wir den Code.

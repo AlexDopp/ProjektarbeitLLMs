@@ -337,6 +337,7 @@ def main():
         for x in range(width):
             color = [0, 0, 0]
             
+            print(f"Rendering Pixel ({x}, {y})...",end="\r")  # Debug-Ausgabe für jedes Pixel
             # Mehrere Samples pro Pixel für Anti-Aliasing
             for s in range(samples):
                 u = (x + s / samples) / width

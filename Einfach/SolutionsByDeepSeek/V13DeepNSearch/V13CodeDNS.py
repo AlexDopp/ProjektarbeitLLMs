@@ -1,0 +1,327 @@
+import numpy as np
+from PIL import Image
+
+# ----------------------------------------------------------------------
+# Vektoroperationen (als Funktionen für numpy arrays)
+# ----------------------------------------------------------------------
+def vec(x, y, z):
+    return np.array([x, y, z], dtype=np.float64)
+
+def normalize(v):
+    return v / np.linalg.norm(v)
+
+def dot(a, b):
+    return np.dot(a, b)
+
+def reflect(I, N):
+    """Reflektierter Vektor I (einfallend) an Normalen N."""
+    return I - 2 * dot(I, N) * N
+
+# ----------------------------------------------------------------------
+# Strahl
+# ----------------------------------------------------------------------
+class Ray:
+    def __init__(self, origin, direction):
+        self.origin = np.array(origin, dtype=np.float64)
+        self.direction = normalize(np.array(direction, dtype=np.float64))
+
+# ----------------------------------------------------------------------
+# Material
+# ----------------------------------------------------------------------
+class Material:
+    def __init__(self, diffuse, emission=(0,0,0), reflectivity=0.0):
+        self.diffuse = np.array(diffuse, dtype=np.float64)
+        self.emission = np.array(emission, dtype=np.float64)
+        self.reflectivity = reflectivity
+
+# ----------------------------------------------------------------------
+# Basisklasse für alle Objekte
+# ----------------------------------------------------------------------
+class Shape:
+    def intersect(self, ray):
+        """Gibt (t, punkt, normale, material) zurück oder None."""
+        raise NotImplementedError
+
+# ----------------------------------------------------------------------
+# Kugel
+# ----------------------------------------------------------------------
+class Sphere(Shape):
+    def __init__(self, center, radius, material):
+        self.center = np.array(center, dtype=np.float64)
+        self.radius = radius
+        self.material = material
+
+    def intersect(self, ray):
+        oc = ray.origin - self.center
+        a = dot(ray.direction, ray.direction)
+        b = 2.0 * dot(oc, ray.direction)
+        c = dot(oc, oc) - self.radius * self.radius
+        disc = b*b - 4*a*c
+        if disc < 0:
+            return None
+        sqrt_disc = np.sqrt(disc)
+        t1 = (-b - sqrt_disc) / (2*a)
+        t2 = (-b + sqrt_disc) / (2*a)
+        t = min(t1, t2) if t1 > 1e-4 else t2 if t2 > 1e-4 else None
+        if t is None:
+            return None
+        point = ray.origin + t * ray.direction
+        normal = normalize(point - self.center)
+        return (t, point, normal, self.material)
+
+# ----------------------------------------------------------------------
+# Dreieck
+# ----------------------------------------------------------------------
+class Triangle(Shape):
+    def __init__(self, v0, v1, v2, material):
+        self.v0 = np.array(v0, dtype=np.float64)
+        self.v1 = np.array(v1, dtype=np.float64)
+        self.v2 = np.array(v2, dtype=np.float64)
+        self.material = material
+        # Vorberechnete Kante und Normale
+        self.edge1 = self.v1 - self.v0
+        self.edge2 = self.v2 - self.v0
+        self.normal = normalize(np.cross(self.edge1, self.edge2))
+
+    def intersect(self, ray):
+        # Möller–Trumbore
+        h = np.cross(ray.direction, self.edge2)
+        a = dot(self.edge1, h)
+        if abs(a) < 1e-8:
+            return None
+        f = 1.0 / a
+        s = ray.origin - self.v0
+        u = f * dot(s, h)
+        if u < 0.0 or u > 1.0:
+            return None
+        q = np.cross(s, self.edge1)
+        v = f * dot(ray.direction, q)
+        if v < 0.0 or u + v > 1.0:
+            return None
+        t = f * dot(self.edge2, q)
+        if t > 1e-4:
+            point = ray.origin + t * ray.direction
+            return (t, point, self.normal, self.material)
+        return None
+
+# ----------------------------------------------------------------------
+# Punktlichtquelle
+# ----------------------------------------------------------------------
+class PointLight:
+    def __init__(self, position, color, intensity=1.0):
+        self.position = np.array(position, dtype=np.float64)
+        self.color = np.array(color, dtype=np.float64) * intensity
+
+# ----------------------------------------------------------------------
+# Szene
+# ----------------------------------------------------------------------
+class Scene:
+    def __init__(self):
+        self.shapes = []
+        self.lights = []
+
+    def add_shape(self, shape):
+        self.shapes.append(shape)
+
+    def add_light(self, light):
+        self.lights.append(light)
+
+    def intersect(self, ray):
+        """Findet den nächsten Schnittpunkt und gibt (shape, t, point, normal, material) zurück."""
+        closest_t = float('inf')
+        result = None
+        for shape in self.shapes:
+            hit = shape.intersect(ray)
+            if hit is not None:
+                t, point, normal, material = hit
+                if t < closest_t:
+                    closest_t = t
+                    result = (shape, t, point, normal, material)
+        return result
+
+# ----------------------------------------------------------------------
+# Kamera
+# ----------------------------------------------------------------------
+class Camera:
+    def __init__(self, position, look_at, up, viewport_height, viewport_distance):
+        self.position = np.array(position, dtype=np.float64)
+        self.direction = normalize(look_at - self.position)
+        self.up = normalize(up)
+        self.right = normalize(np.cross(self.direction, self.up))
+        self.up = np.cross(self.right, self.direction)  # sicherstellen, dass up orthogonal
+        self.viewport_height = viewport_height
+        self.viewport_distance = viewport_distance
+
+    def get_ray(self, x, y, width, height):
+        """Erzeugt einen Strahl für Pixelkoordinaten (x,y) im Bereich [0,width-1] x [0,height-1]."""
+        # Pixel in NDC (normalisierte Gerätekoordinaten) -1..1
+        ndc_x = (2.0 * x / width - 1.0)
+        ndc_y = (1.0 - 2.0 * y / height)  # y invertieren, da Bildkoordinaten oben 0
+        # Größe des Viewports in Weltkoordinaten
+        half_height = self.viewport_height / 2.0
+        aspect = width / height
+        half_width = half_height * aspect
+        # Punkt auf der Bildebene in Kamerakoordinaten
+        pixel_local = self.right * (ndc_x * half_width) + self.up * (ndc_y * half_height)
+        # Strahlrichtung: vom Kamerazentrum zum Punkt auf der Bildebene (Ebene im Abstand viewport_distance)
+        ray_dir = self.direction * self.viewport_distance + pixel_local
+        return Ray(self.position, ray_dir)
+
+# ----------------------------------------------------------------------
+# Raytracer-Hauptschleife
+# ----------------------------------------------------------------------
+def trace_ray(ray, scene, depth, max_depth=3):
+    if depth > max_depth:
+        return np.zeros(3)
+
+    hit = scene.intersect(ray)
+    if hit is None:
+        return np.zeros(3)  # Hintergrund schwarz
+
+    shape, t, point, normal, material = hit
+
+    # Emissionsanteil (falls Material selbst leuchtet – hier nicht genutzt, aber für Vollständigkeit)
+    color = material.emission.copy()
+
+    # print by hand debug info for intersection
+    # print(f"Hit at depth {depth}: point={point}, normal={normal}, material diffuse={material.diffuse}, reflectivity={material.reflectivity}")
+    
+    # Beleuchtung durch alle Punktlichtquellen
+    for light in scene.lights:
+        light_dir = light.position - point
+        light_dist = np.linalg.norm(light_dir)
+        light_dir = light_dir / light_dist
+
+        # Schattenstrahl
+        shadow_ray = Ray(point + normal * 1e-4, light_dir)  # Ursprung leicht verschieben
+        shadow_hit = scene.intersect(shadow_ray)
+        in_shadow = False
+        if shadow_hit is not None:
+            s_shape, s_t, s_point, s_normal, s_material = shadow_hit
+            if s_t < light_dist - 1e-4:
+                in_shadow = True
+
+        if not in_shadow:
+            # Diffuse Beleuchtung (Lambert)
+            ndotl = max(0.0, dot(normal, light_dir))
+            color += material.diffuse * light.color * ndotl
+
+    # Reflexion
+    if material.reflectivity > 0:
+        # Einfallsrichtung (vom Punkt zur Kamera) ist -ray.direction
+        incident = -ray.direction
+        reflected_dir = reflect(incident, normal)
+        reflected_ray = Ray(point + normal * 1e-4, reflected_dir)
+        reflected_color = trace_ray(reflected_ray, scene, depth+1, max_depth)
+        color += material.reflectivity * reflected_color
+
+    # Clamping
+    return np.clip(color, 0, 1)
+
+def render(scene, camera, width, height):
+    image = np.zeros((height, width, 3), dtype=np.float64)
+    for y in range(height):
+        for x in range(width):
+            ray = camera.get_ray(x, y, width, height)
+            color = trace_ray(ray, scene, 0)
+            image[y, x] = color
+    # In 8-Bit konvertieren
+    img = (image * 255).astype(np.uint8)
+    return Image.fromarray(img)
+
+# ----------------------------------------------------------------------
+# Szenenaufbau
+# ----------------------------------------------------------------------
+def build_cornell_box():
+    scene = Scene()
+
+    # Materialien
+    white = Material(diffuse=(0.8, 0.8, 0.8))
+    red   = Material(diffuse=(0.8, 0.2, 0.2))
+    green = Material(diffuse=(0.2, 0.8, 0.2))
+    blue  = Material(diffuse=(0.2, 0.2, 0.8), reflectivity=0.3)   # Kugel
+    grey  = Material(diffuse=(0.6, 0.6, 0.6), reflectivity=0.2)   # Quader
+
+    # Boxkoordinaten: x von -2 bis 2, y von -1 bis 3, z von -4 bis 0
+    # Boden (y = -1) – zwei Dreiecke
+    v0 = vec(-2, -1, -4); v1 = vec(2, -1, -4); v2 = vec(2, -1, 0); v3 = vec(-2, -1, 0)
+    scene.add_shape(Triangle(v0, v1, v2, white))  # A-B-C
+    scene.add_shape(Triangle(v0, v2, v3, white))  # A-C-D
+
+    # Decke (y = 3) – zwei Dreiecke
+    v0 = vec(-2, 3, -4); v1 = vec(2, 3, -4); v2 = vec(2, 3, 0); v3 = vec(-2, 3, 0)
+    scene.add_shape(Triangle(v0, v2, v1, white))  # A-C-B (Orientierung umgekehrt für Normale (0,-1,0))
+    scene.add_shape(Triangle(v0, v3, v2, white))  # A-D-C
+
+    # Rückwand (z = -4) – zwei Dreiecke
+    v0 = vec(-2, -1, -4); v1 = vec(2, -1, -4); v2 = vec(2, 3, -4); v3 = vec(-2, 3, -4)
+    scene.add_shape(Triangle(v0, v1, v2, white))
+    scene.add_shape(Triangle(v0, v2, v3, white))
+
+    # Linke Wand (x = -2) – zwei Dreiecke (Normale (1,0,0))
+    v0 = vec(-2, -1, -4); v1 = vec(-2, 3, -4); v2 = vec(-2, 3, 0); v3 = vec(-2, -1, 0)
+    scene.add_shape(Triangle(v0, v1, v2, red))
+    scene.add_shape(Triangle(v0, v2, v3, red))
+
+    # Rechte Wand (x = 2) – zwei Dreiecke (Normale (-1,0,0))
+    v0 = vec(2, -1, -4); v1 = vec(2, 3, -4); v2 = vec(2, 3, 0); v3 = vec(2, -1, 0)
+    scene.add_shape(Triangle(v0, v2, v1, green))
+    scene.add_shape(Triangle(v0, v3, v2, green))
+
+    # Objekt 1: Kugel (blau, leicht reflektierend)
+    scene.add_shape(Sphere(center=(0, 0.5, -2), radius=0.7, material=blue))
+
+    # Objekt 2: Kleiner Quader (Würfel) aus Dreiecken
+    # Würfel von (-0.5, -1, -1.5) bis (0.5, 0, -0.5)
+    # Vorderseite (z = -0.5) Normale (0,0,1)
+    v0 = vec(-0.5, -1, -0.5); v1 = vec(0.5, -1, -0.5); v2 = vec(0.5, 0, -0.5); v3 = vec(-0.5, 0, -0.5)
+    scene.add_shape(Triangle(v0, v1, v2, grey))
+    scene.add_shape(Triangle(v0, v2, v3, grey))
+    # Rückseite (z = -1.5) Normale (0,0,-1)
+    v0 = vec(-0.5, -1, -1.5); v1 = vec(0.5, -1, -1.5); v2 = vec(0.5, 0, -1.5); v3 = vec(-0.5, 0, -1.5)
+    scene.add_shape(Triangle(v0, v2, v1, grey))
+    scene.add_shape(Triangle(v0, v3, v2, grey))
+    # Linke Seite (x = -0.5) Normale (-1,0,0)
+    v0 = vec(-0.5, -1, -1.5); v1 = vec(-0.5, -1, -0.5); v2 = vec(-0.5, 0, -0.5); v3 = vec(-0.5, 0, -1.5)
+    scene.add_shape(Triangle(v0, v1, v2, grey))
+    scene.add_shape(Triangle(v0, v2, v3, grey))
+    # Rechte Seite (x = 0.5) Normale (1,0,0)
+    v0 = vec(0.5, -1, -1.5); v1 = vec(0.5, -1, -0.5); v2 = vec(0.5, 0, -0.5); v3 = vec(0.5, 0, -1.5)
+    scene.add_shape(Triangle(v0, v2, v1, grey))
+    scene.add_shape(Triangle(v0, v3, v2, grey))
+    # Unterseite (y = -1) Normale (0,-1,0)
+    v0 = vec(-0.5, -1, -1.5); v1 = vec(0.5, -1, -1.5); v2 = vec(0.5, -1, -0.5); v3 = vec(-0.5, -1, -0.5)
+    scene.add_shape(Triangle(v0, v1, v2, grey))
+    scene.add_shape(Triangle(v0, v2, v3, grey))
+    # Oberseite (y = 0) Normale (0,1,0)
+    v0 = vec(-0.5, 0, -1.5); v1 = vec(0.5, 0, -1.5); v2 = vec(0.5, 0, -0.5); v3 = vec(-0.5, 0, -0.5)
+    scene.add_shape(Triangle(v0, v2, v1, grey))
+    scene.add_shape(Triangle(v0, v3, v2, grey))
+
+    # Lichtquelle (Punktlicht) in der Nähe der Decke
+    scene.add_light(PointLight(position=(0, 2.8, -2), color=(1, 1, 1), intensity=1.2))
+
+    return scene
+
+# ----------------------------------------------------------------------
+# Hauptprogramm
+# ----------------------------------------------------------------------
+if __name__ == "__main__":
+    # Szene erstellen
+    scene = build_cornell_box()
+
+    # Kamera: Position (0,1,8), Blick auf (0,1,-2) (etwa in die Box), oben (0,1,0)
+    camera = Camera(
+        position=(0, 1, 8),
+        look_at=(0, 1, -2),
+        up=(0, 1, 0),
+        viewport_height=0.5,    # so gewählt, dass die Box genau ins Bild passt
+        viewport_distance=1.0
+    )
+
+    # Rendern
+    width, height = 512, 512
+    print("Rendere Cornell-Box...")
+    img = render(scene, camera, width, height)
+    img.save("cornellbox.png")
+    print("Bild gespeichert als cornellbox.png")

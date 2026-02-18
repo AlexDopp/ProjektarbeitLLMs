@@ -1,0 +1,475 @@
+import math
+from dataclasses import dataclass
+from typing import List, Optional, Tuple
+import struct
+
+# ============================================================================
+# Mathematik und Geometrie
+# ============================================================================
+
+@dataclass
+class Vec3:
+    """3D-Vektor mit grundlegenden Operationen"""
+    x: float = 0.0
+    y: float = 0.0
+    z: float = 0.0
+    
+    def __add__(self, other):
+        return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
+    
+    def __sub__(self, other):
+        return Vec3(self.x - other.x, self.y - other.y, self.z - other.z)
+    
+    def __mul__(self, scalar: float):
+        return Vec3(self.x * scalar, self.y * scalar, self.z * scalar)
+    
+    def __rmul__(self, scalar: float):
+        return self.__mul__(scalar)
+    
+    def __truediv__(self, scalar: float):
+        return Vec3(self.x / scalar, self.y / scalar, self.z / scalar)
+    
+    def dot(self, other) -> float:
+        return self.x * other.x + self.y * other.y + self.z * other.z
+    
+    def cross(self, other):
+        return Vec3(
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x
+        )
+    
+    def norm(self) -> float:
+        return math.sqrt(self.dot(self))
+    
+    def normalize(self):
+        n = self.norm()
+        if n > 0:
+            return self / n
+        return self
+    
+    def __str__(self):
+        return f"({self.x:.2f}, {self.y:.2f}, {self.z:.2f})"
+
+
+@dataclass
+class Ray:
+    """Strahl mit Ursprung und Richtung"""
+    origin: Vec3
+    direction: Vec3
+    
+    def point_at(self, t: float) -> Vec3:
+        return self.origin + self.direction * t
+
+
+@dataclass
+class HitRecord:
+    """Informationen über einen Schnittpunkt"""
+    t: float
+    point: Vec3
+    normal: Vec3
+    material: 'Material'
+    front_face: bool = True
+
+
+# ============================================================================
+# Materialien und Beleuchtung
+# ============================================================================
+
+class Material:
+    """Basisklasse für Materialien"""
+    def scatter(self, ray: Ray, hit: HitRecord) -> Tuple[bool, Ray, Vec3]:
+        raise NotImplementedError
+
+
+@dataclass
+class Lambertian(Material):
+    """Diffuses Material"""
+    albedo: Vec3
+    
+    def scatter(self, ray: Ray, hit: HitRecord) -> Tuple[bool, Ray, Vec3]:
+        scatter_direction = hit.normal + random_unit_vector()
+        if scatter_direction.norm() < 1e-8:
+            scatter_direction = hit.normal
+        
+        scattered = Ray(hit.point, scatter_direction.normalize())
+        return True, scattered, self.albedo
+
+
+@dataclass
+class Metal(Material):
+    """Reflektierendes Material"""
+    albedo: Vec3
+    fuzz: float = 0.0
+    
+    def scatter(self, ray: Ray, hit: HitRecord) -> Tuple[bool, Ray, Vec3]:
+        reflected = reflect(ray.direction.normalize(), hit.normal)
+        scattered = Ray(
+            hit.point, 
+            reflected + random_unit_vector() * self.fuzz
+        )
+        return (scattered.direction.dot(hit.normal) > 0), scattered, self.albedo
+
+
+# ============================================================================
+# Geometrie (Primitive)
+# ============================================================================
+
+class Hittable:
+    """Basisklasse für alle Objekte, die von Strahlen getroffen werden können"""
+    def hit(self, ray: Ray, t_min: float, t_max: float) -> Optional[HitRecord]:
+        raise NotImplementedError
+
+
+@dataclass
+class Sphere(Hittable):
+    """Kugel-Objekt"""
+    center: Vec3
+    radius: float
+    material: Material
+    
+    def hit(self, ray: Ray, t_min: float, t_max: float) -> Optional[HitRecord]:
+        oc = ray.origin - self.center
+        a = ray.direction.dot(ray.direction)
+        b = oc.dot(ray.direction)
+        c = oc.dot(oc) - self.radius * self.radius
+        discriminant = b * b - a * c
+        
+        if discriminant <= 0:
+            return None
+        
+        sqrt_d = math.sqrt(discriminant)
+        
+        # Nächste gültige Schnittstelle finden
+        t = (-b - sqrt_d) / a
+        if t < t_min or t > t_max:
+            t = (-b + sqrt_d) / a
+            if t < t_min or t > t_max:
+                return None
+        
+        point = ray.point_at(t)
+        normal = (point - self.center) / self.radius
+        front_face = ray.direction.dot(normal) < 0
+        
+        return HitRecord(t, point, normal if front_face else normal * -1, 
+                        self.material, front_face)
+
+
+@dataclass
+class Quad(Hittable):
+    """Rechteckiges Quad (für Wände)"""
+    point: Vec3      # Ein Eckpunkt
+    u: Vec3          # Vektor entlang einer Seite
+    v: Vec3          # Vektor entlang der anderen Seite
+    material: Material
+    
+    def __post_init__(self):
+        self.normal = self.u.cross(self.v).normalize()
+        self.d = self.normal.dot(self.point)
+        self.w = self.normal.cross(self.u) / self.u.dot(self.u)
+        self.area = self.u.cross(self.v).norm()
+    
+    def hit(self, ray: Ray, t_min: float, t_max: float) -> Optional[HitRecord]:
+        denom = self.normal.dot(ray.direction)
+        
+        if abs(denom) < 1e-8:
+            return None
+        
+        t = (self.d - self.normal.dot(ray.origin)) / denom
+        if t < t_min or t > t_max:
+            return None
+        
+        point = ray.point_at(t)
+        planar_hit = point - self.point
+        alpha = self.w.dot(planar_hit.cross(self.v))
+        beta = self.w.dot(self.u.cross(planar_hit))
+        
+        if alpha < 0 or alpha > 1 or beta < 0 or beta > 1:
+            return None
+        
+        front_face = ray.direction.dot(self.normal) < 0
+        normal = self.normal if front_face else self.normal * -1
+        
+        return HitRecord(t, point, normal, self.material, front_face)
+
+
+@dataclass
+class HittableList(Hittable):
+    """Liste von Hittable-Objekten"""
+    objects: List[Hittable]
+    
+    def hit(self, ray: Ray, t_min: float, t_max: float) -> Optional[HitRecord]:
+        hit_record = None
+        closest_t = t_max
+        
+        for obj in self.objects:
+            hit = obj.hit(ray, t_min, closest_t)
+            if hit:
+                closest_t = hit.t
+                hit_record = hit
+        
+        return hit_record
+
+
+# ============================================================================
+# Kamera
+# ============================================================================
+
+@dataclass
+class Camera:
+    """Einfache Kamera für Raytracing"""
+    lookfrom: Vec3
+    lookat: Vec3
+    vup: Vec3
+    vfov: float      # Vertical field of view in degrees
+    aspect_ratio: float
+    
+    def __post_init__(self):
+        theta = math.radians(self.vfov)
+        h = math.tan(theta / 2)
+        viewport_height = 2.0 * h
+        viewport_width = self.aspect_ratio * viewport_height
+        
+        self.w = (self.lookfrom - self.lookat).normalize()
+        self.u = self.vup.cross(self.w).normalize()
+        self.v = self.w.cross(self.u)
+        
+        self.origin = self.lookfrom
+        self.horizontal = self.u * viewport_width
+        self.vertical = self.v * viewport_height
+        self.lower_left = (self.origin - self.horizontal / 2 - 
+                          self.vertical / 2 - self.w)
+    
+    def get_ray(self, u: float, v: float) -> Ray:
+        return Ray(
+            self.origin,
+            (self.lower_left + self.horizontal * u + self.vertical * v - 
+             self.origin).normalize()
+        )
+
+
+# ============================================================================
+# Hilfsfunktionen
+# ============================================================================
+
+def random_unit_vector() -> Vec3:
+    """Zufälliger Einheitsvektor"""
+    while True:
+        p = Vec3(random_float() * 2 - 1, 
+                random_float() * 2 - 1, 
+                random_float() * 2 - 1)
+        len_sq = p.dot(p)
+        if 1e-160 < len_sq <= 1:
+            return p / math.sqrt(len_sq)
+
+
+def reflect(v: Vec3, n: Vec3) -> Vec3:
+    """Reflexionsvektor berechnen"""
+    return v - n * (2 * v.dot(n))
+
+
+def random_float() -> float:
+    """Einfacher Zufallsgenerator (minimaler Import)"""
+    # Linearer Kongruenzgenerator
+    seed = getattr(random_float, "seed", 123456789)
+    seed = (1664525 * seed + 1013904223) & 0xFFFFFFFF
+    random_float.seed = seed
+    return seed / 4294967296.0
+
+
+# ============================================================================
+# Raytracing-Kern
+# ============================================================================
+
+def ray_color(ray: Ray, world: Hittable, depth: int = 0) -> Vec3:
+    """Berechnet die Farbe für einen Strahl"""
+    if depth >= 10:  # Rekursionstiefe begrenzen
+        return Vec3(0, 0, 0)
+    
+    hit = world.hit(ray, 0.001, float('inf'))
+    
+    if hit:
+        # Reflexion und Beleuchtung
+        scattered_valid, scattered, attenuation = hit.material.scatter(ray, hit)
+        
+        if scattered_valid:
+            # Direkte Beleuchtung berechnen
+            light_color = compute_lighting(hit.point, hit.normal, world)
+            reflected_color = ray_color(scattered, world, depth + 1)
+            
+            # Kombinieren
+            return Vec3(
+                attenuation.x * (light_color.x + reflected_color.x),
+                attenuation.y * (light_color.y + reflected_color.y),
+                attenuation.z * (light_color.z + reflected_color.z)
+            )
+        else:
+            return Vec3(0, 0, 0)
+    
+    # Hintergrund (Himmel)
+    t = 0.5 * (ray.direction.y + 1.0)
+    return Vec3(1.0, 1.0, 1.0) * (1.0 - t) + Vec3(0.5, 0.7, 1.0) * t
+
+
+def compute_lighting(point: Vec3, normal: Vec3, world: Hittable) -> Vec3:
+    """Berechnet die Beleuchtung an einem Punkt (vereinfacht)"""
+    # Einfache Ambient-Beleuchtung
+    ambient = Vec3(0.1, 0.1, 0.1)
+    
+    # Lichtquelle in der Cornell-Box (oben)
+    light_pos = Vec3(278, 550, 279.5)
+    light_color = Vec3(1.0, 1.0, 1.0) * 0.8
+    
+    # Richtung zum Licht
+    light_dir = (light_pos - point).normalize()
+    
+    # Schattenstrahl
+    shadow_ray = Ray(point + normal * 0.001, light_dir)
+    shadow_hit = world.hit(shadow_ray, 0.001, float('inf'))
+    
+    if not shadow_hit:  # Kein Schatten
+        # Diffuse Beleuchtung
+        diffuse = max(0, normal.dot(light_dir))
+        return ambient + light_color * diffuse
+    
+    return ambient  # Nur Ambient, wenn im Schatten
+
+
+# ============================================================================
+# Szene aufbauen (Cornell-Box)
+# ============================================================================
+
+def create_cornell_box() -> HittableList:
+    """Erstellt die klassische Cornell-Box"""
+    materials = {
+        'red': Lambertian(Vec3(0.65, 0.05, 0.05)),
+        'green': Lambertian(Vec3(0.12, 0.45, 0.15)),
+        'white': Lambertian(Vec3(0.73, 0.73, 0.73)),
+        'light': Lambertian(Vec3(15.0, 15.0, 15.0)),  # Helles Material für Licht
+        'metal': Metal(Vec3(0.8, 0.8, 0.8), 0.1)
+    }
+    
+    objects = []
+    
+    # Wände (als Quads)
+    # Linke Wand (rot)
+    objects.append(Quad(Vec3(0, 0, 0), Vec3(0, 560, 0), Vec3(0, 0, 560), 
+                       materials['red']))
+    
+    # Rechte Wand (grün)
+    objects.append(Quad(Vec3(560, 0, 0), Vec3(0, 560, 0), Vec3(0, 0, 560), 
+                       materials['green']))
+    
+    # Boden (weiß)
+    objects.append(Quad(Vec3(0, 0, 0), Vec3(560, 0, 0), Vec3(0, 0, 560), 
+                       materials['white']))
+    
+    # Decke (weiß)
+    objects.append(Quad(Vec3(0, 560, 0), Vec3(560, 0, 0), Vec3(0, 0, 560), 
+                       materials['white']))
+    
+    # Hinterwand (weiß)
+    objects.append(Quad(Vec3(0, 0, 560), Vec3(560, 0, 0), Vec3(0, 560, 0), 
+                       materials['white']))
+    
+    # Vorderwand (weiß) - nicht sichtbar, aber für Vollständigkeit
+    objects.append(Quad(Vec3(0, 0, 0), Vec3(560, 0, 0), Vec3(0, 560, 0), 
+                       materials['white']))
+    
+    # Lichtquelle an der Decke
+    light = Quad(Vec3(213, 559.9, 227), Vec3(130, 0, 0), Vec3(0, 0, 105), 
+                materials['light'])
+    objects.append(light)
+    
+    # Zwei Boxen (als Kugeln dargestellt für Einfachheit)
+    # Kleine Kugel vorne (metallisch)
+    objects.append(Sphere(Vec3(200, 100, 300), 100, materials['metal']))
+    
+    # Große Kugel hinten (diffus)
+    objects.append(Sphere(Vec3(380, 150, 200), 150, materials['white']))
+    
+    return HittableList(objects)
+
+
+# ============================================================================
+# Bildausgabe (PPM-Format)
+# ============================================================================
+
+def save_ppm(filename: str, pixels: List[List[Vec3]], width: int, height: int):
+    """Speichert das Bild im PPM-Format"""
+    with open(filename, 'w') as f:
+        f.write(f"P3\n{width} {height}\n255\n")
+        
+        for j in range(height-1, -1, -1):
+            for i in range(width):
+                pixel = pixels[j][i]
+                
+                # Gamma-Korrektur und Quantisierung
+                r = int(255.999 * math.sqrt(max(0, min(1, pixel.x))))
+                g = int(255.999 * math.sqrt(max(0, min(1, pixel.y))))
+                b = int(255.999 * math.sqrt(max(0, min(1, pixel.z))))
+                
+                f.write(f"{r} {g} {b} ")
+            f.write("\n")
+    
+    print(f"Bild gespeichert: {filename}")
+
+
+# ============================================================================
+# Hauptprogramm
+# ============================================================================
+
+def main():
+    # Bildparameter
+    aspect_ratio = 1.0
+    width = 400
+    height = int(width / aspect_ratio)
+    samples_per_pixel = 50  # Für bessere Qualität
+    
+    # Kamera einrichten
+    camera = Camera(
+        lookfrom=Vec3(278, 278, -800),
+        lookat=Vec3(278, 278, 0),
+        vup=Vec3(0, 1, 0),
+        vfov=40,
+        aspect_ratio=aspect_ratio
+    )
+    
+    # Szene erstellen
+    world = create_cornell_box()
+    
+    print(f"Rendere Cornell-Box ({width}x{height})...")
+    
+    # Pixel-Array initialisieren
+    pixels = [[Vec3(0, 0, 0) for _ in range(width)] for _ in range(height)]
+    
+    # Raytracing-Hauptschleife
+    for j in range(height):
+        for i in range(width):
+            pixel_color = Vec3(0, 0, 0)
+            
+            # Mehrere Samples pro Pixel für Antialiasing
+            for _ in range(samples_per_pixel):
+                u = (i + random_float()) / (width - 1)
+                v = (j + random_float()) / (height - 1)
+                
+                ray = camera.get_ray(u, v)
+                pixel_color = pixel_color + ray_color(ray, world)
+            
+            # Durchschnitt der Samples
+            pixels[j][i] = pixel_color / samples_per_pixel
+            
+            # Debug added by hand
+            print(f"Zeile {j + 1}/{i+1} fertig", end='\r')
+        
+        # Fortschritt anzeigen
+        # if (j + 1) % 50 == 0:
+        #    print(f"Zeile {j + 1}/{height} fertig")
+    
+    # Bild speichern
+    save_ppm("cornell_box.ppm", pixels, width, height)
+    print("Fertig!")
+
+
+if __name__ == "__main__":
+    main()
