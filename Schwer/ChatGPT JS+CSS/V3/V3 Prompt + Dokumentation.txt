@@ -1,7 +1,12 @@
 V3 Prompt:
-Die neue Zurodnung klappt gut und auch die neuen Karten sehen gut aus, aber die Fehlerkontrollen fehlen noch. Erkenne ob mehrere Karten die selbe ID haben und lehne das Deck dann ab, selbes gilt für Karten deren Overdue Time über 1 Jahr alt ist oder die ein Datum haben das nach dem aktuellen Tag liegt. Außerdem funktioniert der Boxplot aktuell nur für das erste Deck das geladen wird und der Fortschritt unterschiedlicher Lernzeile updated sich aktuell immer bei diesem Deck, egal welches Lernziel ausgewählt war. Fixe das alles und gib mir den vollständigen verbesserten Code zurück. Antworte nur mit Code.
+Die neue Zurodnung klappt gut und auch die neuen Karten sehen gut aus, aber die Fehlerkontrollen fehlen noch. 
+Erkenne ob mehrere Karten die selbe ID haben und lehne das Deck dann ab, 
+selbes gilt für Karten deren Overdue Time über 1 Jahr alt ist oder die ein Datum haben das nach dem aktuellen Tag liegt. 
+Außerdem funktioniert der Boxplot aktuell nur für das erste Deck das geladen wird und der Fortschritt unterschiedlicher Lernzeile updated sich aktuell immer bei diesem Deck,
+egal welches Lernziel ausgewählt war. Fixe das alles und gib mir den vollständigen verbesserten Code zurück. Antworte nur mit Code.
 
 Kommentare:
-Fehlerkontrolle deutlich besser, aber fehlt noch allgemeine "fehlt etwas" Kontrolle.
-Boxplot immernoch in-sync egal welches Lernziel ausgewählt ist (=> Da Status in Karte gespeichert wird warscheinlich ohne Extra Datenbank nicht lösbar)
+Fehlerkontrolle deutlich besser, aber es fehlt noch eine allgemeine "fehlt etwas in den Karten" Kontrolle.
+Boxplot immernoch in-sync, egal welches Lernziel ausgewählt ist (=> Da Status in Karte gespeichert wird warscheinlich ohne Extra Datenbank nicht lösbar)
+
 Update von Boxplot auch nicht ganz eindeutig, manchmal funktioniert Session stoppen und manchmal nur auf Abschluss aller Karten.
