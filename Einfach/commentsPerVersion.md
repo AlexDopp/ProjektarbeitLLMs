@@ -155,3 +155,16 @@ for o in scene.objects:
     if hit and hit[0] < dist_to_light:
         shadow = True
         break
+
+Version 7:
+
+has same issue as all previous but for some reason gave ambient light with the prompt. this leads to the image appearing (and being limited at the ambient light level) eventho the same requirements exist (ambient light is not mentioned) 
+
+Version 12:
+
+While having the same issue as all the previous ones, it sends a different value (mat.color * 0.1) as return, this lead it to be not fully black, but instead being just dark (0.1 * max is highest possible color code)
+
+Version 1:
+
+does not have shadows at all? at no point. 
+did not follow the prompt (ignored shadow)
