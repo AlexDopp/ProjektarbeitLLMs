@@ -1,0 +1,6 @@
+V6 Prompt:
+Ok, während eine Session läuft müssen alle Felder außer "Session stoppen" gelocked sein, denn aktuell kann man eine zweite Session starten, die das Programm killt. Außerdem kontrolliere nochmal die Fehlermeldungen bei falschen Imports und versuche diese einheitlicher zu gestalten, verändere dabei nicht, welche Fehler erkannt werden. Passe deinen Code dahingehend an und gib den vollständigen verbesserten Code zurück. Antworte nur mit Code.
+
+Kommentare:
+Import-Fehler werden deutlich besser beschrieben. Außerdem werden jetzt während einer Session alle unnötigen Buttons etc. geblockt.
+Zeitanzeige funktioniert perfekt. Alles in allem eine ziemlich solide Lösung.
