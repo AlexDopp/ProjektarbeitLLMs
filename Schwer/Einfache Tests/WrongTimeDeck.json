@@ -1,0 +1,21 @@
+{
+  "deckName": "Overdue Deck",
+  "cards": [
+    {
+      "id": "1",
+      "front": "Frage",
+      "back": "Antwort",
+      "topic": "Spaced Repetition",
+      "status": "learned",
+      "lastReviewed": "2026-01-01"
+    },
+    {
+      "id": "2",
+      "front": "Frage",
+      "back": "Antwort",
+      "topic": "Spaced Repetition",
+      "status": "learned",
+      "lastReviewed": "2029-01-01"
+    }
+  ]
+}
