@@ -27,3 +27,12 @@ Version 8:
     Andere Art von Version 7
 
 Version 9:
+    Fokus auf Verständlichkeit der Konzepte.
+
+Versionen 10 - 13 sind mit einem Extra Paragraphen versehen zu genaueren Beschreibung und Einschränkung des Codes.
+    
+Die einzelnen Versionen haben verschiedene Arten von:
+    512x512 pxl Größe.
+    Es muss eine Cornellbox geben.
+    Es muss mindestens 1 Licht und 1 Objekt geben.
+    Das Bild wird mit einem festen Namen gespeichert.

@@ -1,4 +1,4 @@
-Entwickle einen einfachen Raytracer zur Darstellung einer Cornelbox, wobei der Fokus auf einer klaren Abbildung der grundlegenden Raytracing-Konzepte liegt.
+Entwickle einen einfachen Raytracer zur Darstellung einer Cornellbox, wobei der Fokus auf einer klaren Abbildung der grundlegenden Raytracing-Konzepte liegt.
 
 Allgemein:
 1. Die Speicher- und Ressourcenverwaltung soll ohne komplexe manuelle Eingriffe auskommen.
@@ -9,7 +9,7 @@ Allgemein:
 
 Raytracer spezifisch:
 1. Die geometrischen Elemente der Szene sind frei wählbar und explizit im Code definiert.
-2. Der Raytracer erzeugt ein einzelnes Bild einer Cornelbox-ähnlichen Szene und speichert dieses ab.
+2. Der Raytracer erzeugt ein einzelnes Bild einer Cornellbox-ähnlichen Szene und speichert dieses ab.
 3. Beleuchtung, Schatten, Shading und Reflexionen sollen direkt durch das Raytracing berechnet werden.
 4. Zusätzliche Bildverarbeitung nach dem Rendern ist nicht erlaubt.
 5. Mathematik, Szenengeometrie und Raytracing-Algorithmus sollen voneinander getrennt und modular nutzbar sein.
