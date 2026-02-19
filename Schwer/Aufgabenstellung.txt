@@ -7,3 +7,5 @@ Im Vergleich:
 ChatGPT 5.0 vs. Cursor Agent (GPT4o + Gemini3.5 + Claude3.5)
 Versuch 1: HTML-Datei mit eingebettetem JavaScript und CSS
 Versuch 2: HTML-Datei mit CSS, Frontend-JS, Backend-WebAssembly in Rust
+
+Zeitraum: Januar+Februar 2026
