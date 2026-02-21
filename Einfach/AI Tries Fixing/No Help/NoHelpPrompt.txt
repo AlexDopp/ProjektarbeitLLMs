@@ -1,7 +1,7 @@
 Ich habe diesen Python Code geschrieben für einen Raytracer geschrieben. Leider ist die Ausgabe "V2Box.ppm" komplett schwarz.
 Bitte gib mir genaue Anpassungen um diesen Fehler zu beheben.
 Es kann an mehreren Stellen Fehlerhaft sein.
-Es gibt Debugausgaben, die zur Hilfe und Findung des Problems führen.
+Es gibt kein Debugausgaben, die zur Hilfe und Findung des Problems führen.
 
 Der Code: 
 import math
