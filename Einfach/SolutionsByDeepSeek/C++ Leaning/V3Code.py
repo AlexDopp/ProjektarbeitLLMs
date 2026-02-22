@@ -63,15 +63,13 @@ class Ray:
 # Geometrie-Bereich
 # ============================================================================
 
-@dataclass
 class Material:
-    """Materialeigenschaften für Oberflächen"""
-    color: Vec3
-    emissive: Vec3 = Vec3(0, 0, 0)
-    reflective: float = 0.0  # 0 = nicht reflektierend, 1 = voll reflektierend
-
-
-@dataclass
+    
+    def __init__(self, color: Vec3, emissive: Vec3 = Vec3(0, 0, 0), reflective: float = 0.0):
+        self.color = color
+        self.emissive = emissive
+        self.reflective = reflective
+        
 class HitRecord:
     """Informationen über einen Schnittpunkt"""
     point: Vec3

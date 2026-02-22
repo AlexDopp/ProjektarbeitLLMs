@@ -1,0 +1,321 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+#include <memory>
+
+// ============================================================================
+// Mathematik-Modul
+// ============================================================================
+
+class Vec3 {
+public:
+    double x, y, z;
+    
+    Vec3() : x(0), y(0), z(0) {}
+    Vec3(double x, double y, double z) : x(x), y(y), z(z) {}
+    
+    Vec3 operator+(const Vec3& v) const { return Vec3(x + v.x, y + v.y, z + v.z); }
+    Vec3 operator-(const Vec3& v) const { return Vec3(x - v.x, y - v.y, z - v.z); }
+    Vec3 operator*(double s) const { return Vec3(x * s, y * s, z * s); }
+    Vec3 operator/(double s) const { return Vec3(x / s, y / s, z / s); }
+    
+    double dot(const Vec3& v) const { return x * v.x + y * v.y + z * v.z; }
+    Vec3 cross(const Vec3& v) const { 
+        return Vec3(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x); 
+    }
+    
+    double length() const { return std::sqrt(x*x + y*y + z*z); }
+    Vec3 normalize() const { 
+        double len = length();
+        return (len > 0) ? *this / len : Vec3(0, 0, 0); 
+    }
+};
+
+class Ray {
+public:
+    Vec3 origin;
+    Vec3 direction;
+    
+    Ray(const Vec3& o, const Vec3& d) : origin(o), direction(d.normalize()) {}
+    
+    Vec3 point(double t) const { return origin + direction * t; }
+};
+
+// ============================================================================
+// Geometrie-Modul
+// ============================================================================
+
+class Material {
+public:
+    Vec3 color;
+    double reflectance;
+    double diffuse;
+    
+    Material(const Vec3& c, double r = 0.0, double d = 0.8) 
+        : color(c), reflectance(r), diffuse(d) {}
+};
+
+class HitRecord {
+public:
+    double t;
+    Vec3 point;
+    Vec3 normal;
+    const Material* material;
+    
+    HitRecord() : t(0), material(nullptr) {}
+};
+
+class Hittable {
+public:
+    virtual ~Hittable() {}
+    virtual bool hit(const Ray& ray, double tMin, double tMax, HitRecord& record) const = 0;
+};
+
+class Sphere : public Hittable {
+private:
+    Vec3 center;
+    double radius;
+    Material material;
+    
+public:
+    Sphere(const Vec3& c, double r, const Material& m) 
+        : center(c), radius(r), material(m) {}
+    
+    bool hit(const Ray& ray, double tMin, double tMax, HitRecord& record) const override {
+        Vec3 oc = ray.origin - center;
+        double a = ray.direction.dot(ray.direction);
+        double b = 2.0 * oc.dot(ray.direction);
+        double c = oc.dot(oc) - radius * radius;
+        
+        double discriminant = b*b - 4*a*c;
+        if (discriminant < 0) return false;
+        
+        double sqrtD = std::sqrt(discriminant);
+        double t = (-b - sqrtD) / (2.0 * a);
+        
+        if (t < tMin || t > tMax) {
+            t = (-b + sqrtD) / (2.0 * a);
+            if (t < tMin || t > tMax) return false;
+        }
+        
+        record.t = t;
+        record.point = ray.point(t);
+        record.normal = (record.point - center).normalize();
+        record.material = &material;
+        
+        return true;
+    }
+};
+
+class Plane : public Hittable {
+private:
+    Vec3 point;
+    Vec3 normal;
+    Material material;
+    
+public:
+    Plane(const Vec3& p, const Vec3& n, const Material& m) 
+        : point(p), normal(n.normalize()), material(m) {}
+    
+    bool hit(const Ray& ray, double tMin, double tMax, HitRecord& record) const override {
+        double denominator = ray.direction.dot(normal);
+        
+        if (std::abs(denominator) < 1e-6) return false;
+        
+        double t = (point - ray.origin).dot(normal) / denominator;
+        
+        if (t < tMin || t > tMax) return false;
+        
+        record.t = t;
+        record.point = ray.point(t);
+        record.normal = normal;
+        record.material = &material;
+        
+        return true;
+    }
+};
+
+// ============================================================================
+// Raytracing-Modul
+// ============================================================================
+
+class Scene {
+private:
+    std::vector<std::unique_ptr<Hittable>> objects;
+    Vec3 ambientLight;
+    
+public:
+    Scene() : ambientLight(0.1, 0.1, 0.1) {}
+    
+    void addObject(std::unique_ptr<Hittable> object) {
+        objects.push_back(std::move(object));
+    }
+    
+    bool trace(const Ray& ray, double tMin, double tMax, HitRecord& record) const {
+        bool hitAnything = false;
+        double closest = tMax;
+        HitRecord tempRecord;
+        
+        for (const auto& obj : objects) {
+            if (obj->hit(ray, tMin, closest, tempRecord)) {
+                hitAnything = true;
+                closest = tempRecord.t;
+                record = tempRecord;
+            }
+        }
+        
+        return hitAnything;
+    }
+    
+    Vec3 getAmbientLight() const { return ambientLight; }
+};
+
+class Light {
+public:
+    Vec3 position;
+    Vec3 color;
+    double intensity;
+    
+    Light(const Vec3& p, const Vec3& c, double i) 
+        : position(p), color(c), intensity(i) {}
+};
+
+class Camera {
+private:
+    Vec3 position;
+    Vec3 lookAt;
+    Vec3 up;
+    double fov;
+    int width, height;
+    
+public:
+    Camera(const Vec3& pos, const Vec3& target, const Vec3& upDir, double fieldOfView, int w, int h)
+        : position(pos), lookAt(target), up(upDir.normalize()), fov(fieldOfView), width(w), height(h) {}
+    
+    Ray getRay(int x, int y) const {
+        double aspectRatio = static_cast<double>(width) / height;
+        double tanFov = std::tan(fov * 0.5 * M_PI / 180.0);
+        
+        double px = (2.0 * (x + 0.5) / width - 1.0) * tanFov * aspectRatio;
+        double py = (1.0 - 2.0 * (y + 0.5) / height) * tanFov;
+        
+        Vec3 forward = (lookAt - position).normalize();
+        Vec3 right = forward.cross(up).normalize();
+        Vec3 realUp = right.cross(forward).normalize();
+        
+        Vec3 rayDir = (forward + right * px + realUp * py).normalize();
+        
+        return Ray(position, rayDir);
+    }
+};
+
+Vec3 shade(const HitRecord& record, const Scene& scene, const std::vector<Light>& lights, const Ray& ray, int depth) {
+    if (depth <= 0) return Vec3(0, 0, 0);
+    
+    Vec3 color = record.material->color * scene.getAmbientLight();
+    
+    for (const auto& light : lights) {
+        Vec3 lightDir = (light.position - record.point).normalize();
+        
+        // Schatten-Test
+        Ray shadowRay(record.point + record.normal * 0.001, lightDir);
+        HitRecord shadowHit;
+        
+        if (!scene.trace(shadowRay, 0, (light.position - record.point).length(), shadowHit)) {
+            // Diffuse Beleuchtung
+            double diffuseFactor = std::max(0.0, record.normal.dot(lightDir));
+            color = color + record.material->color * light.color * light.intensity * 
+                    diffuseFactor * record.material->diffuse;
+        }
+    }
+    
+    // Reflexion
+    if (record.material->reflectance > 0) {
+        Vec3 reflectedDir = ray.direction - record.normal * 2 * ray.direction.dot(record.normal);
+        Ray reflectedRay(record.point + record.normal * 0.001, reflectedDir);
+        
+        HitRecord reflectedHit;
+        if (scene.trace(reflectedRay, 0, 1000, reflectedHit)) {
+            color = color + shade(reflectedHit, scene, lights, reflectedRay, depth - 1) * record.material->reflectance;
+        }
+    }
+    
+    return color;
+}
+
+// ============================================================================
+// Hauptprogramm - Cornelbox-Szene
+// ============================================================================
+
+int main() {
+    // Szene erstellen
+    Scene scene;
+    
+    // Materialien definieren
+    Material red(Vec3(1.0, 0.2, 0.2), 0.3, 0.7);
+    Material green(Vec3(0.2, 1.0, 0.2), 0.3, 0.7);
+    Material white(Vec3(1.0, 1.0, 1.0), 0.2, 0.8);
+    Material blue(Vec3(0.2, 0.2, 1.0), 0.5, 0.5);
+    Material gray(Vec3(0.5, 0.5, 0.5), 0.1, 0.9);
+    
+    // Wände der Cornelbox
+    scene.addObject(std::make_unique<Plane>(Vec3(0, -1, 0), Vec3(0, 1, 0), white));   // Boden
+    scene.addObject(std::make_unique<Plane>(Vec3(0, 1, 0), Vec3(0, -1, 0), white));   // Decke
+    scene.addObject(std::make_unique<Plane>(Vec3(-2, 0, 0), Vec3(1, 0, 0), red));     // Linke Wand
+    scene.addObject(std::make_unique<Plane>(Vec3(2, 0, 0), Vec3(-1, 0, 0), green));   // Rechte Wand
+    scene.addObject(std::make_unique<Plane>(Vec3(0, 0, -3), Vec3(0, 0, 1), white));   // Hintere Wand
+    
+    // Objekte in der Box
+    scene.addObject(std::make_unique<Sphere>(Vec3(-1, -0.3, -1), 0.7, blue));
+    scene.addObject(std::make_unique<Sphere>(Vec3(1, 0, -0.5), 1.0, gray));
+    
+    // Lichtquellen
+    std::vector<Light> lights;
+    lights.push_back(Light(Vec3(0, 0.8, 0), Vec3(1, 1, 1), 1.2));
+    lights.push_back(Light(Vec3(-1, 0.5, -1), Vec3(0.8, 0.8, 1.0), 0.5));
+    
+    // Kamera
+    Camera camera(Vec3(0, 0.5, 5), Vec3(0, 0, -1), Vec3(0, 1, 0), 60, 800, 600);
+    
+    // Bild rendern
+    std::cout << "Rendere Cornelbox...\n";
+    
+    std::vector<Vec3> framebuffer(800 * 600);
+    
+    for (int y = 0; y < 600; y++) {
+        for (int x = 0; x < 800; x++) {
+            Ray ray = camera.getRay(x, y);
+            HitRecord record;
+            
+            if (scene.trace(ray, 0, 1000, record)) {
+                framebuffer[y * 800 + x] = shade(record, scene, lights, ray, 3);
+            } else {
+                framebuffer[y * 800 + x] = Vec3(0.1, 0.1, 0.2); // Hintergrund
+            }
+        }
+    }
+    
+    // Bild als PPM speichern
+    std::ofstream image("cornellbox.ppm");
+    image << "P3\n800 600\n255\n";
+    
+    for (int y = 0; y < 600; y++) {
+        for (int x = 0; x < 800; x++) {
+            Vec3& color = framebuffer[y * 800 + x];
+            
+            // Gamma-Korrektur und Clamping
+            int r = static_cast<int>(255 * std::sqrt(std::min(1.0, color.x)));
+            int g = static_cast<int>(255 * std::sqrt(std::min(1.0, color.y)));
+            int b = static_cast<int>(255 * std::sqrt(std::min(1.0, color.z)));
+            
+            image << r << " " << g << " " << b << "\n";
+        }
+    }
+    
+    image.close();
+    std::cout << "Fertig! Bild gespeichert als 'cornellbox.ppm'\n";
+    
+    return 0;
+}

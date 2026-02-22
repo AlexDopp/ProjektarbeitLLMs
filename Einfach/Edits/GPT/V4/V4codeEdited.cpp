@@ -1,0 +1,239 @@
+#include <cmath>
+#include <fstream>
+#include <vector>
+
+/* ============================================================
+   MATHEMATIK
+   ============================================================ */
+
+struct Vec3 {
+    double x, y, z;
+
+    Vec3(double v = 0) : x(v), y(v), z(v) {}
+    Vec3(double x_, double y_, double z_) : x(x_), y(y_), z(z_) {}
+
+    Vec3 operator+(const Vec3& b) const { return {x+b.x, y+b.y, z+b.z}; }
+    Vec3 operator-(const Vec3& b) const { return {x-b.x, y-b.y, z-b.z}; }
+    Vec3 operator*(double s) const { return {x*s, y*s, z*s}; }
+    Vec3 operator*(const Vec3& b) const { return {x*b.x, y*b.y, z*b.z}; }
+
+    Vec3 normalized() const {
+        double l = std::sqrt(x*x + y*y + z*z);
+        return l > 0 ? (*this)*(1.0/l) : Vec3();
+    }
+
+    double dot(const Vec3& b) const {
+        return x*b.x + y*b.y + z*b.z;
+    }
+
+    Vec3 reflect(const Vec3& n) const {
+        return *this - n * (2.0 * this->dot(n));
+    }
+};
+
+/* ============================================================
+   RAY
+   ============================================================ */
+
+struct Ray {
+    Vec3 origin;
+    Vec3 dir;
+};
+
+/* ============================================================
+   MATERIAL
+   ============================================================ */
+
+struct Material {
+    Vec3 color;
+    double reflectivity;
+
+    Material(const Vec3& c = Vec3(1), double r = 0.0)
+        : color(c), reflectivity(r) {}
+};
+
+/* ============================================================
+   GEOMETRIE
+   ============================================================ */
+
+struct Hit {
+    double t;
+    Vec3 pos;
+    Vec3 normal;
+    const Material* mat;
+};
+
+struct Object {
+    Material mat;
+    virtual bool intersect(const Ray&, Hit&) const = 0;
+    virtual ~Object() = default;
+};
+
+/* ---------------- Plane ---------------- */
+
+struct Plane : Object {
+    Vec3 p, n;
+
+    Plane(const Vec3& p_, const Vec3& n_, const Material& m) {
+        p = p_;
+        n = n_.normalized();
+        mat = m;
+    }
+
+    bool intersect(const Ray& r, Hit& h) const override {
+        double d = n.dot(r.dir);
+        if (std::fabs(d) < 1e-6) return false;
+        double t = (p - r.origin).dot(n) / d;
+        if (t > 1e-4 && t < h.t) {
+            h.t = t;
+            h.pos = r.origin + r.dir * t;
+            h.normal = n;
+            h.mat = &mat;
+            return true;
+        }
+        return false;
+    }
+};
+
+/* ---------------- Sphere ---------------- */
+
+struct Sphere : Object {
+    Vec3 c;
+    double r;
+
+    Sphere(const Vec3& c_, double r_, const Material& m) {
+        c = c_;
+        r = r_;
+        mat = m;
+    }
+
+    bool intersect(const Ray& ray, Hit& h) const override {
+        Vec3 oc = ray.origin - c;
+        double b = oc.dot(ray.dir);
+        double c_ = oc.dot(oc) - r*r;
+        double disc = b*b - c_;
+        if (disc < 0) return false;
+
+        double t = -b - std::sqrt(disc);
+        if (t > 1e-4 && t < h.t) {
+            h.t = t;
+            h.pos = ray.origin + ray.dir * t;
+            h.normal = (h.pos - c).normalized();
+            h.mat = &mat;
+            return true;
+        }
+        return false;
+    }
+};
+
+/* ============================================================
+   SZENE
+   ============================================================ */
+
+struct Scene {
+    std::vector<Object*> objects;
+    Vec3 lightPos;
+    Vec3 lightColor;
+};
+
+/* ============================================================
+   RAYTRACING
+   ============================================================ */
+
+Vec3 trace(const Ray& ray, const Scene& scene, int depth) {
+    if (depth <= 0) return Vec3(0);
+
+    Hit hit;
+    hit.t = 1e9;
+
+    for (const auto* obj : scene.objects)
+        obj->intersect(ray, hit);
+
+    if (!hit.mat) return Vec3(0);
+
+    Vec3 color(0);
+
+    // Licht
+    Vec3 toLight = (scene.lightPos - hit.pos).normalized();
+    Ray shadowRay{hit.pos + hit.normal * 1e-4, toLight};
+
+    bool shadow = false;
+    Hit sh;
+    sh.t = (scene.lightPos - hit.pos).dot(toLight);
+    for (const auto* obj : scene.objects)
+        if (obj->intersect(shadowRay, sh)) {
+            shadow = true;
+            break;
+        }
+
+    if (!shadow) {
+        double diff = std::max(0.0, hit.normal.dot(toLight));
+        color = hit.mat->color * scene.lightColor * diff;
+    }
+
+    // Reflexion
+    if (hit.mat->reflectivity > 0) {
+        Vec3 rdir = ray.dir.reflect(hit.normal).normalized();
+        Ray rray{hit.pos + hit.normal * 1e-4, rdir};
+        Vec3 rc = trace(rray, scene, depth - 1);
+        color = color * (1 - hit.mat->reflectivity) +
+                rc * hit.mat->reflectivity;
+    }
+
+    return color;
+}
+
+/* ============================================================
+   MAIN
+   ============================================================ */
+
+int main() {
+    const int W = 800;
+    const int H = 800;
+
+    Scene scene;
+    scene.lightPos = Vec3(0, 1.8, -1);
+    scene.lightColor = Vec3(1);
+
+    // Materialien
+    Material red(Vec3(0.75, 0.1, 0.1));
+    Material green(Vec3(0.1, 0.75, 0.1));
+    Material white(Vec3(0.75));
+    Material mirror(Vec3(1), 0.6);
+
+    // Cornellbox
+    scene.objects.push_back(new Plane(Vec3(0, -1, 0), Vec3(0, 1, 0), white));
+    scene.objects.push_back(new Plane(Vec3(0, 2, 0), Vec3(0, -1, 0), white));
+    scene.objects.push_back(new Plane(Vec3(-1, 0, 0), Vec3(1, 0, 0), red));
+    scene.objects.push_back(new Plane(Vec3(1, 0, 0), Vec3(-1, 0, 0), green));
+    scene.objects.push_back(new Plane(Vec3(0, 0, -3), Vec3(0, 0, 1), white));
+
+    scene.objects.push_back(new Sphere(Vec3(-0.4, -0.4, -1.5), 0.6, mirror));
+    scene.objects.push_back(new Sphere(Vec3(0.5, -0.6, -2.2), 0.4, white));
+
+    //Changed to "cornell.ppm" to "V4Box.ppm"
+    std::ofstream out("V4Box.ppm");
+    out << "P3\n" << W << " " << H << "\n255\n";
+
+    Vec3 cam(0, 0, 1);
+
+    for (int y = 0; y < H; ++y) {
+        for (int x = 0; x < W; ++x) {
+            double u = (x + 0.5) / W * 2 - 1;
+            double v = (y + 0.5) / H * 2 - 1;
+            v = -v;
+
+            Ray ray{cam, Vec3(u, v, -1).normalized()};
+            Vec3 c = trace(ray, scene, 3);
+
+            int r = std::min(255, int(c.x * 255));
+            int g = std::min(255, int(c.y * 255));
+            int b = std::min(255, int(c.z * 255));
+
+            out << r << " " << g << " " << b << "\n";
+        }
+    }
+
+    for (auto* o : scene.objects) delete o;
+    return 0;
+}

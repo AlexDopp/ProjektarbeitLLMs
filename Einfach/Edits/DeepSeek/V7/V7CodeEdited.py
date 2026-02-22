@@ -1,0 +1,382 @@
+import math
+from dataclasses import dataclass
+from typing import List, Optional, Tuple
+import struct
+
+# ============================================================================
+# Mathematik-Modul
+# ============================================================================
+
+@dataclass
+class Vec3:
+    """3D Vektor mit grundlegenden Operationen"""
+    x: float = 0.0
+    y: float = 0.0
+    z: float = 0.0
+    
+    def __add__(self, other):
+        if isinstance(other, Vec3):
+            return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
+        return NotImplemented
+    
+    def __sub__(self, other):
+        if isinstance(other, Vec3):
+            return Vec3(self.x - other.x, self.y - other.y, self.z - other.z)
+        return NotImplemented
+    
+    def __mul__(self, other):
+        if isinstance(other, Vec3):
+            return Vec3(
+                self.x * other.x,
+                self.y * other.y,
+                self.z * other.z
+            )
+        elif isinstance(other, (int, float)):
+            return Vec3(
+                self.x * other,
+                self.y * other,
+                self.z * other
+            )
+        return NotImplemented
+
+    __rmul__ = __mul__
+    
+    def __truediv__(self, scalar):
+        if isinstance(scalar, (int, float)):
+            if scalar == 0:
+                raise ValueError("Cannot divide by zero")
+            return Vec3(self.x / scalar, self.y / scalar, self.z / scalar)
+        return NotImplemented
+    
+    def dot(self, other):
+        if isinstance(other, Vec3):
+            return self.x * other.x + self.y * other.y + self.z * other.z
+        return NotImplemented
+    
+    def cross(self, other):
+        if isinstance(other, Vec3):
+            return Vec3(
+                self.y * other.z - self.z * other.y,
+                self.z * other.x - self.x * other.z,
+                self.x * other.y - self.y * other.x
+            )
+        return NotImplemented
+    
+    def length(self):
+        return math.sqrt(self.dot(self))
+    
+    def normalize(self):
+        l = self.length()
+        if l > 0:
+            return self / l
+        return self
+    
+    def reflect(self, normal):
+        """Reflektiert Vektor an Normalen"""
+        if isinstance(normal, Vec3):
+            return self - normal * (2 * self.dot(normal))
+        return NotImplemented
+
+@dataclass
+class Ray:
+    """Strahl mit Ursprung und Richtung"""
+    origin: Vec3
+    direction: Vec3
+    
+    def point_at(self, t: float) -> Vec3:
+        return self.origin + self.direction * t
+
+# ============================================================================
+# Geometrie-Modul
+# ============================================================================
+
+class Material:
+    """Material mit Farbe, Reflexion und Emission"""
+    def __init__(self, color: Vec3, reflection: float = 0.0, emission: Vec3 = None):
+        self.color = color
+        self.reflection = reflection
+        self.emission = emission if emission else Vec3(0, 0, 0)
+
+class HitRecord:
+    """Informationen über einen Schnittpunkt"""
+    def __init__(self):
+        self.t = float('inf')
+        self.point = Vec3()
+        self.normal = Vec3()
+        self.material = None
+        self.hit = False
+
+class Sphere:
+    """Kugel als geometrisches Objekt"""
+    def __init__(self, center: Vec3, radius: float, material: Material):
+        self.center = center
+        self.radius = radius
+        self.material = material
+    
+    def hit(self, ray: Ray, t_min: float, t_max: float, rec: HitRecord) -> bool:
+        oc = ray.origin - self.center
+        a = ray.direction.dot(ray.direction)
+        b = oc.dot(ray.direction)
+        c = oc.dot(oc) - self.radius * self.radius
+        discriminant = b * b - a * c
+        
+        if discriminant > 0:
+            sqrt_disc = math.sqrt(discriminant)
+            t = (-b - sqrt_disc) / a
+            if t < t_max and t > t_min:
+                rec.t = t
+                rec.point = ray.point_at(t)
+                rec.normal = (rec.point - self.center) / self.radius
+                rec.material = self.material
+                return True
+            
+            t = (-b + sqrt_disc) / a
+            if t < t_max and t > t_min:
+                rec.t = t
+                rec.point = ray.point_at(t)
+                rec.normal = (rec.point - self.center) / self.radius
+                rec.material = self.material
+                return True
+        
+        return False
+
+class Plane:
+    """Ebene als geometrisches Objekt"""
+    def __init__(self, point: Vec3, normal: Vec3, material: Material):
+        self.point = point
+        self.normal = normal.normalize()
+        self.material = material
+    
+    def hit(self, ray: Ray, t_min: float, t_max: float, rec: HitRecord) -> bool:
+        denom = self.normal.dot(ray.direction)
+        if abs(denom) > 1e-6:
+            t = (self.point - ray.origin).dot(self.normal) / denom
+            if t < t_max and t > t_min:
+                rec.t = t
+                rec.point = ray.point_at(t)
+                rec.normal = self.normal
+                rec.material = self.material
+                return True
+        return False
+
+class World:
+    """Sammlung von Objekten in der Szene"""
+    def __init__(self):
+        self.objects = []
+    
+    def add(self, obj):
+        self.objects.append(obj)
+    
+    def hit(self, ray: Ray, t_min: float, t_max: float) -> Optional[HitRecord]:
+        rec = HitRecord()
+        hit_anything = False
+        closest_t = t_max
+        
+        for obj in self.objects:
+            temp_rec = HitRecord()
+            if obj.hit(ray, t_min, closest_t, temp_rec):
+                hit_anything = True
+                closest_t = temp_rec.t
+                rec = temp_rec
+        
+        return rec if hit_anything else None
+
+# ============================================================================
+# Raytracing-Modul
+# ============================================================================
+
+class Camera:
+    """Kamera für den Raytracer"""
+    def __init__(self, lookfrom: Vec3, lookat: Vec3, vup: Vec3, 
+                 vfov: float, aspect_ratio: float):
+        self.aspect_ratio = aspect_ratio
+        
+        theta = math.radians(vfov)
+        h = math.tan(theta / 2)
+        viewport_height = 2.0 * h
+        viewport_width = aspect_ratio * viewport_height
+        
+        w = (lookfrom - lookat).normalize()
+        u = vup.cross(w).normalize()
+        v = w.cross(u)
+        
+        self.origin = lookfrom
+        self.horizontal = u * viewport_width
+        self.vertical = v * viewport_height
+        self.lower_left = self.origin - self.horizontal / 2 - self.vertical / 2 - w
+
+class Light:
+    """Punktlichtquelle"""
+    def __init__(self, position: Vec3, color: Vec3, intensity: float):
+        self.position = position
+        self.color = color
+        self.intensity = intensity
+
+class Raytracer:
+    """Haupt-Raytracer-Klasse"""
+    def __init__(self, world: World, camera: Camera, lights: List[Light],
+                 max_bounces: int = 5, samples: int = 1):
+        self.world = world
+        self.camera = camera
+        self.lights = lights
+        self.max_bounces = max_bounces
+        self.samples = samples
+    
+    def trace(self, ray: Ray, depth: int = 0) -> Vec3:
+        """Verfolgt einen Strahl durch die Szene"""
+        if depth >= self.max_bounces:
+            return Vec3(0, 0, 0)
+        
+        hit = self.world.hit(ray, 0.001, float('inf'))
+        if not hit:
+            return Vec3(0, 0, 0)  # Schwarzer Hintergrund
+        
+        material = hit.material
+        color = material.color
+        
+        # Emission vom Material selbst (für Lichtquellen)
+        if material.emission.length() > 0:
+            return material.emission
+        
+        # Beleuchtung berechnen
+        lighting = Vec3(0, 0, 0)
+        
+        for light in self.lights:
+            light_dir = (light.position - hit.point).normalize()
+            light_distance = (light.position - hit.point).length()
+            
+            # Schattenstrahl
+            shadow_ray = Ray(hit.point + hit.normal * 0.001, light_dir)
+            shadow_hit = self.world.hit(shadow_ray, 0.001, light_distance)
+            
+            if not shadow_hit:
+                # Diffuse Beleuchtung (Lambert)
+                diffuse = max(0, hit.normal.dot(light_dir))
+                light_contrib = light.color * (light.intensity / (light_distance * light_distance))
+                lighting = lighting + color * light_contrib * diffuse
+        
+        # Reflexion
+        reflection = Vec3(0, 0, 0)
+        if material.reflection > 0:
+            reflected_dir = ray.direction.reflect(hit.normal)
+            reflected_ray = Ray(hit.point + hit.normal * 0.001, reflected_dir)
+            reflected_color = self.trace(reflected_ray, depth + 1)
+            reflection = reflected_color * material.reflection
+        
+        return lighting + reflection
+    
+    def render(self, width: int, height: int) -> List[List[Vec3]]:
+        """Rendert das Bild"""
+        image = [[Vec3(0, 0, 0) for _ in range(width)] for _ in range(height)]
+        
+        for j in range(height):
+            for i in range(width):
+                color = Vec3(0, 0, 0)
+                
+                for _ in range(self.samples):
+                    u = (i + 0.5) / width
+                    v = (j + 0.5) / height
+                    
+                    ray_dir = self.camera.lower_left + \
+                             self.camera.horizontal * u + \
+                             self.camera.vertical * v - \
+                             self.camera.origin
+                    
+                    ray = Ray(self.camera.origin, ray_dir.normalize())
+                    color = color + self.trace(ray)
+                
+                if self.samples > 1:
+                    color = color / self.samples
+                
+                image[j][i] = color
+            print(f"Rendering progress: {j+1}/{height} with color {color}", end="\r")
+        
+        return image
+
+# ============================================================================
+# Bildausgabe-Modul
+# ============================================================================
+
+def save_ppm(filename: str, image: List[List[Vec3]], width: int, height: int):
+    """Speichert das Bild als PPM-Datei"""
+    with open(filename, 'w') as f:
+        f.write(f"P3\n{width} {height}\n255\n")
+        
+        for j in range(height - 1, -1, -1):
+            for i in range(width):
+                pixel = image[j][i]
+                
+                # Gamma-Korrektur
+                r = int(255.999 * math.sqrt(min(1.0, pixel.x)))
+                g = int(255.999 * math.sqrt(min(1.0, pixel.y)))
+                b = int(255.999 * math.sqrt(min(1.0, pixel.z)))
+                
+                f.write(f"{r} {g} {b} ")
+            f.write("\n")
+
+# ============================================================================
+# Hauptprogramm - Cornelbox-Szene
+# ============================================================================
+
+def create_cornell_box() -> Tuple[World, List[Light], Camera]:
+    """Erstellt die Cornelbox-Szene"""
+    world = World()
+    
+    # Materialien
+    white = Material(Vec3(0.8, 0.8, 0.8), 0.2)
+    red = Material(Vec3(0.8, 0.1, 0.1), 0.2)
+    green = Material(Vec3(0.1, 0.8, 0.1), 0.2)
+    light_material = Material(Vec3(1, 1, 1), 0.0, Vec3(1, 1, 1) * 0.8)
+    sphere_material = Material(Vec3(0.8, 0.6, 0.2), 0.4)
+    
+    # Wände
+    world.add(Plane(Vec3(0, -1, 0), Vec3(0, 1, 0), white))     # Boden
+    world.add(Plane(Vec3(0, 1, 0), Vec3(0, -1, 0), white))     # Decke
+    world.add(Plane(Vec3(-1, 0, 0), Vec3(1, 0, 0), red))       # Linke Wand
+    world.add(Plane(Vec3(1, 0, 0), Vec3(-1, 0, 0), green))     # Rechte Wand
+    world.add(Plane(Vec3(0, 0, -2), Vec3(0, 0, 1), white))     # Hintere Wand
+    
+    # Objekte im Raum
+    world.add(Sphere(Vec3(-0.5, -0.5, -0.5), 0.5, sphere_material))
+    world.add(Sphere(Vec3(0.5, -0.3, 0.2), 0.3, Material(Vec3(0.2, 0.4, 0.8), 0.3)))
+    
+    # Lichtquelle (an der Decke)
+    world.add(Plane(Vec3(0, 0.95, 0), Vec3(0, -1, 0), light_material))
+    
+    # Lichtposition für Schattenberechnung
+    lights = [
+        Light(Vec3(0, 0.9, 0), Vec3(1, 1, 1), 1.5)
+    ]
+    
+    # Kamera
+    camera = Camera(
+        Vec3(0, 0, 3),    # Position
+        Vec3(0, 0, -1),   # Blickpunkt
+        Vec3(0, 1, 0),    # Up-Vektor
+        60,               # Sichtfeld
+        16/9              # Seitenverhältnis
+    )
+    
+    return world, lights, camera
+
+def main():
+    """Hauptfunktion"""
+    print("Erstelle Cornelbox-Szene...")
+    world, lights, camera = create_cornell_box()
+    
+    print("Initialisiere Raytracer...")
+    raytracer = Raytracer(world, camera, lights, max_bounces=3, samples=4)
+    
+    width, height = 1000, 750
+    
+    # edited to be ,end = "\r" to not fill console
+    print(f"Rendere Bild ({width}x{height})...", end="\r")
+    image = raytracer.render(width, height)
+    
+    print("Speichere Bild als 'cornell_box.ppm'...")
+    save_ppm("big_cornell_box.ppm", image, width, height)
+    
+    print("Fertig! Das Bild wurde als 'big_cornell_box.ppm' gespeichert.")
+
+if __name__ == "__main__":
+    main()

@@ -30,3 +30,16 @@ Länge von ChatGPT Code (Zeilen)
     |   V13   |  213  |
 | **Total**   | **2800**  |
 | **Average** | **215.4** |
+
+
+ChatGPTs Codephilosophy:
+
+Minimierung der Zeilen: Wo immer möglich, versuche ich, redundante oder unnötige Codezeilen zu vermeiden. Das bedeutet, dass ich nicht unnötig ausführliche Strukturen oder Kommentare hinzufüge, wenn sie nicht unbedingt notwendig sind. Das Ziel ist, Code zu erzeugen, der funktional ist, aber auch so kurz wie möglich bleibt.
+
+Fokus auf Klarheit: Manchmal erfordert der „maximale Teil“ eines Prompts mehr Kontext oder bestimmte Best Practices, die einen Code etwas ausdehnen, aber das ist okay, solange die Lesbarkeit nicht leidet. Ich vermeide es, Lösungen zu entwickeln, die zwar minimal sind, aber schwer zu verstehen oder zu warten wären.
+
+Flexibilität bei der Erfüllung des Prompts: Nicht immer bedeutet „minimale Zeilen“ auch die beste Lösung. Es gibt Fälle, in denen es besser ist, einige Zeilen mehr zu verwenden, um eine robustere, sicherere oder wartungsfreundlichere Lösung zu bieten. Der „maximale“ Teil des Prompts bezieht sich daher oft auch auf die Qualität und die Flexibilität der Lösung.
+
+Vermeidung von Overengineering: Oft ist es verlockend, zusätzliche Funktionen oder abstrakte Lösungen einzuführen, die „perfekt“ wären, aber nicht notwendig für das eigentliche Ziel des Prompts. Ich versuche, solche Lösungen zu vermeiden, um die Einfachheit zu wahren.
+
+Adaptivität: Wenn ein Problem mit einer minimalen Lösung nicht gut gelöst werden kann (z.B. wegen Performance oder Zukunftssicherheit), werde ich bereit sein, die Lösung zu erweitern, aber immer mit dem Ziel, so wenig wie möglich zu tun, um das gewünschte Ergebnis zu erzielen.
