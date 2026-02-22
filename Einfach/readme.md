@@ -56,4 +56,4 @@ DeepSeek optimiert, bzw. setzt Standardwerte häufig auch außerhalb der Norm (z
 Code generiert von DeepSeek ist meist stark Bloated. 
 Dabei handelt er sich nicht um Erweiterungsmöglichkeiten oder ähnliches.
 Die Lesbarkeit wird durch Kommentare vor den meisten Zeilen stark erhöht.
-Dabei sind in den einzelnen Zeilen praktisch nie die Probleme, sondern nur in der Kombination mehrer 
+Dabei sind in den einzelnen Zeilen praktisch nie die Probleme, sondern nur in der Kombination mehrerer Zeilen die sich zanken.
