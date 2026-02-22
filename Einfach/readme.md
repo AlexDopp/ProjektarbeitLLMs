@@ -46,3 +46,14 @@ Haupterkenntnisse:
 
 Allgemein:
 
+DeepSeek Codegenerierung ist oberflächig und ausgiebig.
+Bei der Generierung werden häufig fehlerhaft Operanten verwendet.
+Diese sind dann meist undefiniert für die bestimmte Typ-Kombination oder falsch implementiert im Allgemeinen.
+Das Reparieren des gelieferten Codes dauert häufig an, da das Programm (natürlich) abbricht sobald es einen Fehler findet (z.b. operant+ undefined for int - Vec3).
+Dies führt dazu das weitere Fehler der gleichen Art nicht angezeigt werden.
+Da das ausführen von DeepSeek Code lange dauert, wird die Reparaturzeit somit stark verlängert (nicht DeepSeeks Problem zu 100%).
+DeepSeek optimiert, bzw. setzt Standardwerte häufig auch außerhalb der Norm (z.b. V11 mit max_depth = 20).
+Code generiert von DeepSeek ist meist stark Bloated. 
+Dabei handelt er sich nicht um Erweiterungsmöglichkeiten oder ähnliches.
+Die Lesbarkeit wird durch Kommentare vor den meisten Zeilen stark erhöht.
+Dabei sind in den einzelnen Zeilen praktisch nie die Probleme, sondern nur in der Kombination mehrer 
