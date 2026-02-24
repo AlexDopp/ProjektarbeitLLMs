@@ -49,17 +49,20 @@ Quality Assurance und Absicherung der Imports:
 
 Anfangs keine ordentlichen Importkontrollen und Fehler in Boxplotdarstellung.
 Außerdem Implementierung für "Lernziele" nur oberflächlich und nicht eingebunden in den Rest.
-Über mehrere Iterationsschritte konnten die Importkontrollen dann Schritt für Schritt ausgebessert werden. 
+Auch kritische Fehler in der Umsetzung von Lernsessions vorhanden, 
+wodurch mehrere gleichzeitig startbar waren und damit das Programm zerlegt haben.
+Über mehrere Iterationsschritte konnten alle Fehler dann Schritt für Schritt ausgebessert werden. 
 
 **Chat-GPT schwer:**
 ![Bild](Bilder/GPT_Rust.png)
 
 Erste Version wirft bei Verwendung direkt Fehler und hat gar kein funktionierendes Backend.
-Auch nach mehreren Versionen können zwar Imports oberflächlich stattfinden und Fehler beseitigt werden, 
-aber die Daten gehen direkt wieder verloren und Lernsession können nicht gestartet werden.
+Auch nach mehreren Versionen können zwar Imports oberflächlich stattfinden und Fehlermeldungen beseitigt werden, 
+aber die Daten gehen direkt wieder verloren und Lernsessions können nicht gestartet werden.
 Ein Boxplot ist auch nicht vorhanden. Beim aufwändigen Denkprozess zum Rust-Teil wurde zeitgleich ein Großteil 
 der eigentlichen Anforderungen des Programms wieder verworfen und auch mit zusätzlichen Prompts
-dreht sich die Entwicklung im Kreis. Deshalb habe ich den Versuch abgebrochen.
+dreht sich die Entwicklung im Kreis. 
+Deshalb habe ich den Versuch abgebrochen.
 
 **Cursor leicht:**
 ![Bild](Bilder/Cursor_JS.png)
@@ -71,4 +74,8 @@ Nur Unschönheiten in Boxplots sind nicht ganz optimal lösbar.
 **Cursor schwer:**
 ![Bild](Bilder/Cursor_Rust.png)
 
-
+Anfangs garkeine Importkontrollen!
+Im Thinkingprozess wurde außerdem der Sinn hinter Rust-Implementierung hinterfragt.
+Umsetzung aber solide, allerdings fehlen durch Mehraufwand mit Rust jetzt 
+viele der "optionalen" Zusätze, die in der 1. Version noch vorhanden waren.
+Kontrollen lassen sich leicht fixen und Boxplots sind diesmal von vorne herein durchdachter.
