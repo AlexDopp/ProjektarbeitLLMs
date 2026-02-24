@@ -89,3 +89,4 @@ Kontrollen lassen sich leicht fixen und Boxplots sind diesmal von vorne herein d
 
 Erkenntnis ChatGPT arbeitet mit Prompt als zu erreichendes Maximum (manchmal auch nur weniger)
 Erkenntnis Cursor arbeitet mit Prompt als Minimum und viele Extras zusätzlich die man evtl. begrenzen muss
+Antwort auf 3 ursprüngliche Fragen!!
