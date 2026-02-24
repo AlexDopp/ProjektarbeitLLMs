@@ -46,6 +46,7 @@ Quality Assurance und Absicherung der Imports:
 | Cursor schwer | 0 | 3 | 6 |
 
 **Chat-GPT leicht:**
+
 ![Bild](Bilder/GPT_JS.png)
 
 Anfangs keine ordentlichen Importkontrollen und Fehler in Boxplotdarstellung.
@@ -55,6 +56,7 @@ wodurch mehrere gleichzeitig startbar waren und damit das Programm zerlegt haben
 Über mehrere Iterationsschritte konnten alle Fehler dann Schritt für Schritt ausgebessert werden. 
 
 **Chat-GPT schwer:**
+
 ![Bild](Bilder/GPT_Rust.png)
 
 Erste Version wirft bei Verwendung direkt Fehler und hat gar kein funktionierendes Backend.
@@ -66,6 +68,7 @@ dreht sich die Entwicklung im Kreis.
 Deshalb habe ich den Versuch abgebrochen.
 
 **Cursor leicht:**
+
 ![Bild](Bilder/Cursor_JS.png)
 
 Anfangs keine ordentlichen Importkontrollen, aber sehr viele Details zur besseren Verwendung aus Usersicht.
@@ -73,6 +76,7 @@ Kontrollen lassen sich leicht ergänzen und auch kleinere Alignment-Fehler sind 
 Nur Unschönheiten in Boxplots sind nicht ganz optimal lösbar.
 
 **Cursor schwer:**
+
 ![Bild](Bilder/Cursor_Rust.png)
 
 Anfangs garkeine Importkontrollen!
