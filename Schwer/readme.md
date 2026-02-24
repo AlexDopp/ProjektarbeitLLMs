@@ -22,14 +22,29 @@ Damit soll ein Vergleich geschaffen werden zwischen weitverbreiteten Sprachen mi
 und eher unbekannteren Sprachen mit weniger Bezugsquellen dazu.
 Außerdem werde ich durch gezielte Iterationen versuchen, die LLMs zum Reparieren ihrer Fehler zu bewegen.
 
-
+ 
 **Ergebnisse:**
 
-Im Überblick:
-
+Im Überblick
 | Versuch | Anzahl Iterationen | Zeilen Code | Ergebniss |
 |:-------:|:------------------:|:-----------:|:---------:|
 | Chat-GPT leicht | 6 | 442 | ✔ OK |
 | Chat-GPT schwer | 4 | 261 | ✘ Abbruch |
 | Cursor leicht | 3 | 1128 | ✔ OK |
 | Cursor schwer | 3 | 1029 | ✔ OK |
+
+Quality Assurance und Absicherung der Imports:
+*EC = Edge-Case-Tests, maximal 6*
+| Versuch | Erfüllte EC zu Beginn | Erfüllte EC nach "Selbstreflektierung" | Erfüllte EC nach spezifischem Hinweis |
+|:-------:|:------------------:|:-----------:|:---------:|
+| Chat-GPT leicht | 1 | 3 | 6 |
+| Chat-GPT schwer | 0 | - | - |
+| Cursor leicht |  |  |  |
+| Cursor schwer |  |  |  |
+
+**Chat-GPT leicht:**
+![Bild](bilder/GPT_JS.png)
+
+Anfangs keine Importkontrollen und Fehler in Boxplotdarstellung.
+Außerdem Implementierung für "Lernziele" nur oberflächlich und nicht eingebunden in den Rest.
+Über mehrere Iterationsschritte konnten die Importkontrollen dann Schritt für Schritt ausgebessert werden. 
