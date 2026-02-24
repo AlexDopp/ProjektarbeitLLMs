@@ -34,13 +34,14 @@ Im Überblick
 | Cursor schwer | 3 | 1029 | ✔ OK |
 
 Quality Assurance und Absicherung der Imports:
+
 *EC = Edge-Case-Tests, maximal 6*
-| Versuch | Erfüllte EC zu Beginn | Erfüllte EC nach "Selbstreflektierung" | Erfüllte EC nach spezifischem Hinweis |
+| Versuch | Erfüllte EC zu Beginn | Erfüllte EC nach "Selbstreflektierung" | Erfüllte EC nach spezifischem Prompt |
 |:-------:|:------------------:|:-----------:|:---------:|
 | Chat-GPT leicht | 1 | 3 | 6 |
 | Chat-GPT schwer | 0 | - | - |
-| Cursor leicht |  |  |  |
-| Cursor schwer |  |  |  |
+| Cursor leicht | 1 | 3 | 6 |
+| Cursor schwer | 0 | 3 | 6 |
 
 **Chat-GPT leicht:**
 ![Bild](bilder/GPT_JS.png)
