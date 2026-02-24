@@ -15,7 +15,8 @@ Grundlegend sollen in diesem Versuch beide Anbieter mit denselben Anforderungen 
 die lokal im Browser eine ausführbare App implementiert. Die App selbst soll mittels eines festgelegten 
 Import-Formats Anki-Karten darstellen und dem Nutzer ermöglichen, seinen Fortschritt beim Lernen dieser
 zu tracken und grafisch dargestellt bekommen. Dabei wird in zwei unterschiedlichen Versuchen die 
-Sprache festgelegt, bei der leichten Version nur auf HTML, CSS und Javascript und bei der
-schweren Version auf HTMl, CSS und Javascript im Frontend mit WebAssembly und einem Wasm-Core in Rust geschrieben
-im Backend. Damit soll ein Vergleich geschaffen werden zwischen weitverbreiteten Sprachen mit vielen Informationen
+Sprache festgelegt.
+Bei der leichten Version nur auf HTML, CSS und Javascript und 
+bei der schweren Version auf HTML, CSS und Javascript im Frontend mit WebAssembly in Rust geschrieben im Backend. 
+Damit soll ein Vergleich geschaffen werden zwischen weitverbreiteten Sprachen mit vielen Informationen
 und eher unbekannteren Sprachen mit weniger Bezugsquellen dazu.
