@@ -36,6 +36,7 @@ Im Überblick
 Quality Assurance und Absicherung der Imports:
 
 *EC = Edge-Case-Tests, maximal 6*
+*Bestehend aus: DoubleID, InvalidDate(Abgelaufen), LongText, Minimal(0 Karten), MissingParts, WrongTime(Zukunft)*
 | Versuch | Erfüllte EC zu Beginn | Erfüllte EC nach "Selbstreflektierung" | Erfüllte EC nach spezifischem Prompt |
 |:-------:|:------------------:|:-----------:|:---------:|
 | Chat-GPT leicht | 1 | 3 | 6 |
@@ -46,6 +47,28 @@ Quality Assurance und Absicherung der Imports:
 **Chat-GPT leicht:**
 ![Bild](bilder/GPT_JS.png)
 
-Anfangs keine Importkontrollen und Fehler in Boxplotdarstellung.
+Anfangs keine ordentlichen Importkontrollen und Fehler in Boxplotdarstellung.
 Außerdem Implementierung für "Lernziele" nur oberflächlich und nicht eingebunden in den Rest.
 Über mehrere Iterationsschritte konnten die Importkontrollen dann Schritt für Schritt ausgebessert werden. 
+
+**Chat-GPT schwer:**
+![Bild](bilder/GPT_Rust.png)
+
+Erste Version wirft bei Verwendung direkt Fehler und hat gar kein funktionierendes Backend.
+Auch nach mehreren Versionen können zwar Imports oberflächlich stattfinden und Fehler beseitigt werden, 
+aber die Daten gehen direkt wieder verloren und Lernsession können nicht gestartet werden.
+Ein Boxplot ist auch nicht vorhanden. Beim aufwändigen Denkprozess zum Rust-Teil wurde zeitgleich ein Großteil 
+der eigentlichen Anforderungen des Programms wieder verworfen und auch mit zusätzlichen Prompts
+dreht sich die Entwicklung im Kreis. Deshalb habe ich den Versuch abgebrochen.
+
+**Cursor leicht:**
+![Bild](bilder/Cursor_JS.png)
+
+Anfangs keine ordentlichen Importkontrollen, aber sehr viele Details zur besseren Verwendung aus Usersicht.
+Kontrollen lassen sich leicht ergänzen und auch kleinere Alignment-Fehler sind schnell behoben.
+Nur Unschönheiten in Boxplots sind nicht ganz optimal lösbar.
+
+**Cursor schwer:**
+![Bild](bilder/Cursor_Rust.png)
+
+
