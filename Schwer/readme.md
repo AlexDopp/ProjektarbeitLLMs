@@ -36,6 +36,7 @@ Im Überblick
 Quality Assurance und Absicherung der Imports:
 
 *EC = Edge-Case-Tests, maximal 6*
+
 *Bestehend aus: DoubleID, InvalidDate(Abgelaufen), LongText, Minimal(0 Karten), MissingParts, WrongTime(Zukunft)*
 | Versuch | Erfüllte EC zu Beginn | Erfüllte EC nach "Selbstreflektierung" | Erfüllte EC nach spezifischem Prompt |
 |:-------:|:------------------:|:-----------:|:---------:|
@@ -88,5 +89,7 @@ Kontrollen lassen sich leicht fixen und Boxplots sind diesmal von vorne herein d
 **Fazit:**
 
 Erkenntnis ChatGPT arbeitet mit Prompt als zu erreichendes Maximum (manchmal auch nur weniger)
+
 Erkenntnis Cursor arbeitet mit Prompt als Minimum und viele Extras zusätzlich die man evtl. begrenzen muss
+
 Antwort auf 3 ursprüngliche Fragen!!
