@@ -79,3 +79,13 @@ Im Thinkingprozess wurde außerdem der Sinn hinter Rust-Implementierung hinterfr
 Umsetzung aber solide, allerdings fehlen durch Mehraufwand mit Rust jetzt 
 viele der "optionalen" Zusätze, die in der 1. Version noch vorhanden waren.
 Kontrollen lassen sich leicht fixen und Boxplots sind diesmal von vorne herein durchdachter.
+
+
+**Interpretation:**
+
+*Bezug auf Leons Part*
+
+**Fazit:**
+
+Erkenntnis ChatGPT arbeitet mit Prompt als zu erreichendes Maximum (manchmal auch nur weniger)
+Erkenntnis Cursor arbeitet mit Prompt als Minimum und viele Extras zusätzlich die man evtl. begrenzen muss
