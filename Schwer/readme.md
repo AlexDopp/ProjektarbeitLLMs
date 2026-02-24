@@ -14,9 +14,22 @@ Die Verwendung dieser Modelle fand im Februar 2026 statt.
 Grundlegend sollen in diesem Versuch beide Anbieter mit denselben Anforderungen eine .html erstellen, 
 die lokal im Browser eine ausführbare App implementiert. Die App selbst soll mittels eines festgelegten 
 Import-Formats Anki-Karten darstellen und dem Nutzer ermöglichen, seinen Fortschritt beim Lernen dieser
-zu tracken und grafisch dargestellt bekommen. Dabei wird in zwei unterschiedlichen Versuchen die 
-Sprache festgelegt.
+zu tracken und grafisch dargestellt bekommen. 
+Dabei wird in zwei unterschiedlichen Versuchen die Sprache festgelegt.
 Bei der leichten Version nur auf HTML, CSS und Javascript und 
 bei der schweren Version auf HTML, CSS und Javascript im Frontend mit WebAssembly in Rust geschrieben im Backend. 
 Damit soll ein Vergleich geschaffen werden zwischen weitverbreiteten Sprachen mit vielen Informationen
 und eher unbekannteren Sprachen mit weniger Bezugsquellen dazu.
+Außerdem werde ich durch gezielte Iterationen versuchen, die LLMs zum Reparieren ihrer Fehler zu bewegen.
+
+
+**Ergebnisse:**
+
+Im Überblick:
+
+| Versuch | Anzahl Iterationen | Zeilen Code | Ergebniss |
+|:-------:|:------------------:|:-----------:|:---------:|
+| Chat-GPT leicht | 6 | 442 | ✔ OK |
+| Chat-GPT schwer | 4 | 261 | ✘ Abbruch |
+| Cursor leicht | 3 | 1128 | ✔ OK |
+| Cursor schwer | 3 | 1029 | ✔ OK |
