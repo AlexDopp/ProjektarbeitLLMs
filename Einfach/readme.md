@@ -1,41 +1,43 @@
-**Allgemein zum Prompt**
+# Allgemein zum Prompt
 
 Der Prompt an die verschiedenen KIs soll ein kurzer, von einer Person mittleren Wissenstands geschriebene Anfrage sein.
-In den verschiedenen Versionen werden (mit Absicht) mögliche Bias zu verschiedenen Programmiersprachen und 
+In den verschiedenen Versionen werden (mit Absicht) mögliche Biases zu verschiedenen Programmiersprachen und möglichen Lösungswegen injiziert.
+Hierbei wird nie einer Programmiersprache, eine bestimmte Klasse oder ähnliches verlangt.
+Die größte Eingrenzung ist in den Versionen 10 - 13 indenen das Endergebnis in 512x512pxl gesetzt wird.
 
+## Änderungen in den Verschiedenen Versionen des Prompts:
 
-Änderungen in den Verschiedenen Versionen des Prompts:
-
-Version 1:
+### Version 1:
     Standard Version, verlangt in beliebiger Programmiersprache, einen nach Lupenreinen Raytracer.
     Dieser soll Schatten, Reflexionen, Shading und Lichtquellen und keine Post-Processing-Effekte verwenden.
     Weiterhin soll die komplette Berechnung der Rays auch in der File stehen.
 
-Version 2:
+### Version 2:
     Leichte Umbenennung der zuerstellenden Szenerie, sowie fokus auf Unabhängigkeit der einzelnen Module
 
-Version 3:
+### Version 3:
     Keine Verwendung von zu erwartenden Fachbegriffen außen Cornellbox.
 
-Version 4:
+### Version 4:
     Fokus auf möglichst kleinen verwendeten Speicher.
 
-Version 5:
+### Version 5:
     Fokus auf Geschwindigkeit. Einerseits des Programms andererseits der Kompilierung.
 
-Version 6:
+### Version 6:
     Möglichst kurzer Code.
 
-Version 7:
+### Version 7:
     Versuch der Verleitung zu Java
 
-Version 8:
+### Version 8:
     Andere Art von Version 7
 
-Version 9:
+### Version 9:
     Fokus auf Verständlichkeit der Konzepte.
 
-Versionen 10 - 13 sind mit einem Extra Paragraphen versehen zu genaueren Beschreibung und Einschränkung des Codes.
+### Versionen 10 - 13 
+    sind mit einem Extra Paragraphen versehen zu genaueren Beschreibung und Einschränkung des Codes.
     
 Die einzelnen Versionen haben verschiedene Arten von:
     512x512 pxl Größe.
@@ -44,9 +46,9 @@ Die einzelnen Versionen haben verschiedene Arten von:
     Das Bild wird mit einem festen Namen gespeichert.
 
 
-**ChatGPT**: 
+# ChatGPT: 
 
-**Allgemeines:**
+##  Allgemeines:
 
 ChatGPTs Codeerstellung ist sehr an das Min-Max Pronzip angelehnt.
 Es wird versucht, mit der niedrigst möglichen Anzahl an Zeilen den möglichst größten Teil des Prompts zu erfüllen.
@@ -87,7 +89,41 @@ Dies lässt vermuten, dass lokale Kohärenz über globale Konsistenz priorisiert
 Komplexitätsmanagement erfolgt eher oberflächlich als architektonisch geplant.
 Insgesamt entsteht Code, der funktional wirkt, jedoch nicht immer als ganzheitliches System entworfen wurde.
 
-**Technische Daten**
+## ChatGPTs Codephilosophy (Von ChatGPT selbst zum Vergleich):
+
+Minimierung der Zeilen: Wo immer möglich, versuche ich, redundante oder unnötige Codezeilen zu vermeiden. Das bedeutet, dass ich nicht unnötig ausführliche Strukturen oder Kommentare hinzufüge, wenn sie nicht unbedingt notwendig sind. Das Ziel ist, Code zu erzeugen, der funktional ist, aber auch so kurz wie möglich bleibt.
+
+Fokus auf Klarheit: Manchmal erfordert der „maximale Teil“ eines Prompts mehr Kontext oder bestimmte Best Practices, die einen Code etwas ausdehnen, aber das ist okay, solange die Lesbarkeit nicht leidet. Ich vermeide es, Lösungen zu entwickeln, die zwar minimal sind, aber schwer zu verstehen oder zu warten wären.
+
+Flexibilität bei der Erfüllung des Prompts: Nicht immer bedeutet „minimale Zeilen“ auch die beste Lösung. Es gibt Fälle, in denen es besser ist, einige Zeilen mehr zu verwenden, um eine robustere, sicherere oder wartungsfreundlichere Lösung zu bieten. Der „maximale“ Teil des Prompts bezieht sich daher oft auch auf die Qualität und die Flexibilität der Lösung.
+
+Vermeidung von Overengineering: Oft ist es verlockend, zusätzliche Funktionen oder abstrakte Lösungen einzuführen, die „perfekt“ wären, aber nicht notwendig für das eigentliche Ziel des Prompts. Ich versuche, solche Lösungen zu vermeiden, um die Einfachheit zu wahren.
+
+Adaptivität: Wenn ein Problem mit einer minimalen Lösung nicht gut gelöst werden kann (z.B. wegen Performance oder Zukunftssicherheit), werde ich bereit sein, die Lösung zu erweitern, aber immer mit dem Ziel, so wenig wie möglich zu tun, um das gewünschte Ergebnis zu erzielen.
+
+## Ergebnisse bei Promptversionen
+
+### Des Perfekte
+
+![Bild](SolutionsByGPT/Pictures/V4Box.ppm)
+Das einzige Perfekte in den 13 Versionen bei ChatGPT (Das nicht repariert werden musste für)
+
+### Standardausgabe
+
+![Bild](SolutionsByGPT/Pictures/V10Box.png)
+Die Standardausgabe bei ChatGPT, der komplett Schwarze. Dies liegt an dem zuvor besprochenen Hauptfehler und ist für die Versionen 2, 3, 5, 6, 8, 9, 10, 13 zu sehen.
+
+### Ignorieren des Prompts
+
+![Bild](SolutionsByGPT/Pictures/V1Box.ppm)
+In Version 1 des Prompts hat ChatGPT den Schattenteil des Prompts einfach ignoriert.
+
+### Ambient Light
+
+![Bild](SolutionsByGPT/Pictures/V7Box.ppm)
+In den Versionen 7 und 12 hat ChatGPT Ambient Light implementiert und damit das komplett schwarze bild vermieden (Sonst wäre es die Standardausgabe).
+
+## Technische Daten
 
 ChatGPT hat sich 6/13 (46.2%) der Zeit für C++ und 7/13 (53.8%) für Python entschieden. Versuche auf Java zu lenken (ohne Zwang) liefen leer aus.
 Bei 1/13 (7.7%) Versionen ist zur Initialerstellung ein "perfektes" oder gewolltes Ergebnis erstellt worden. 
@@ -102,7 +138,7 @@ In Version 11 (1/13 7.7%) ist das Compilieren fehlgeschlagen, da eine define Zei
 Bei der Fehlerbehebung mit ChatGPT des eigenen Fehlers im Code von Version 2, konnte ChatGPT den Hauptfehler (Schatten-Ray) immer erkennen.
 Hierbei war es egal wie genau die Fehlerquelle eingegrenzt wurde. Alleine das Endergebnis des Fehlers (Schwarze Output File) hat gereicht um ChatGPT auf die korrekte Fehlerbehebung zu bringen. Sobald auch nur die konkrete Klasse des Fehlers genannt wurde hat ChatGPT auch den Fehler gefunden, der speziell bei der 2. Version zum Kompilierabbruch führt (Die Negation eines Vec3 ist undefiniert). Weitere Präzision führt zu keiner Verbesserung des Codes oder der Antwort.
 
-**Länge von ChatGPT Code (Zeilen)**
+## Länge von ChatGPT Code (Zeilen)
 
     | Version | Lines |
     |---------|-------|
@@ -119,24 +155,10 @@ Hierbei war es egal wie genau die Fehlerquelle eingegrenzt wurde. Alleine das En
     |   V11   |  267  |
     |   V12   |  226  |
     |   V13   |  213  |
-| **Total**   | **2800**  |
-| **Average** | **215.4** |
+| Total   | 2800  |
+| Average | 215.4 |
 
-
-**ChatGPTs Codephilosophy (Von ChatGPT selbst zum Vergleich):**
-
-Minimierung der Zeilen: Wo immer möglich, versuche ich, redundante oder unnötige Codezeilen zu vermeiden. Das bedeutet, dass ich nicht unnötig ausführliche Strukturen oder Kommentare hinzufüge, wenn sie nicht unbedingt notwendig sind. Das Ziel ist, Code zu erzeugen, der funktional ist, aber auch so kurz wie möglich bleibt.
-
-Fokus auf Klarheit: Manchmal erfordert der „maximale Teil“ eines Prompts mehr Kontext oder bestimmte Best Practices, die einen Code etwas ausdehnen, aber das ist okay, solange die Lesbarkeit nicht leidet. Ich vermeide es, Lösungen zu entwickeln, die zwar minimal sind, aber schwer zu verstehen oder zu warten wären.
-
-Flexibilität bei der Erfüllung des Prompts: Nicht immer bedeutet „minimale Zeilen“ auch die beste Lösung. Es gibt Fälle, in denen es besser ist, einige Zeilen mehr zu verwenden, um eine robustere, sicherere oder wartungsfreundlichere Lösung zu bieten. Der „maximale“ Teil des Prompts bezieht sich daher oft auch auf die Qualität und die Flexibilität der Lösung.
-
-Vermeidung von Overengineering: Oft ist es verlockend, zusätzliche Funktionen oder abstrakte Lösungen einzuführen, die „perfekt“ wären, aber nicht notwendig für das eigentliche Ziel des Prompts. Ich versuche, solche Lösungen zu vermeiden, um die Einfachheit zu wahren.
-
-Adaptivität: Wenn ein Problem mit einer minimalen Lösung nicht gut gelöst werden kann (z.B. wegen Performance oder Zukunftssicherheit), werde ich bereit sein, die Lösung zu erweitern, aber immer mit dem Ziel, so wenig wie möglich zu tun, um das gewünschte Ergebnis zu erzielen.
-
-
-**Best Practice Advice:**
+## Best Practice Advice:
 
 1. Fokuspunkte deutlich markieren 
 2. Nach Modularität und Erweiterbarkeit fragen
@@ -144,15 +166,15 @@ Adaptivität: Wenn ein Problem mit einer minimalen Lösung nicht gut gelöst wer
 4. Code in neuen Chats korrigieren lassen
 
 
-**Haupterkenntnisse:**
+## Haupterkenntnisse:
 
 1. ChatGPT ist min-max Code Gen
 2. ChatGPTs Fehler kommen (häufig) vom Frankenstein Weg wie Code generiert wird
 3. ChatGPT kann den eigenen Code (in neuen Chat) gut reperieren
 
-**DeepSeek**:
+# DeepSeek:
 
-**Allgemein:**
+## Allgemein:
 
 DeepSeek Codegenerierung ist oberflächig und ausgiebig.
 Bei der Generierung werden häufig fehlerhaft Operanten verwendet.
@@ -181,7 +203,7 @@ Das Zusammenspiel einzelner Module bleibt daher anfällig für Seiteneffekte.
 Testfälle oder Validierungsmechanismen werden kaum mitgedacht.
 Insgesamt entsteht der Eindruck einer ausführlichen, aber nicht tiefgreifend abgestimmten Codebasis.
 
-**Technische Daten**
+## Technische Daten
 
 DeepSeek Antworten sind sind meistens (codeweise) deutlich länger als ChatGPT Antworten (ca. 374 Zeilen).
 Der Code ist dafür meistens nicht beim initialen erstellen benutzbar in 7/13 (53.8%) ist kein compilieren möglich.
@@ -191,7 +213,7 @@ Jedoch wurde hier, sowie in 2/13 (Total: 3/14 21.4%) der Versionen externen extr
 Weiterhin hat Deepseek trotz des Versuchs mit Promptänderungen die Sprachwahl zu beeinflussen, zu 11/13 (84.6%) der Zeit für Python und 2/13 (15.4%) für C++ entschieden.
 
 
-Länge von DeepSeek Code (Zeilen)
+## Länge von DeepSeek Code (Zeilen)
 
     | Version | Lines |
     |---------|-------|
@@ -208,5 +230,13 @@ Länge von DeepSeek Code (Zeilen)
     |   V11   |  408  |
     |   V12   |  382  |
     |   V13   |  325  |
-| **Total**   | **4867**  |
-| **Average** | **374.4** |
+    | Total   | 4867  |
+    | Average | 374.4 |
+
+## Best Practice Advice:
+
+
+
+## Haupterkenntnisse:
+
+
