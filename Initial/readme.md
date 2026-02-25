@@ -1,8 +1,8 @@
 # Vorwort
 
 Für ChatGPT wurde die neuste mögliche Version zum Zeitpunkt der Erstellung verwendet.
-Bei DeepSeek die neuste Version des "Free" Plans vom 18.2.2026.
-Es wird immer nur die Initialanwort und Verwendbarkeit bzw. das Ergebnis des Programms betrachtet.
+Bei DeepSeek die neueste Version des "Free" Plans vom 18.2.2026.
+Es wird immer nur die Initialantwort und Verwendbarkeit bzw. das Ergebnis des Programms betrachtet.
 
 Die zu beantwortende Frage war:
     Wie gut ist die Initialausgabe einer Allgemein-KI unter der Annahme, dass weder die Programmiersprache noch das konkrete Aussehen der Ausgabe eingeschränkt wird?
