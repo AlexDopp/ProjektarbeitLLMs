@@ -193,6 +193,15 @@ In Version 11 (1/13 7.7%) ist das Compilieren fehlgeschlagen, da eine define Zei
 Bei der Fehlerbehebung mit ChatGPT des eigenen Fehlers im Code von Version 2, konnte ChatGPT den Hauptfehler (Schatten-Ray) immer erkennen.
 Hierbei war es egal wie genau die Fehlerquelle eingegrenzt wurde. Alleine das Endergebnis des Fehlers (Schwarze Output File) hat gereicht um ChatGPT auf die korrekte Fehlerbehebung zu bringen. Sobald auch nur die konkrete Klasse des Fehlers genannt wurde hat ChatGPT auch den Fehler gefunden, der speziell bei der 2. Version zum Kompilierabbruch führt (Die Negation eines Vec3 ist undefiniert). Weitere Präzision führt zu keiner Verbesserung des Codes oder der Antwort.
 
+Mögliche Lösung des Standardproblems
+
+    shadow_hit = scene.trace(shadow_ray)
+        if shadow_hit:
+            dist_to_light = (light.pos - point).length()
+            if shadow_hit[0] < dist_to_light:
+                continue
+
+
 ## Länge von ChatGPT Code (Zeilen)
 
     | Version | Lines |
@@ -283,8 +292,6 @@ Wie ChatGPT ignoriert DeepSeek bei Version 1 den Prompt zur Implementierung von 
 ### Funktionsfähig aber Schwarz
 
 ![Bild](SolutionsByDeepSeek/Pictures/V9Box.png)
-
-
 
 ### Schwarz
 
