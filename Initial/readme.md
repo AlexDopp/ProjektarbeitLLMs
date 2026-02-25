@@ -10,6 +10,13 @@ Die zu beantwortende Frage war:
 Hierzu wurde die Erstellung eines einfachen Raytracers gewählt, der durchschnittlich 200 Zeilen zur Erstellung benötigt. 
 Er ist in den meisten weitverbreiteten Programmiersprachen implementierbar.
 
+## Informationen
+
+Wenn 2 Bilder in Pictures bei einer Version stehen ist die .ppm die generierte und die .png eine Kopie.
+Für Versionen bei denen der Code nicht kompiliert ist in den meisten Fällen eine funktionierende Version in Edits.
+In allen Fällen wurde Search und DeepThink nicht verwendet außer bei DeepSeek Version 13 DNS. 
+Diese wurde später hinzugefügt um die Tauglichkeit von DeepSeek zur Codegenerierung zu Testen.
+
 # Allgemein zum Prompt
 
 Der Prompt wurde händisch erstellt und bearbeitet. 
@@ -217,6 +224,8 @@ ChatGPT folgt bei der Codegenerierung häufig einem Min-Max-Prinzip, bei dem mit
 Viele Fehler entstehen durch die fragmentierte, „Frankenstein“-artige Zusammensetzung einzelner Codebausteine ohne durchgehenden Gesamtplan.
 Wird derselbe Code jedoch in einem neuen Chat zur Analyse vorgelegt, kann ChatGPT ihn meist zuverlässig verstehen, Fehler identifizieren und gezielt reparieren.
 
+
+
 # DeepSeek:
 
 ## Allgemein:
@@ -247,6 +256,53 @@ Zudem werden bestehende Abhängigkeiten zwischen Komponenten nicht konsequent an
 Das Zusammenspiel einzelner Module bleibt daher anfällig für Seiteneffekte.
 Testfälle oder Validierungsmechanismen werden kaum mitgedacht.
 Insgesamt entsteht der Eindruck einer ausführlichen, aber nicht tiefgreifend abgestimmten Codebasis.
+
+## Ergebnisse bei Promptversionen
+
+Da bei DeepSeek die meisten Versionen nicht Initial funktioniert haben, sind alle Versionen gezeigt.
+
+
+### Schattenlos
+
+![Bild](SolutionsByDeepSeek/Pictures/V1Box.png)
+
+Wie ChatGPT ignoriert DeepSeek bei Version 1 den Prompt zur Implementierung von Schatten
+
+### Ambient Light Grey
+
+![Bild](SolutionsByDeepSeek/Pictures/V2Box.png)
+
+
+
+### Weiß mit Rauschen
+
+![Bild](SolutionsByDeepSeek/Pictures/V8Box.png)
+
+
+
+### Funktionsfähig aber Schwarz
+
+![Bild](SolutionsByDeepSeek/Pictures/V9Box.png)
+
+
+
+### Schwarz
+
+![Bild](SolutionsByDeepSeek/Pictures/V10Box.png)
+
+
+
+### Unendlichkeit
+
+![Bild](SolutionsByDeepSeek/Pictures/V13Box.png)
+
+
+
+### Wer denken kann ist im Vorteil
+
+![Bild](SolutionsByDeepSeek/Pictures/V13BoxDNS.png)
+
+
 
 ## Technische Daten
 
