@@ -97,6 +97,9 @@ technischen Kern erfolgreich implementieren kann.
 
 Diese Ergebnisse stehen im starken Kontrast zu Leons Erfahrungen mit Chat-GPT   
 bei einer einfacheren Aufgabe mit weniger Kontext.  
+Besonders deutlich wird hier, wie bei ihm im kleineren Kontext Chat-GPT deutlich genauer  
+auf den Prompt und die spezifische Wortwahl achtet,  
+was in meinem Versuch bei steigender Komplexität verloren gegangen ist.  
 
 
 Cursor hingegen hat ab der allerersten Verwendung ein deutlich professionelleres Bild abgegeben.  
