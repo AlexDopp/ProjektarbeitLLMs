@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Anki Lern-App – Lokal (HTML + Wasm)</title>
+
+<style>
+body { font-family: Arial, sans-serif; background: #f4f4f4; margin:0; }
+header { background: #2c3e50; color: #fff; padding: 12px 20px; }
+main { padding: 20px; }
+section { background: #fff; padding: 16px; margin-bottom:16px; border-radius:6px; }
+button { margin:4px; }
+.card { border:1px solid #ccc; padding:20px; min-height:100px; margin-bottom:10px; }
+.hidden { display:none; }
+.boxplot { display:flex; align-items:flex-end; height:120px; gap:6px; }
+.box { width:20px; text-align:center; font-size:10px; color:#333; }
+.legend { display:flex; gap:12px; font-size:12px; margin-top:4px; }
+.legend span { display:inline-block; width:12px; height:12px; }
+</style>
+</head>
+
+<body>
+<header>
+<h1>Anki Lern-App (lokal, ohne Libraries)</h1>
+</header>
+
+<main>
+<section>
+<h2>1. Deck importieren</h2>
+<input type="file" id="importFile">
+<div id="importError" style="color:red;"></div>
+</section>
+
+<section>
+<h2>2. Lernziele</h2>
+<input id="goalName" placeholder="Neues Lernziel">
+<button onclick="UI.addGoal()">Hinzufügen</button>
+<ul id="goalList"></ul>
+</section>
+
+<section>
+<h2>3. Deck-Übersicht</h2>
+<div id="deckStats"></div>
+</section>
+
+<section>
+<h2>4. Lernsession</h2>
+<label>Lernziel auswählen:
+  <select id="sessionGoal"></select>
+</label>
+<br>
+<button onclick="UI.startSession()">Session starten</button>
+<button onclick="UI.stopSession()">Session stoppen</button>
+<div id="cardView" class="card hidden"></div>
+<button id="flipBtn" class="hidden" onclick="UI.flipCard()">Karte umdrehen</button>
+<div id="ratingButtons" class="hidden">
+<button onclick="UI.rateCard('new')">Neu</button>
+<button onclick="UI.rateCard('hard')">Schwer</button>
+<button onclick="UI.rateCard('easy')">Leicht</button>
+<button onclick="UI.rateCard('learned')">Gelernt</button>
+</div>
+</section>
+
+<section>
+<h2>5. Lernfortschritt</h2>
+<div id="progressView"></div>
+</section>
+
+<section>
+<h2>6–7. Aktivität & Boxplot</h2>
+<div id="boxplot" class="boxplot"></div>
+<div class="legend"></div>
+</section>
+</main>
+
+<script>
+/* =======================
+   State & Persistenz
+======================= */
+const State = { decks: [], goals: [], sessions: [], session:{active:false,start:null,cardsReviewed:0,currentGoal:null} };
+function saveState(){localStorage.setItem("ankiState",JSON.stringify(State));}
+function loadState(){const s=localStorage.getItem("ankiState");if(s)Object.assign(State,JSON.parse(s));}
+loadState();
+
+/* =======================
+   UI Controller
+======================= */
+const UI = {
+  currentCard:null, side:"front",
+
+  addGoal(){
+    const name=document.getElementById("goalName").value.trim();
+    if(!name)return;
+    State.goals.push({name,decks:[]});
+    saveState();
+    UI.renderGoals();
+  },
+
+  renderGoals(){
+    const ul=document.getElementById("goalList");
+    ul.innerHTML="";
+    State.goals.forEach((g,i)=>{
+      const li=document.createElement("li");
+      li.textContent=g.name;
+      ul.appendChild(li);
+    });
+    // Session dropdown
+    const sel=document.getElementById("sessionGoal");
+    sel.innerHTML="";
+    State.goals.forEach((g,i)=>{ const o=document.createElement("option"); o.value=i; o.text=g.name; sel.appendChild(o); });
+  },
+
+  updateDeckStats(){
+    const div=document.getElementById("deckStats");
+    div.innerHTML="";
+    State.decks.forEach(deck=>{
+      const topicCounts={};
+      deck.cards.forEach(c=>{ topicCounts[c.topic]=(topicCounts[c.topic]||0)+1; });
+      let statsHTML=`<h4>${deck.deckName}</h4>`;
+      statsHTML+=`<b>Karten gesamt:</b> ${deck.cards.length}<br>`;
+      statsHTML+=`<b>Karten pro Thema:</b> `;
+      for(const t in topicCounts){statsHTML+=`${t}: ${topicCounts[t]}, `;}
+      const statusCounts={new:0,hard:0,easy:0,learned:0};
+      deck.cards.forEach(c=>{ statusCounts[c.status]=(statusCounts[c.status]||0)+1; });
+      statsHTML+=`<br><b>Status:</b> `;
+      for(const s in statusCounts){ statsHTML+=`${s}: ${statusCounts[s]}, `;}
+      div.innerHTML+=statsHTML;
+    });
+  },
+
+  startSession(){
+    const goalIndex=document.getElementById("sessionGoal").value;
+    if(State.decks.length===0||!State.goals[goalIndex])return;
+    State.session.active=true;
+    State.session.start=Date.now();
+    State.session.currentGoal=goalIndex;
+    UI.nextCard();
+  },
+
+  stopSession(){
+    if(!State.session.active) return;
+    State.session.active=false;
+    State.sessions.push({goal:State.session.currentGoal, start:State.session.start, cardsReviewed:State.session.cardsReviewed});
+    State.session.cardsReviewed=0;
+    UI.hideCardUI();
+    UI.renderProgress();
+    UI.renderBoxplot();
+    saveState();
+  },
+
+  nextCard(){
+    const goalIndex=State.session.currentGoal;
+    const goal=State.goals[goalIndex];
+    if(!goal) return;
+    const cards=goal.decks.flatMap(d=>d.cards);
+    if(cards.length===0) return;
+    UI.currentCard=cards[Math.floor(Math.random()*cards.length)];
+    UI.side="front";
+    const view=document.getElementById("cardView");
+    view.textContent=UI.currentCard.front;
+    view.classList.remove("hidden");
+    document.getElementById("flipBtn").classList.remove("hidden");
+    document.getElementById("ratingButtons").classList.add("hidden");
+  },
+
+  flipCard(){
+    if(!UI.currentCard) return;
+    const view=document.getElementById("cardView");
+    if(UI.side==="front"){
+      view.textContent=UI.currentCard.back;
+      UI.side="back";
+      document.getElementById("ratingButtons").classList.remove("hidden");
+    }
+  },
+
+  rateCard(status){
+    UI.currentCard.status=status;
+    UI.currentCard.lastReviewed=new Date().toISOString().slice(0,10);
+    State.session.cardsReviewed++;
+    saveState();
+    UI.renderProgress();
+    UI.nextCard();
+  },
+
+  hideCardUI(){
+    document.getElementById("cardView").classList.add("hidden");
+    document.getElementById("flipBtn").classList.add("hidden");
+    document.getElementById("ratingButtons").classList.add("hidden");
+  },
+
+  renderProgress(){
+    const goalIndex=State.session.currentGoal;
+    const goal=State.goals[goalIndex];
+    if(!goal) return;
+    let total=0, learned=0;
+    goal.decks.forEach(d=>{ d.cards.forEach(c=>{ total++; if(c.status==="learned") learned++; }); });
+    const percent=total?((learned/total)*100).toFixed(1):0;
+    document.getElementById("progressView").textContent=`Lernziel: ${goal.name} – Gesamtfortschritt: ${percent}% (${learned}/${total})`;
+  },
+
+  renderBoxplot(){
+    const goalIndex=State.session.currentGoal;
+    const goal=State.goals[goalIndex];
+    if(!goal) return;
+    const div=document.getElementById("boxplot");
+    div.innerHTML="";
+    const legendDiv=document.querySelector(".legend");
+    legendDiv.innerHTML="";
+    const topics=new Set(goal.decks.flatMap(d=>d.cards.map(c=>c.topic)));
+    const colors=["#3498db","#2ecc71","#e74c3c","#f1c40f","#9b59b6"];
+    let colorMap={};
+    Array.from(topics).forEach((t,i)=>{ colorMap[t]=colors[i%colors.length]; legendDiv.innerHTML+=`<div><span style="background:${colorMap[t]}"></span> ${t}</div>`; });
+
+    topics.forEach(topic=>{
+      let vals=[];
+      goal.decks.forEach(d=>d.cards.forEach(c=>{ if(c.topic===topic) vals.push(c.status==="learned"?1:c.status==="easy"?0.7:c.status==="hard"?0.4:0.1); }));
+      if(vals.length===0) return;
+      vals.sort((a,b)=>a-b);
+      const q1=vals[Math.floor(vals.length*0.25)];
+      const q2=vals[Math.floor(vals.length*0.5)];
+      const q3=vals[Math.floor(vals.length*0.75)];
+      const box=document.createElement("div");
+      box.className="box";
+      box.style.height=(q3*100)+"px";
+      box.style.background=colorMap[topic];
+      box.title=`Q1:${(q1*100).toFixed(0)}% Q2:${(q2*100).toFixed(0)}% Q3:${(q3*100).toFixed(0)}%`;
+      div.appendChild(box);
+    });
+  }
+};
+
+/* =======================
+   Deck Import
+======================= */
+document.getElementById("importFile").addEventListener("change", e=>{
+  const file=e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const json=JSON.parse(reader.result);
+      if(!json.deckName||!Array.isArray(json.cards)) throw new Error("Ungültiges Deck-Format");
+      State.decks.push(json);
+      saveState();
+      UI.updateDeckStats();
+      UI.renderProgress();
+    }catch(err){ document.getElementById("importError").textContent=err.message; }
+  };
+  reader.readAsText(file);
+});
+
+/* Initial Render */
+UI.renderGoals();
+UI.updateDeckStats();
+UI.renderProgress();
+UI.renderBoxplot();
+</script>
+
+</body>
+</html>

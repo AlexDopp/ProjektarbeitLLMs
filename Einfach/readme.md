@@ -1,9 +1,38 @@
+# Vorwort
+
+Der Prompt wurde händisch erstellt und bearbeitet. hierbei ist es leider nicht immer zum gewünschten Ergbenis gekommen (Was zu erwarten war).
+Bei der Erstellung eines Prompts wurde nicht auf das Ergebnis des vorherigen Prompts geachtet
+
 # Allgemein zum Prompt
 
 Der Prompt an die verschiedenen KIs soll ein kurzer, von einer Person mittleren Wissenstands geschriebene Anfrage sein.
 In den verschiedenen Versionen werden (mit Absicht) mögliche Biases zu verschiedenen Programmiersprachen und möglichen Lösungswegen injiziert.
 Hierbei wird nie einer Programmiersprache, eine bestimmte Klasse oder ähnliches verlangt.
 Die größte Eingrenzung ist in den Versionen 10 - 13 indenen das Endergebnis in 512x512pxl gesetzt wird.
+
+Startversion des Prompts:
+
+    Erstelle in einer beliebigen Programmiersprache, einen einfachen Raytracer zur Darstellung einer Cornellbox.
+
+    Dieser sollte diese Anforderungen erfüllen:
+
+        Allgemein:
+            1. Es gibt keine Speicherlecks. 
+            2. Es wird minimal importiert.
+            3. Es werden keine externen Seiten verwendet.
+            4. Der Code ist wohlstrukturiert
+            5. Der Code muss vollständig implementiert werden und ohne Addition weiteren Codes ausführbar sein
+
+        Raytracer spezifisch:
+
+            1. Die grafischen primitiven sind freiwählbar.
+            2. Es wird ein Bild einer Variante der Cornellbox unter Verwendung des Raytracers erstellt und gespeichert.
+            3. Schatten, Reflexionen, Shading und Lichtquellen müssen implementiert werden.
+            4. Es sollen keine Post-Processing-Effekte angewandt werden
+            5. Das Raytracing, die Mathematik und die Geografie sollten im Code unabhängig (modular) verwendbar sein
+
+Die einzelnen Punkte des Prompts ändern sich in den meisten versionen des Prompts leicht und der Hauptunterschied wird in die gewollte Zeile integriert **nicht** hervorgehoben.
+
 
 ## Änderungen in den Verschiedenen Versionen des Prompts:
 
@@ -162,19 +191,20 @@ Hierbei war es egal wie genau die Fehlerquelle eingegrenzt wurde. Alleine das En
     | Total   | 2800  |
     | Average | 215.4 |
 
-## Best Practice Advice:
+## Fazit
 
-1. Fokuspunkte deutlich markieren 
-2. Nach Modularität und Erweiterbarkeit fragen
-3. Sofortige Ausführbarkeit erwarten
-4. Code in neuen Chats korrigieren lassen
+### Best Practice Advice:
 
+Fokuspunkte sollten im Prompt klar und eindeutig markiert werden, damit zentrale Anforderungen priorisiert umgesetzt werden.
+Zudem ist es sinnvoll, gezielt nach Modularität und Erweiterbarkeit zu fragen, um eine nachhaltige Code-Struktur zu fördern.
+Der generierte Code sollte unmittelbar ausführbar sein, ohne dass grundlegende Anpassungen notwendig sind.
+Treten Fehler auf, empfiehlt es sich, den vollständigen Code in einem neuen Chat zur Korrektur einzureichen, um ein verbessertes Grundergebnis zu erhalten.
 
-## Haupterkenntnisse:
+### Erkenntnisse:
 
-1. ChatGPT ist min-max Code Gen
-2. ChatGPTs Fehler kommen (häufig) vom Frankenstein Weg wie Code generiert wird
-3. ChatGPT kann den eigenen Code (in neuen Chat) gut reperieren
+ChatGPT folgt bei der Codegenerierung häufig einem Min-Max-Prinzip, bei dem mit möglichst wenig Struktur möglichst viele Anforderungen abgedeckt werden sollen.
+Viele Fehler entstehen durch die fragmentierte, „Frankenstein“-artige Zusammensetzung einzelner Codebausteine ohne durchgehenden Gesamtplan.
+Wird derselbe Code jedoch in einem neuen Chat zur Analyse vorgelegt, kann ChatGPT ihn meist zuverlässig verstehen, Fehler identifizieren und gezielt reparieren.
 
 # DeepSeek:
 
@@ -237,10 +267,12 @@ Weiterhin hat Deepseek trotz des Versuchs mit Promptänderungen die Sprachwahl z
     | Total   | 4867  |
     | Average | 374.4 |
 
-## Best Practice Advice:
+## Fazit
+
+### Best Practice Advice:
 
 
 
-## Haupterkenntnisse:
+### Haupterkenntnisse:
 
 

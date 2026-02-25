@@ -1,0 +1,16 @@
+V2 Prompt:
+Ok das Ergebnis ist im Prinzip schon sehr gut, aber es fehlen Import-Kontrollen.
+Beim Import sollen Decks abgelehnt werden, die Inkonsistenz oder Fehler in ihren Daten haben, welche das Programm behindern könnten.
+Kontrolliere zusätzlich die verwendeten Texte/Beschreibungen in den Boxplots auf Fehler 
+und Verständlichkeit und achte darauf, dass sie nicht in andere Dinge hineinragen.
+Passe deinen Code dahingehend an und gib den vollständigen verbesserten Code zurück. 
+Antworte nur mit Code.
+Begrenze dabei deine Antwort wie bisher auf 2000 Zeilen Code maximal.
+
+
+Kommentare:
+Ähnlich wie in der JSS Version werden sehr einfache Fehler jetzt erkannt, aber Logik zur 
+Erkennung von falschen Daten ist immer noch ausbaufähig. Auch Karten mit zu langem Text brechen
+die App auf lächerliche Weise.
+Der Code wurde außerdem auch sehr komprimiert aufgrund der maximalen Zeilenanzahl, aber Inhalt ist
+unfassbar überladen.

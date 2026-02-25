@@ -1,0 +1,26 @@
+Erste Analyse:
+Cursor hat eigenständig in seiner ersten Lösung über 3000 Zeilen geschrieben,
+was die Desktop-App selbst gecrasht hat, weshalb ich jetzt immer eine manuelle Zeilenbegrenzung auf 2000 mitgebe.
+Mit dieser Begrenzung umfasst die erste Lösung 1074 Zeilen.
+
+Beim ersten Ausführen wird direkt ein Klassenunterschied deutlich zwischen Cursor und ChatGPT.
+Während GPT vorher genaustens nach Plan programmiert hat und dabei eher oft noch Dinge vergisst,
+geht Cursor eher auf "Alles und noch ganz viel extra"!
+Es wurde massiv viele Felder und Informationen automatisch aufgefüllt mit Dingen die zum Thema passen könnten.
+Dazu gehören ein Header mit Bild und Kurzbeschreibung, die Möglichkeit zur Zurücksetzung der importierten Daten,
+Beschreibungsmöglichkeiten für Lernziele und Beispieltext für die einzelnen Textfelder und vieles mehr.
+Besonders fällt auf dass die UI sehr modern und farblich angepasst erscheint, obwohl ich dazu gar keine
+Spezifikationen mitgegeben habe. Timer und Beschriftungen an den Boxplots, wovon es hier sogar mehrere gibt,
+wurden auch automatisch dazu gedacht und updaten nach jeder gespielten Karte.
+Einzige direkt auffallende Fehler sind Beschriftungen in Buttons und Boxplot-legenden, die nicht ganz passen
+oder keine Umlaute erlauben. Außerdem sind die Import-Kontrollen noch viel zu schwach.
+Erst beim Session Start fällt auf dass ein Deck keine Karte hat und die anderen Test Cases gehen ungechecked durch.
+Aber alles in allem hätte ein einzelner Junior-Entwickler viele Stunden bis hin zu Tage gebraucht,
+um auf eine ähnlich komplexe Lösung zu kommen.
+
+Nicht erfolgreiche Testfälle:
+- ID doppelt verwendet 
+- Letzter Review über 1 Jahr her
+- Review Zeit liegt in Zukunft von heute aus gesehen
+- Eine Karte ist unvollständig
+- Kartentext ist zu lang

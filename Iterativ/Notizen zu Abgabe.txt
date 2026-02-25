@@ -1,0 +1,9 @@
+Abgabe Projektarbeit:
+
+Zusammenfassendes Dokument (Best Practice Zusammenfassung)
+Ein Teil in Verbindung mit Leons part.
+Erkenntnis ChatGPT arbeitet mit Prompt als zu erreichendes Maximum (manchmal auch nur weniger)
+Erkenntnis Cursor arbeitet mit Prompt als Minimum und viele Extras zusätzlich die man begrenzen muss
+
+ChatGPT exportieren!
+Dazu dokumentieren, wann welche Modelle genutzt

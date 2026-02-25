@@ -1,0 +1,165 @@
+{
+  "deckName": "Beispiel-Deck Mathe",
+  "cards": [
+    {
+      "id": "1",
+      "front": "0+0",
+      "back": "0",
+      "topic": "Addition",
+      "status": "new",
+      "lastReviewed": "2026-01-01"
+    },
+    {
+      "id": "2",
+      "front": "1+1",
+      "back": "2",
+      "topic": "Addition",
+      "status": "hard",
+      "lastReviewed": "2026-01-11"
+    },
+    {
+      "id": "3",
+      "front": "4!",
+      "back": "24",
+      "topic": "Faktor",
+      "status": "easy",
+      "lastReviewed": "2026-01-01"
+    },
+    {
+      "id": "4",
+      "front": "5*10",
+      "back": "50",
+      "topic": "Multiplikation",
+      "status": "learned",
+      "lastReviewed": "2026-01-01"
+    },
+    {
+      "id": "5",
+      "front": "2*7",
+      "back": "14",
+      "topic": "Multiplikation",
+      "status": "new",
+      "lastReviewed": "2026-01-12"
+    },
+    {
+      "id": "6",
+      "front": "12+15",
+      "back": "27",
+      "topic": "Addition",
+      "status": "learned",
+      "lastReviewed": "2026-01-12"
+    },
+    {
+      "id": "7",
+      "front": "8+22",
+      "back": "30",
+      "topic": "Addition",
+      "status": "easy",
+      "lastReviewed": "2026-01-12"
+    },
+    {
+      "id": "8",
+      "front": "45+55",
+      "back": "100",
+      "topic": "Addition",
+      "status": "new",
+      "lastReviewed": "2026-01-12"
+    },
+    {
+      "id": "9",
+      "front": "123+7",
+      "back": "130",
+      "topic": "Addition",
+      "status": "hard",
+      "lastReviewed": "2026-01-12"
+    },
+    {
+      "id": "10",
+      "front": "9+14",
+      "back": "23",
+      "topic": "Addition",
+      "status": "easy",
+      "lastReviewed": "2026-01-12"
+    },
+    {
+      "id": "11",
+      "front": "3!",
+      "back": "6",
+      "topic": "Faktor",
+      "status": "new",
+      "lastReviewed": "2026-01-12"
+    },
+    {
+      "id": "12",
+      "front": "5!",
+      "back": "120",
+      "topic": "Faktor",
+      "status": "hard",
+      "lastReviewed": "2026-01-12"
+    },
+    {
+      "id": "13",
+      "front": "1!",
+      "back": "1",
+      "topic": "Faktor",
+      "status": "learned",
+      "lastReviewed": "2026-01-12"
+    },
+    {
+      "id": "14",
+      "front": "0!",
+      "back": "1",
+      "topic": "Faktor",
+      "status": "easy",
+      "lastReviewed": "2026-01-12"
+    },
+    {
+      "id": "15",
+      "front": "6!",
+      "back": "720",
+      "topic": "Faktor",
+      "status": "hard",
+      "lastReviewed": "2026-01-12"
+    },
+    {
+      "id": "16",
+      "front": "3*9",
+      "back": "27",
+      "topic": "Multiplikation",
+      "status": "easy",
+      "lastReviewed": "2026-01-12"
+    },
+    {
+      "id": "17",
+      "front": "8*8",
+      "back": "64",
+      "topic": "Multiplikation",
+      "status": "new",
+      "lastReviewed": "2026-01-12"
+    },
+    {
+      "id": "18",
+      "front": "6*7",
+      "back": "42",
+      "topic": "Multiplikation",
+      "status": "hard",
+      "lastReviewed": "2026-01-12"
+    },
+    {
+      "id": "19",
+      "front": "12*5",
+      "back": "60",
+      "topic": "Multiplikation",
+      "status": "learned",
+      "lastReviewed": "2026-01-12"
+    },
+    {
+      "id": "20",
+      "front": "11*11",
+      "back": "121",
+      "topic": "Multiplikation",
+      "status": "new",
+      "lastReviewed": "2026-01-12"
+    }
+  ]
+}

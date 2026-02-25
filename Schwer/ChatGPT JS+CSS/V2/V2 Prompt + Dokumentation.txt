@@ -1,6 +1,0 @@
-V2 Prompt:
-Die App ist ausführbar im Browser, aber die Lernziele haben erkennbar keine Verknüpfung zum Rest des Programms, diese sollten eigentlich zu einer gestarteten Lernsession zuordbar sein und dann wird für dieses Lernziel die Aktivität gemessen und im Boxplot dargestellt. Außerdem sollen alle Attribute des Lerndecks und der Lernkarten verwendet werden, sowie beim Import auf Fehler gecheckt werden. Und diese zusätzlichen Attribute sollen alle beim Anschauen der Karte sinnvoll dargestellt werden, mit Text in der Mitte, ID darüber, Datum an der Seite und so weiter. Passe deine Antwort dahingehend weiter an und gib den vollständigen angepassten Code zurück. Antworte nur mit Code.
-
-Kommentare:
-Kaum Fehlererkennung bei Decks, nur bei komplett kaputtem Deck.
-Boxplot updated immer alles, unabhängig von ausgewähltem Lernziel und auch immer nur für das erste Deck das geladen wurde.
