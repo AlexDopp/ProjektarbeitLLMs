@@ -26,7 +26,26 @@ Der zweite Punkt, auch in meinem Teil, ist das sofortige Erkennen des Fehlers be
 Hier zeigt sich, dass selbst wenn, der Prompt nur aus Problembeschreibung und Code besteht, dass ChatGPT den Fehler findet und lösenden Code zur Verfügung stellt.
 Dies deutet darauf hin, dass ChatGPT Code dieser Länge versteht und auch untersuchen kann, aber nicht beim erstellen erneut überprüft.
 Somit sollte das erneute senden des Codes in einen neuem Chat zu einem besseren Grundergebnis führen.
-
+Zusätzlich zeigt sich, dass ChatGPT häufig stark auf die exakte Formulierung des Prompts reagiert.
+Kleine sprachliche Änderungen können dabei bereits zu deutlich anderen Codeergebnissen führen.
+Dabei wird ersichtlich, dass Prioritäten implizit aus der Wortwahl abgeleitet werden.
+Explizite Gewichtungen im Prompt beeinflussen daher die Struktur des generierten Codes erheblich.
+Ohne klare Priorisierung behandelt ChatGPT viele Anforderungen als gleichrangig.
+Dies kann dazu führen, dass komplexe Kernlogik und nebensächliche Details denselben Raum erhalten.
+Ein weiterer Punkt ist die Tendenz zur Wiederverwendung ähnlicher Lösungsstrukturen.
+Oft orientiert sich der generierte Code an zuvor erfolgreichen Mustern.
+Dadurch entstehen konsistente, aber nicht immer optimal angepasste Implementierungen.
+Besonders bei grafischen oder mathematischen Problemen zeigt sich diese Musterorientierung deutlich.
+ChatGPT optimiert zudem selten iterativ innerhalb einer einzigen Antwort.
+Stattdessen wird eine scheinbar abgeschlossene Lösung präsentiert.
+Interne Abhängigkeiten zwischen Methoden werden nicht systematisch validiert.
+Fehlende Rückkopplungsschleifen im Generierungsprozess verstärken dieses Problem.
+Auch Randfälle werden nur berücksichtigt, wenn sie explizit genannt werden.
+Nicht spezifizierte Edge-Cases bleiben daher häufig unbeachtet.
+Die Struktur des Codes wirkt oft logisch, aber nicht vollständig durchdacht.
+Dies lässt vermuten, dass lokale Kohärenz über globale Konsistenz priorisiert wird.
+Komplexitätsmanagement erfolgt eher oberflächlich als architektonisch geplant.
+Insgesamt entsteht Code, der funktional wirkt, jedoch nicht immer als ganzheitliches System entworfen wurde.
 
 Best Practice Advice:
 
@@ -56,4 +75,19 @@ DeepSeek optimiert, bzw. setzt Standardwerte häufig auch außerhalb der Norm (z
 Code generiert von DeepSeek ist meist stark Bloated. 
 Dabei handelt er sich nicht um Erweiterungsmöglichkeiten oder ähnliches.
 Die Lesbarkeit wird durch Kommentare vor den meisten Zeilen stark erhöht.
-Dabei sind in den einzelnen Zeilen praktisch nie die Probleme, sondern nur in der Kombination mehrerer Zeilen die sich zanken.
+Dabei sind in den einzelnen Zeilen praktisch nie die Probleme, sondern nur in der Kombination mehrerer Zeilen die sich zanken.Zeilen.
+Zusätzlich fällt auf, dass DeepSeek häufig sehr viele Hilfsvariablen einführt.
+Diese Variablen tragen nicht immer zur tatsächlichen Problemlösung bei.
+Oft werden Berechnungen unnötig aufgesplittet, obwohl eine kompaktere Lösung möglich wäre.
+Dadurch entsteht ein erhöhter Wartungsaufwand im weiteren Entwicklungsprozess.
+Strukturell wirken viele Implementierungen übermäßig verschachtelt.
+Kontrollstrukturen werden teilweise redundant eingesetzt.
+Fehlende Typprüfungen führen regelmäßig zu vermeidbaren Laufzeitfehlern.
+Generische Funktionen werden selten wirklich generisch umgesetzt.
+Stattdessen entstehen stark spezialisierte Einzelimplementierungen.
+Optimierungen wirken häufig kosmetisch statt algorithmisch fundiert.
+Speicher- oder Laufzeitkomplexität wird nur selten bewusst berücksichtigt.
+Zudem werden bestehende Abhängigkeiten zwischen Komponenten nicht konsequent analysiert.
+Das Zusammenspiel einzelner Module bleibt daher anfällig für Seiteneffekte.
+Testfälle oder Validierungsmechanismen werden kaum mitgedacht.
+Insgesamt entsteht der Eindruck einer ausführlichen, aber nicht tiefgreifend abgestimmten Codebasis.
