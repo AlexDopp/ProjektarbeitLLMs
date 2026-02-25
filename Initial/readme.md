@@ -16,6 +16,10 @@ Wenn 2 Bilder in Pictures bei einer Version stehen ist die .ppm die generierte u
 Für Versionen bei denen der Code nicht kompiliert ist in den meisten Fällen eine funktionierende Version in Edits.
 In allen Fällen wurde Search und DeepThink nicht verwendet außer bei DeepSeek Version 13 DNS. 
 Diese wurde später hinzugefügt um die Tauglichkeit von DeepSeek zur Codegenerierung zu Testen.
+Alle Ergebnisse die im Vergleich zwischen ChatGPT und DeepSeek gezogen werden, beziehen sich nur auf die verwendeten Versionen.
+Letztenendes kann kein definitives Ergebnis von einer so kleinen Promptanzahl produziert werden.
+Bei den jeweiligen KI Teilen wird sich nur auf die eigenen Erkenntnisse fokussiert. 
+Bei Faziten werden auch die Ergebnisse von Alex mit eingebaut.
 
 # Allgemein zum Prompt
 
@@ -272,13 +276,9 @@ Wie ChatGPT ignoriert DeepSeek bei Version 1 den Prompt zur Implementierung von 
 
 ![Bild](SolutionsByDeepSeek/Pictures/V2Box.png)
 
-
-
 ### Weiß mit Rauschen
 
 ![Bild](SolutionsByDeepSeek/Pictures/V8Box.png)
-
-
 
 ### Funktionsfähig aber Schwarz
 
@@ -290,19 +290,19 @@ Wie ChatGPT ignoriert DeepSeek bei Version 1 den Prompt zur Implementierung von 
 
 ![Bild](SolutionsByDeepSeek/Pictures/V10Box.png)
 
-
+ChatGPT-Fehler auch hier bei DeepSeek zu sehen.
 
 ### Unendlichkeit
 
 ![Bild](SolutionsByDeepSeek/Pictures/V13Box.png)
 
-
+Falscher Bau der Cornellbox
 
 ### Wer denken kann ist im Vorteil
 
 ![Bild](SolutionsByDeepSeek/Pictures/V13BoxDNS.png)
 
-
+Ein perfektes Modell nach 120 Sekunden warten.
 
 ## Technische Daten
 
@@ -338,16 +338,39 @@ Weiterhin hat Deepseek trotz des Versuchs mit Promptänderungen die Sprachwahl z
 
 ### Best Practice Advice:
 
-
+Prompts sollten bei DeepSeek möglichst eindeutig, technisch präzise und stark eingegrenzt formuliert werden.
+Typdefinitionen und erlaubte Operatoren sollten explizit gefordert werden, um Kompilierfehler zu vermeiden.
+Externe Bibliotheken sollten im Prompt ausdrücklich verboten oder erlaubt werden.
+Eine schrittweise Validierung einzelner Module wäre sinnvoller als eine vollständige Generierung auf einmal.
 
 ### Haupterkenntnisse:
 
+DeepSeek produziert umfangreichen, stark kommentierten, aber häufig nicht direkt kompilierbaren Code.
+Viele Fehler entstehen durch inkonsistente Operatorüberladungen und Typkombinationen.
+Die Lösungen wirken ausführlich, jedoch architektonisch nicht vollständig abgestimmt.
+Mit aktiviertem „DeepThink“ steigt die Qualität deutlich, jedoch auf Kosten der Generierungszeit.
+Ohne zusätzliche Denkzeit ist die Initialausgabe meist nicht unmittelbar verwendbar.
 
 # Gesamtfazit
 
 ## DeepSeek vs ChatGPT
 
+ChatGPT erzeugt kompakteren und strukturell klareren Code als DeepSeek.
+DeepSeek generiert deutlich längeren, aber häufiger fehleranfälligen Code.
+ChatGPT scheitert primär an konzeptionellen Integrationsfehlern (z. B. Shadow Rays), während DeepSeek häufiger an syntaktischen und typbezogenen Problemen scheitert.
+ChatGPT liefert schneller nutzbare Ergebnisse, DeepSeek benötigt häufig Nacharbeit oder zusätzliche Denkzeit.
+Für diese Länge des Programms (ca. 200-300 Zeilen) sollte ChatGPT verwendet werden. 
+Ob DeepSeek andere Programmiersprachen oder Programmlängen besser kann, ist unbekannt.
+
 ## Kleine Projekte vs Große Projekte
+
+Bei kleineren, klar definierten Projekten liefert ChatGPT meist schneller ein lauffähiges Grundgerüst.
+DeepSeek produziert umfangreichere Strukturen, die sich theoretisch besser erweitern lassen, jedoch initial instabil sind.
+Mit steigender Projektgröße steigt die Wahrscheinlichkeit struktureller Inkonsistenzen bei beiden Modellen.
+Ohne iterative Validierung nimmt die Fehleranfälligkeit mit wachsender Komplexität deutlich zu.
 
 ## Freiheit vs Einschränkung (bei Programmiersprache)
 
+Freie Sprachwahl führt bei beiden Modellen zu impliziten Präferenzen (Python bei DeepSeek, Python/C++ bei ChatGPT).
+Leichte sprachliche Lenkung im Prompt reicht nicht aus, um die Sprachwahl zuverlässig zu steuern.
+Mehr Freiheit führt zu kreativeren, aber weniger kontrollierbaren Resultaten.
