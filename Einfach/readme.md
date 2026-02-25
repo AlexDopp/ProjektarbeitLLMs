@@ -105,7 +105,7 @@ Adaptivität: Wenn ein Problem mit einer minimalen Lösung nicht gut gelöst wer
 
 ### Des Perfekte
 
-![Bild](SolutionsByGPT/Pictures/V4Box.ppm)
+![Bild](SolutionsByGPT/Pictures/V4Box.png)
 Das einzige Perfekte in den 13 Versionen bei ChatGPT (Das nicht repariert werden musste für)
 
 ### Standardausgabe
@@ -115,12 +115,12 @@ Die Standardausgabe bei ChatGPT, der komplett Schwarze. Dies liegt an dem zuvor 
 
 ### Ignorieren des Prompts
 
-![Bild](SolutionsByGPT/Pictures/V1Box.ppm)
+![Bild](SolutionsByGPT/Pictures/V1Box.png)
 In Version 1 des Prompts hat ChatGPT den Schattenteil des Prompts einfach ignoriert.
 
 ### Ambient Light
 
-![Bild](SolutionsByGPT/Pictures/V7Box.ppm)
+![Bild](SolutionsByGPT/Pictures/V7Box.png)
 In den Versionen 7 und 12 hat ChatGPT Ambient Light implementiert und damit das komplett schwarze bild vermieden (Sonst wäre es die Standardausgabe).
 
 ## Technische Daten
