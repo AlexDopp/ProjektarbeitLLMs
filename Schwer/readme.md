@@ -6,23 +6,23 @@ Welche Probleme treten dabei auf und für welche Teile benötigt sie externe Hil
 Gibt es Dinge, die gar nicht funktionieren?  
 
 Mit diesen Fragen habe ich mich im Zuge dieser Projektarbeit beschäftigt und verwende dabei  
-stellvertretend für kostenlose LLMs ChatGPT 5.2 und stellvertretend für Business Lösungen  
-Cursor AI Agents auf Basis von Claude 4.6, Gemini 3.0, GPT-5.2 / GPT-5.3 Codex und Grok Code,  
+stellvertretend für kostenlose LLMs [ChatGPT 5.2](https://developers.openai.com/api/docs/models) und stellvertretend für Business Lösungen  
+[Cursor AI Agents](https://cursor.com/docs/models) auf Basis von Claude 4.6, Gemini 3.0, GPT-5.2 / GPT-5.3 Codex und Grok Code,  
 wobei Cursor intern je nach Aufgabe entscheided, welches Model am besten dafür geeignet ist.  
 Die Verwendung dieser Modelle fand im Februar 2026 statt.  
 
 Grundlegend sollen in diesem Versuch beide Anbieter mit denselben Anforderungen eine .html erstellen,  
 die lokal im Browser eine ausführbare App implementiert. Die App selbst soll mittels eines festgelegten  
 Import-Formats Anki-Karten darstellen und dem Nutzer ermöglichen, seinen Fortschritt beim Lernen dieser  
-zu tracken und grafisch dargestellt bekommen.  
-Dabei wird in zwei unterschiedlichen Versuchen die Sprache festgelegt.  
-Bei der leichten Version nur auf HTML, CSS und Javascript und  
+zu tracken und grafisch dargestellt zu bekommen.  
+Dabei wird in zwei unterschiedlichen Versuchen die Programmiersprache festgelegt.  
+Bei der leichten Version wird diese auf HTML, CSS und Javascript gesetzt und  
 bei der schweren Version auf HTML, CSS und Javascript im Frontend mit WebAssembly in Rust geschrieben im Backend.  
 Damit soll ein Vergleich geschaffen werden zwischen weitverbreiteten Sprachen mit vielen Informationen  
 und eher unbekannteren Sprachen mit weniger Bezugsquellen dazu.  
 Außerdem werde ich durch gezielte Iterationen versuchen, die LLMs zum Reparieren ihrer Fehler zu bewegen.  
 
- 
+
 # Ergebnisse:
 
 ### Im Überblick  
@@ -88,9 +88,9 @@ Kontrollen lassen sich leicht fixen und Boxplots sind diesmal von vorne herein d
 
 Bereits während der Ausführung der Tests und auch jetzt mit den fertigen Ergebnissen im Vergleich  
 wird für mich deutlich, dass ChatGPT deutlich kürzere und vereinfachte Lösungen bevorzugt.  
-Dabei scheinen die Anforderungen im Prompt das Maximum zu sein, das GPT erreichen kann, aber oftmals  
-nicht erreicht und im Denkprozess Teile davon wieder vergisst.  
-Meine Vermutung hierbei ist, dass Chat-GPT die Grenzen seines Context Cache sehr schnell erreicht bei so großen Aufgaben.  
+Dabei scheinen die Anforderungen im Prompt das Maximum zu sein, das GPT erreichen kann,  
+aber oftmals nicht erreicht und im Denkprozess dann Teile davon wieder vergisst.  
+Meine Vermutung hierbei ist, dass Chat-GPT bei so großen Aufgaben die Grenzen seines Context Cache bereits erreicht.  
 Beim Verwenden einer schwereren Programmiersprache wurde dies besonders deutlich,  
 wenn ganze Abschnitte der ersten drei Anforderungen wegfallen und das Ergebniss trotzdem nicht einmal den  
 technischen Kern erfolgreich implementieren kann.   
