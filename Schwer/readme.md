@@ -1,4 +1,4 @@
-#Fragestellung und Vorgehen:  
+# Fragestellung und Vorgehen:  
 
 Kann eine LLM einen Junior-Developer ersetzen und eine strickt vorgegebene Programmanforderung  
 in zwei verschieden komplexen Programmiersprachen umsetzen?  
@@ -23,9 +23,9 @@ und eher unbekannteren Sprachen mit weniger Bezugsquellen dazu.
 Außerdem werde ich durch gezielte Iterationen versuchen, die LLMs zum Reparieren ihrer Fehler zu bewegen.  
 
  
-#Ergebnisse:
+# Ergebnisse:
 
-###Im Überblick  
+### Im Überblick  
 | Versuch | Anzahl Iterationen | Zeilen Code | Ergebniss |
 |:-------:|:------------------:|:-----------:|:---------:|
 | Chat-GPT leicht | 6 | 442 | ✔ OK |
@@ -33,7 +33,7 @@ Außerdem werde ich durch gezielte Iterationen versuchen, die LLMs zum Repariere
 | Cursor leicht | 3 | 1128 | ✔ OK |
 | Cursor schwer | 3 | 1029 | ✔ OK |
 
-###Quality Assurance und Absicherung der Imports  
+### Quality Assurance und Absicherung der Imports  
 *EC = Edge-Case-Tests, maximal 6*  
 *Bestehend aus: DoubleID, InvalidDate(Abgelaufen), LongText, Minimal(0 Karten), MissingParts, WrongTime(Zukunft)*  
 | Versuch | Erfüllte EC zu Beginn | Erfüllte EC nach "Selbstreflektierung" | Erfüllte EC nach spezifischer Hilfestellung |
@@ -43,7 +43,7 @@ Außerdem werde ich durch gezielte Iterationen versuchen, die LLMs zum Repariere
 | Cursor leicht | 1 | 3 | 6 |
 | Cursor schwer | 0 | 3 | 6 |
 
-##Chat-GPT leicht:  
+## Chat-GPT leicht:  
 
 ![Bild](Bilder/GPT_JS.png)
 
@@ -53,7 +53,7 @@ Auch kritische Fehler in der Umsetzung von Lernsessions vorhanden,
 wodurch mehrere gleichzeitig startbar waren und damit das Programm zerlegt haben.  
 Über mehrere Iterationsschritte konnten alle Fehler dann Schritt für Schritt ausgebessert werden.   
 
-##Chat-GPT schwer:  
+## Chat-GPT schwer:  
 
 ![Bild](Bilder/GPT_Rust.png)
 
@@ -65,7 +65,7 @@ der eigentlichen Anforderungen des Programms wieder verworfen und auch mit zusä
 dreht sich die Entwicklung im Kreis. 
 Deshalb habe ich den Versuch abgebrochen.
 
-##Cursor leicht:  
+## Cursor leicht:  
 
 ![Bild](Bilder/Cursor_JS.png)
 
@@ -73,7 +73,7 @@ Anfangs keine ordentlichen Importkontrollen, aber sehr viele Details zur bessere
 Kontrollen lassen sich leicht ergänzen und auch kleinere Alignment-Fehler sind schnell behoben.  
 Nur Unschönheiten in Boxplots sind nicht ganz optimal lösbar.  
 
-##Cursor schwer:  
+## Cursor schwer:  
 
 ![Bild](Bilder/Cursor_Rust.png)
 
@@ -84,7 +84,7 @@ viele der "optionalen" Zusätze, die in der 1. Version noch vorhanden waren.
 Kontrollen lassen sich leicht fixen und Boxplots sind diesmal von vorne herein durchdachter.  
 
 
-#Interpretation:  
+# Interpretation:  
 
 Bereits während der Ausführung der Tests und auch jetzt mit den fertigen Ergebnissen im Vergleich  
 wird für mich deutlich, dass ChatGPT deutlich kürzere und vereinfachte Lösungen bevorzugt.  
@@ -108,7 +108,7 @@ Beim Vergleich beider Tests mit Cursor vielen auch einige Ähnlichkeiten voralle
 was mich vermuten lässt, dass Teile davon hardcoded sind und nicht direkt von der LLM entschieden wurden.  
 
 
-#Fazit:  
+# Fazit:  
 
 Im Bezug auf meine ursprünglichen drei Fragen kann ich nun sagen:  
 
