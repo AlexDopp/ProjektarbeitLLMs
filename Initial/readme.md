@@ -1,14 +1,25 @@
 # Vorwort
 
-Der Prompt wurde händisch erstellt und bearbeitet. hierbei ist es leider nicht immer zum gewünschten Ergbenis gekommen (Was zu erwarten war).
-Bei der Erstellung eines Prompts wurde nicht auf das Ergebnis des vorherigen Prompts geachtet
+Für ChatGPT wurde die neuste mögliche Version zum Zeitpunkt der Erstellung verwendet.
+Bei DeepSeek die neuste Version des "Free" Plans vom 18.2.2026.
+Es wird immer nur die Initialanwort und Verwendbarkeit bzw. das Ergebnis des Programms betrachtet.
+
+Die zu beantwortende Frage war:
+    Wie gut ist die Initialausgabe einer Allgemein-KI unter der Annahme, dass weder die Programmiersprache noch das konkrete Aussehen der Ausgabe eingeschränkt wird?
+
+Hierzu wurde die Erstellung eines einfachen Raytracers gewählt, der durchschnittlich 200 Zeilen zur Erstellung benötigt. 
+Er ist in den meisten weitverbreiteten Programmiersprachen implementierbar.
 
 # Allgemein zum Prompt
 
+Der Prompt wurde händisch erstellt und bearbeitet. 
+Hierbei ist es leider nicht immer zum gewünschten Ergbenis gekommen (Was zu erwarten war).
+Bei der Erstellung eines Prompts wurde nicht auf das Ergebnis des vorherigen Prompts geachtet.
 Der Prompt an die verschiedenen KIs soll ein kurzer, von einer Person mittleren Wissenstands geschriebene Anfrage sein.
 In den verschiedenen Versionen werden (mit Absicht) mögliche Biases zu verschiedenen Programmiersprachen und möglichen Lösungswegen injiziert.
 Hierbei wird nie einer Programmiersprache, eine bestimmte Klasse oder ähnliches verlangt.
 Die größte Eingrenzung ist in den Versionen 10 - 13 indenen das Endergebnis in 512x512pxl gesetzt wird.
+
 
 Startversion des Prompts:
 
@@ -275,4 +286,12 @@ Weiterhin hat Deepseek trotz des Versuchs mit Promptänderungen die Sprachwahl z
 
 ### Haupterkenntnisse:
 
+
+# Gesamtfazit
+
+## DeepSeek vs ChatGPT
+
+## Kleine Projekte vs Große Projekte
+
+## Freiheit vs Einschränkung (bei Programmiersprache)
 
