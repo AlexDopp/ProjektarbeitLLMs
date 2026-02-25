@@ -1,7 +1,7 @@
 # Fragestellung und Vorgehen:  
 
-Kann eine LLM die Arbeit eines Junior-Developers ersetzen und eine klar vorgegebene Programmieraufgabe  
-in zwei verschieden komplexen Programmiersprachen vollständig realisieren?  
+Kann eine LLM die Arbeit eines Junior-Developers ersetzen und eine klar vorgegebene  
+Programmieraufgabe in zwei verschieden komplexen Sprachen vollständig realisieren?   
 Welche Probleme treten dabei auf und für welche Teile benötigt sie externe Hilfe?  
 Gibt es Dinge, die gar nicht funktionieren?  
 
