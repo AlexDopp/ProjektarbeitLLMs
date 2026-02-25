@@ -1,0 +1,15 @@
+Erstelle in einer frei wählbaren Programmiersprache einen einfachen, vollständigen Raytracer zur Darstellung einer Variante der Cornellbox.
+
+Allgemein:
+1. Der Code darf keine Speicherlecks aufweisen.
+2. Es sollen nur notwendige Imports verwendet werden.
+3. Externe Webseiten oder externe Inhalte dürfen nicht genutzt werden.
+4. Die Codebasis soll übersichtlich und logisch strukturiert sein.
+5. Die Implementierung muss vollständig sein und direkt ausführbar sein.
+
+Raytracer spezifisch:
+1. Die verwendeten grafischen Primitive können frei gewählt werden.
+2. Der Raytracer erzeugt ein Bild einer Cornellbox-ähnlichen Szene und speichert dieses ab.
+3. Lichtquellen, Schatten, Shading und Reflexionen müssen Bestandteil der Implementierung sein.
+4. Es dürfen keine Post-Processing-Verfahren eingesetzt werden.
+5. Raytracing-Logik, mathematische Grundlagen und Szenengeometrie sollen modular und unabhängig nutzbar sein.
