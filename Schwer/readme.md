@@ -33,12 +33,12 @@ Im Überblick
 | Cursor leicht | 3 | 1128 | ✔ OK |
 | Cursor schwer | 3 | 1029 | ✔ OK |
 
-Quality Assurance und Absicherung der Imports:
+Quality Assurance und Absicherung der Imports
 
 *EC = Edge-Case-Tests, maximal 6*
 
 *Bestehend aus: DoubleID, InvalidDate(Abgelaufen), LongText, Minimal(0 Karten), MissingParts, WrongTime(Zukunft)*
-| Versuch | Erfüllte EC zu Beginn | Erfüllte EC nach "Selbstreflektierung" | Erfüllte EC nach spezifischem Prompt |
+| Versuch | Erfüllte EC zu Beginn | Erfüllte EC nach "Selbstreflektierung" | Erfüllte EC nach spezifischer Hilfestellung |
 |:-------:|:------------------:|:-----------:|:---------:|
 | Chat-GPT leicht | 1 | 3 | 6 |
 | Chat-GPT schwer | 0 | - | - |
@@ -87,13 +87,41 @@ Kontrollen lassen sich leicht fixen und Boxplots sind diesmal von vorne herein d
 
 
 **Interpretation:**
+Bereits während der Ausführung der Tests und auch jetzt mit den fertigen Ergebnissen im Vergleich
+wird für mich deutlich, dass ChatGPT deutlich kürzere und vereinfachte Lösungen bevorzugt.
+Dabei scheinen die Anforderungen im Prompt das Maximum zu sein, das GPT erreichen kann, aber oftmals
+nicht erreicht und im Denkprozess Teile davon wieder vergisst.
+Meine Vermutung hierbei ist, dass Chat-GPT die Grenzen seines Context Cache sehr schnell erreicht bei so großen Aufgaben.
+Beim Verwenden einer schwereren Programmiersprache wurde dies besonders deutlich,
+wenn ganze Abschnitte der ersten drei Anforderungen wegfallen und das Ergebniss trotzdem nicht einmal den
+technischen Kern erfolgreich implementieren kann. 
 
-*Bezug auf Leons Part*
+Diese Ergebnisse stehen im starken Kontrast zu Leons Erfahrungen mit Chat-GPT 
+bei einer einfacheren Aufgabe mit weniger Kontext.
+
+
+Cursor hingegen hat ab der allerersten Verwendung ein deutlich professionelleres Bild abgegeben.
+Jede Iteration bei beiden Varianten war immer voll ausführbar und deutlich ansprechender für mich als User.
+Dabei viel schnell auf, dass Cursor die Anforderungen als zu erfüllendes Minimum sah 
+und immer deutlich mehr geliefert hat. Allerdings ging dadurch auch die Komplexität und reine Länge
+des Codes durch die Decke, was auch zu deutlich höherem Rechenaufwand führt.
+Beim Vergleich beider Tests mit Cursor vielen auch einige Ähnlichkeiten vorallem in der UI-Gestaltung auf, 
+was mich vermuten lässt, dass Teile davon hardcoded sind und nicht direkt von der LLM entschieden wurden.
+
 
 **Fazit:**
 
-Erkenntnis ChatGPT arbeitet mit Prompt als zu erreichendes Maximum (manchmal auch nur weniger)
+Im Bezug auf meine ursprünglichen drei Fragen kann ich nun sagen:
 
-Erkenntnis Cursor arbeitet mit Prompt als Minimum und viele Extras zusätzlich die man evtl. begrenzen muss
+Chat-GPT kann einfache Aufgaben nach dem Minimalprinzip einigermaßen erfolgreich erfüllen,
+benötigt dabei aber dringend Unterstützung beim Testen und Absichern gegen Fehlerquellen 
+und bei der Darstellung des UI und möglicher Boxplots.
+Des Weiteren begrenzen sich die Möglichkeiten auf leichtere Programmiersprachen und nicht zu viel Kontext.
 
-Antwort auf 3 ursprüngliche Fragen!!
+Cursor kann sowohl einfache als auch schwere Aufgaben erfolgreich erfüllen und die Ergebnisse
+sehr gut darstellen und präsentieren, auch bei großem Kontextumfang.
+Dabei nimmt Cursor die gegebenen Anforderungen als Minimum und fügt viele optionale Erweiterungen automatisch hinzu.
+Allerdings benötigt auch Cursor dringend Hilfe beim Testen und Absichern gegen Fehlerquellen
+und am Ende muss der User selbst entscheiden, wieviele der optionalen Erweiterungen er für sinnvoll hält.
+
+Auf Basis dieser Erkenntnisse blicke ich gespannt auf die Entwicklung von LLMs in der Zukunft! :)
