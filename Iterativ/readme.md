@@ -1,7 +1,7 @@
 # Fragestellung und Vorgehen:  
 
-Kann eine LLM einen Junior-Developer ersetzen und eine strickt vorgegebene Programmanforderung  
-in zwei verschieden komplexen Programmiersprachen umsetzen?  
+Kann eine LLM die Arbeit eines Junior-Developers ersetzen und eine klar vorgegebene  
+Programmieraufgabe in zwei verschieden komplexen Sprachen vollständig realisieren?   
 Welche Probleme treten dabei auf und für welche Teile benötigt sie externe Hilfe?  
 Gibt es Dinge, die gar nicht funktionieren?  
 
@@ -28,8 +28,8 @@ Außerdem werde ich durch gezielte Iterationen versuchen, die LLMs zum Repariere
 ### Im Überblick  
 | Versuch | Anzahl Iterationen | Zeilen Code | Ergebnis |
 |:-------:|:------------------:|:-----------:|:---------:|
-| Chat-GPT leicht | 6 | 442 | ✔ OK |
-| Chat-GPT schwer | 4 | 261 | ✘ Abbruch |
+| ChatGPT leicht | 6 | 442 | ✔ OK |
+| ChatGPT schwer | 4 | 261 | ✘ Abbruch |
 | Cursor leicht | 3 | 1128 | ✔ OK |
 | Cursor schwer | 3 | 1029 | ✔ OK |
 
@@ -38,12 +38,12 @@ Außerdem werde ich durch gezielte Iterationen versuchen, die LLMs zum Repariere
 *Bestehend aus: DoubleID / InvalidDate(Abgelaufen) / LongText / Minimal(0 Karten) / MissingParts / WrongTime(Zukunft)*  
 | Versuch | Erfüllte EC zu Beginn | Erfüllte EC nach "Selbstreflexion" | Erfüllte EC nach spezifischer Hilfestellung |
 |:-------:|:------------------:|:-----------:|:---------:|
-| Chat-GPT leicht | 1 | 3 | 6 |
-| Chat-GPT schwer | 0 | - | - |
+| ChatGPT leicht | 1 | 3 | 6 |
+| ChatGPT schwer | 0 | - | - |
 | Cursor leicht | 1 | 3 | 6 |
 | Cursor schwer | 0 | 3 | 6 |
 
-## Chat-GPT leicht:  
+## ChatGPT leicht:  
 
 ![Bild](Bilder/GPT_JS.png)
 
@@ -53,7 +53,7 @@ Auch kritische Fehler in der Umsetzung von Lernsessions sind vorhanden,
 wodurch mehrere gleichzeitig startbar waren und damit das Programm zerlegt haben.  
 Über mehrere Iterationsschritte konnten alle Fehler dann Schritt für Schritt ausgebessert werden.   
 
-## Chat-GPT schwer:  
+## ChatGPT schwer:  
 
 ![Bild](Bilder/GPT_Rust.png)
 
@@ -88,16 +88,16 @@ Die Kontrollen lassen sich leicht ergänzen und Boxplots sind diesmal deutlich d
 
 Bereits während der Ausführung der Tests und auch jetzt mit den fertigen Ergebnissen im Vergleich  
 wird für mich deutlich, dass ChatGPT deutlich kürzere und vereinfachte Lösungen bevorzugt.  
-Dabei scheinen die Anforderungen im Prompt das Maximum zu sein, das GPT erreichen kann,  
+Dabei scheinen die Anforderungen im Prompt das Maximum zu sein, das ChatGPT erreichen kann,  
 aber oftmals nicht erreicht und im Denkprozess dann Teile davon wieder vergisst.  
-Meine Vermutung hierbei ist, dass Chat-GPT bei so großen Aufgaben die Grenzen seines Kontext Cache bereits erreicht.  
+Meine Vermutung hierbei ist, dass ChatGPT bei so großen Aufgaben die Grenzen seines Kontext Cache bereits erreicht.  
 Beim Verwenden einer schwereren Programmiersprache wurde dies besonders deutlich,  
 wenn ganze Abschnitte der ersten drei Anforderungen wegfallen und das Ergebnis trotzdem nicht einmal den  
 technischen Kern erfolgreich implementieren kann.   
 
-Diese Ergebnisse stehen im starken Kontrast zu Leons Erfahrungen mit Chat-GPT   
+Diese Ergebnisse stehen im starken Kontrast zu Leons Erfahrungen mit ChatGPT   
 bei einer einfacheren Aufgabe mit weniger Kontext.  
-Besonders deutlich wird hier, wie bei ihm im kleineren Kontext Chat-GPT deutlich genauer  
+Besonders deutlich wird hier, wie bei ihm im kleineren Kontext ChatGPT deutlich genauer  
 auf den Prompt und die spezifische Wortwahl achtet,  
 was in meinem Versuch bei steigender Komplexität verloren gegangen ist.  
 
@@ -115,7 +115,7 @@ was mich vermuten lässt, dass Teile davon "hardcoded" sind und nicht direkt von
 
 In Bezug auf meine ursprünglichen drei Fragen kann ich nun sagen:  
 
-Chat-GPT kann einfache Aufgaben nach dem Minimalprinzip einigermaßen erfolgreich erfüllen,  
+ChatGPT kann einfache Aufgaben nach dem Minimalprinzip einigermaßen erfolgreich erfüllen,  
 benötigt dabei aber dringend Unterstützung beim Testen und Absichern gegen Fehlerquellen  
 und bei der Darstellung des UI und möglicher Boxplots.  
 Des Weiteren begrenzen sich die Möglichkeiten auf leichtere Programmiersprachen und nicht zu viel Kontext.  
