@@ -204,21 +204,21 @@ Mögliche Lösung des Standardproblems
 
 ## Länge von ChatGPT Code (Zeilen)
 
-    | Version | Lines |
-    |---------|-------|
-    |   V1    |  199  |
-    |   V2    |  261  |
-    |   V3    |  272  |
-    |   V4    |  239  |
-    |   V5    |  163  |
-    |   V6    |  127  |
-    |   V7    |  209  |
-    |   V8    |  196  |
-    |   V9    |  213  |
-    |   V10   |  215  |
-    |   V11   |  267  |
-    |   V12   |  226  |
-    |   V13   |  213  |
+    | Version | Lines | Kompiliert | Korrekt | Korrektes Ergebnis |
+    |---------|-------|------------|---------|--------------------|
+    |   V1    |  199  |      ✔     |   ✔    |          ✔         |
+    |   V2    |  261  |      ✔     |   ✘    |          ✔         |
+    |   V3    |  272  |      ✔     |   ✘    |          ✔         |
+    |   V4    |  239  |      ✔     |   ✔    |          ✔         |
+    |   V5    |  163  |      ✔     |   ✘    |          ✔         |
+    |   V6    |  127  |      ✔     |   ✘    |          ✔         |
+    |   V7    |  209  |      ✔     |   ✔    |          ✔         |
+    |   V8    |  196  |      ✔     |   ✘    |          ✔         |
+    |   V9    |  213  |      ✔     |   ✘    |          ✔         |
+    |   V10   |  215  |      ✔     |   ✘    |          ✔         |
+    |   V11   |  267  |      ✘     |   ✘    |          ✔         |
+    |   V12   |  226  |      ✔     |   ✔    |          ✔         |
+    |   V13   |  213  |      ✔     |   ✘    |          ✔         |
     | Total   | 2800  |
     | Average | 215.4 |
 
@@ -275,7 +275,7 @@ Insgesamt entsteht der Eindruck einer ausführlichen, aber nicht tiefgreifend ab
 Da bei DeepSeek die meisten Versionen nicht Initial funktioniert haben, sind alle Versionen gezeigt.
 
 
-### Schattenlos
+### ChatGPT Kopie
 
 ![Bild](SolutionsByDeepSeek/Pictures/V1Box.png)
 
@@ -305,11 +305,24 @@ ChatGPT-Fehler auch hier bei DeepSeek zu sehen.
 
 Falscher Bau der Cornellbox
 
+### Weitere Ergebnisse
+
 ### Wer denken kann ist im Vorteil
 
 ![Bild](SolutionsByDeepSeek/Pictures/V13BoxDNS.png)
 
 Ein perfektes Modell nach 120 Sekunden warten.
+
+### Unendlichkeit II
+
+![Bild](Edits/DeepSeek/V7/big_cornell_box.ppm)
+![Bild](Edits/DeepSeek/V7/cornell_box.ppm)
+
+Diese zwei Bilder haben 15 und 5 Minuten zum Rendern gebraucht (Version 7 ohne Kompilierfehler)
+
+### Zwei Monde
+
+![Bild](Edits/DeepSeek/V6/cornell_box.ppm)
 
 ## Technische Daten
 
@@ -323,23 +336,25 @@ Weiterhin hat Deepseek trotz des Versuchs mit Promptänderungen die Sprachwahl z
 
 ## Länge von DeepSeek Code (Zeilen)
 
-    | Version | Lines |
-    |---------|-------|
-    |   V1    |  373  |
-    |   V2    |  425  |
-    |   V3    |  375  |
-    |   V4    |  321  |
-    |   V5    |  432  |
-    |   V6    |  282  |
-    |   V7    |  353  |
-    |   V8    |  475  |
-    |   V9    |  337  |
-    |   V10   |  379  |
-    |   V11   |  408  |
-    |   V12   |  382  |
-    |   V13   |  325  |
-    | Total   | 4867  |
-    | Average | 374.4 |
+Hierbei gilt das Ergebnis nach Codereparatur (für "Korrektes Ergebnis")
+
+    | Version | Lines | Kompiliert | Korrekt | Korrektes Ergebnis |
+    |---------|-------|------------|---------|--------------------|
+    |   V1    |  373  |      ✔     |   ✔    |          ✔        |
+    |   V2    |  425  |      ✔     |   ✘    |          ✘        |
+    |   V3    |  375  |      ✘     |   ✘    |          ✘        |
+    |   V4    |  321  |      ✘     |   ✘    |          ✘        |
+    |   V5    |  432  |      ✘     |   ✘    |          ✘        |
+    |   V6    |  282  |      ✘     |   ✘    |          ✘        |
+    |   V7    |  353  |      ✘     |   ✘    |          ✔        |
+    |   V8    |  475  |      ✔     |   ✘    |          ✘        |
+    |   V9    |  337  |      ✔     |   ✘    |          ✘        |
+    |   V10   |  379  |      ✔     |   ✘    |          ✘        |
+    |   V11   |  408  |      ✘     |   ✘    |          ✘        |
+    |   V12   |  382  |      ✘     |   ✘    |          ✘        |
+    |   V13   |  325  |      ✔     |   ✔    |          ✔        |
+    | Total   | 4867  |    12/13   |
+    | Average | 374.4 |    92.3%   |
 
 ## Fazit
 
