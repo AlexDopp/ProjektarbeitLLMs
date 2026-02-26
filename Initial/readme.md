@@ -204,23 +204,25 @@ Mögliche Lösung des Standardproblems
 
 ## Länge von ChatGPT Code (Zeilen)
 
-    | Version | Lines | Kompiliert | Korrekt | Korrektes Ergebnis |
-    |---------|-------|------------|---------|--------------------|
-    |   V1    |  199  |      ✔     |   ✔    |          ✔         |
-    |   V2    |  261  |      ✔     |   ✘    |          ✔         |
-    |   V3    |  272  |      ✔     |   ✘    |          ✔         |
-    |   V4    |  239  |      ✔     |   ✔    |          ✔         |
-    |   V5    |  163  |      ✔     |   ✘    |          ✔         |
-    |   V6    |  127  |      ✔     |   ✘    |          ✔         |
-    |   V7    |  209  |      ✔     |   ✔    |          ✔         |
-    |   V8    |  196  |      ✔     |   ✘    |          ✔         |
-    |   V9    |  213  |      ✔     |   ✘    |          ✔         |
-    |   V10   |  215  |      ✔     |   ✘    |          ✔         |
-    |   V11   |  267  |      ✘     |   ✘    |          ✔         |
-    |   V12   |  226  |      ✔     |   ✔    |          ✔         |
-    |   V13   |  213  |      ✔     |   ✘    |          ✔         |
-    | Total   | 2800  |
-    | Average | 215.4 |
+Hierbei gilt das Ergebnis nach Codereparatur (für "Korrektes Ergebnis")
+
+| Version | Lines | Kompiliert | Korrekt | Korrektes Ergebnis |
+|:---------:|:-------:|:------------:|:---------:|:--------------------:|
+|   V1    |  199  |      ✔     |   ✔    |          ✔         |
+|   V2    |  261  |      ✔     |   ✘    |          ✔         |
+|   V3    |  272  |      ✔     |   ✘    |          ✔         |
+|   V4    |  239  |      ✔     |   ✔    |          ✔         |
+|   V5    |  163  |      ✔     |   ✘    |          ✔         |
+|   V6    |  127  |      ✔     |   ✘    |          ✔         |
+|   V7    |  209  |      ✔     |   ✔    |          ✔         |
+|   V8    |  196  |      ✔     |   ✘    |          ✔         |
+|   V9    |  213  |      ✔     |   ✘    |          ✔         |
+|   V10   |  215  |      ✔     |   ✘    |          ✔         |
+|   V11   |  267  |      ✘     |   ✘    |          ✔         |
+|   V12   |  226  |      ✔     |   ✔    |          ✔         |
+|   V13   |  213  |      ✔     |   ✘    |          ✔         |
+| Total   | 2800  |
+| Average | 215.4 |
 
 ## Fazit
 
@@ -336,25 +338,23 @@ Weiterhin hat Deepseek trotz des Versuchs mit Promptänderungen die Sprachwahl z
 
 ## Länge von DeepSeek Code (Zeilen)
 
-Hierbei gilt das Ergebnis nach Codereparatur (für "Korrektes Ergebnis")
-
-    | Version | Lines | Kompiliert | Korrekt | Korrektes Ergebnis |
-    |---------|-------|------------|---------|--------------------|
-    |   V1    |  373  |      ✔     |   ✔    |          ✔        |
-    |   V2    |  425  |      ✔     |   ✘    |          ✘        |
-    |   V3    |  375  |      ✘     |   ✘    |          ✘        |
-    |   V4    |  321  |      ✘     |   ✘    |          ✘        |
-    |   V5    |  432  |      ✘     |   ✘    |          ✘        |
-    |   V6    |  282  |      ✘     |   ✘    |          ✘        |
-    |   V7    |  353  |      ✘     |   ✘    |          ✔        |
-    |   V8    |  475  |      ✔     |   ✘    |          ✘        |
-    |   V9    |  337  |      ✔     |   ✘    |          ✘        |
-    |   V10   |  379  |      ✔     |   ✘    |          ✘        |
-    |   V11   |  408  |      ✘     |   ✘    |          ✘        |
-    |   V12   |  382  |      ✘     |   ✘    |          ✘        |
-    |   V13   |  325  |      ✔     |   ✔    |          ✔        |
-    | Total   | 4867  |    12/13   |
-    | Average | 374.4 |    92.3%   |
+| Version | Lines | Kompiliert | Korrekt | Korrektes Ergebnis |
+|:---------:|:-------:|:------------:|:---------:|:--------------------:|
+|   V1    |  373  |      ✔     |   ✔    |          ✔        |
+|   V2    |  425  |      ✔     |   ✘    |          ✘        |
+|   V3    |  375  |      ✘     |   ✘    |          ✘        |
+|   V4    |  321  |      ✘     |   ✘    |          ✘        |
+|   V5    |  432  |      ✘     |   ✘    |          ✘        |
+|   V6    |  282  |      ✘     |   ✘    |          ✘        |
+|   V7    |  353  |      ✘     |   ✘    |          ✔        |
+|   V8    |  475  |      ✔     |   ✘    |          ✘        |
+|   V9    |  337  |      ✔     |   ✘    |          ✘        |
+|   V10   |  379  |      ✔     |   ✘    |          ✘        |
+|   V11   |  408  |      ✘     |   ✘    |          ✘        |
+|   V12   |  382  |      ✘     |   ✘    |          ✘        |
+|   V13   |  325  |      ✔     |   ✔    |          ✔        |
+| Total   | 4867  |    12/13   |
+| Average | 374.4 |    92.3%   |
 
 ## Fazit
 
