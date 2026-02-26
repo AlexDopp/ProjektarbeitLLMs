@@ -70,8 +70,8 @@ Außerdem werde ich durch gezielte Iterationen versuchen, die LLMs zum Repariere
      ] 
     } 
    
-    Antworte ausschließlich mit dem vollständigen Code. 
-    Stelle keine Rückfragen.
+    Antworte ausschließlich mit dem vollständigen Code. Stelle keine Rückfragen.
+    Begrenze dabei deine Antwort auf 2000 Zeilen Code maximal.
 
 ## Prompt für Version 2:
 
