@@ -101,7 +101,7 @@ Die einzelnen Versionen haben verschiedene Arten von:
 
 ##  Allgemeines:
 
-ChatGPTs Codeerstellung ist sehr an das Min-Max Pronzip angelehnt.
+ChatGPTs Codeerstellung ist sehr an das Min-Max Prinzip angelehnt.
 Es wird versucht, mit der niedrigst möglichen Anzahl an Zeilen den möglichst größten Teil des Prompts zu erfüllen.
 Das Erwähnen von Fokuspunkten und bestimmten Fachbegriffen führt meistens dazu, dass der fokussierte Teil des Codes auch wirklich funktioniert.
 Hierbei besteht allerdings das Problem das durch Fokusierungen, häufig ein anderer Teil des Codes vernachlässig wird.
@@ -255,7 +255,7 @@ DeepSeek optimiert, bzw. setzt Standardwerte häufig auch außerhalb der Norm (z
 Code generiert von DeepSeek ist meist stark Bloated. 
 Dabei handelt er sich nicht um Erweiterungsmöglichkeiten oder ähnliches.
 Die Lesbarkeit wird durch Kommentare vor den meisten Zeilen stark erhöht.
-Dabei sind in den einzelnen Zeilen praktisch nie die Probleme, sondern nur in der Kombination mehrerer Zeilen die sich zanken.Zeilen.
+Dabei sind in den einzelnen Zeilen praktisch nie die Probleme, sondern nur in der Kombination mehrerer Zeilen die sich zanken.
 Zusätzlich fällt auf, dass DeepSeek häufig sehr viele Hilfsvariablen einführt.
 Diese Variablen tragen nicht immer zur tatsächlichen Problemlösung bei.
 Oft werden Berechnungen unnötig aufgesplittet, obwohl eine kompaktere Lösung möglich wäre.
@@ -277,7 +277,7 @@ Insgesamt entsteht der Eindruck einer ausführlichen, aber nicht tiefgreifend ab
 Da bei DeepSeek die meisten Versionen nicht Initial funktioniert haben, sind alle Versionen gezeigt.
 
 
-### ChatGPT Kopie
+### "ChatGPT Kopie"
 
 ![Bild](SolutionsByDeepSeek/Pictures/V1Box.png)
 
