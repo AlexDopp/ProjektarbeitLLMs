@@ -22,6 +22,107 @@ Damit soll ein Vergleich geschaffen werden zwischen weitverbreiteten Sprachen mi
 und eher unbekannteren Sprachen mit weniger Bezugsquellen dazu.  
 Außerdem werde ich durch gezielte Iterationen versuchen, die LLMs zum Reparieren ihrer Fehler zu bewegen.  
 
+### Prompt für Version 1:
+
+    Erstelle eine lokale Web-App zur Verwendung von Ankikarten und Verwaltung von Lernfortschritt in Verbindung mit Anki-Decks:
+    Funktionale Anforderungen: 
+    1. Nutzer kann ein oder mehrere Anki-Decks importieren (JSON-Format, wie unten dargestellt) 
+       und danach die enthaltenen Anki-Karten erlernen, indem er die Vorderseite gezeigt bekommt, 
+       danach zur Lösung umdrehen kann und dann kategorisiert, 
+       wie schwer er diese Karte fand in 4 Kategorien: new, hard, easy, learned. 
+      Dabei werden die Karten in zufälliger Reihenfolge gezeigt. 
+    2. Nutzer kann Lernziele anlegen und beliebig viele importierte Decks einem Lernziel zuordnen. 
+    3. Nach Import werden folgende Daten angezeigt: 
+      - Anzahl Karten 
+      - Karten pro Thema 
+      - Kartenstatus (neu, gelernt, fällig, überfällig) als Graph mit Legende 
+    4. Nutzer kann Lernsessions starten und stoppen und diese Decks zuordnen. 
+    5. Der Lernfortschritt wird berechnet als: 
+      - Prozent gelernter Karten pro Thema 
+      - Gesamtfortschritt über alle Themen 
+    6. Zeitaufwand und Kartenaktivität werden getracked und übersichtlich 
+       im UI dargestellt (täglich / wöchentlich) mit Beschriftung. 
+    7. Darstellung als Boxplot mit Beschriftung, sortiert nach Themen 
+       und farblich unterteilt mit Legende. 
+       
+    Technische Anforderungen: 
+      - Eine einzelne HTML-Datei mit eingebettetem JavaScript und CSS. 
+      - Keine externen Libraries. 
+      - Saubere Trennung von: 
+         - Datenmodell 
+         - Logik 
+         - UI 
+      - Lokale Persistenz via LocalStorage. 
+      - Robuste Fehlerbehandlung bei Importen.
+      
+    Anki-Deck-JSON-Format: 
+    { 
+     "deckName": "Beispiel-Deck", 
+     "cards": [ 
+      { 
+       "id": "1", 
+       "front": "Frage", 
+       "back": "Antwort", 
+       "topic": "Grundlagen", 
+       "status": "learned", 
+       "lastReviewed": "2024-01-10" 
+      } 
+     ] 
+    } 
+   
+    Antworte ausschließlich mit dem vollständigen Code. Stelle keine Rückfragen.
+    Begrenze dabei deine Antwort auf 2000 Zeilen Code maximal.
+
+## Prompt für Version 2:
+
+    Erstelle eine lokale Web-App zur Verwendung von Ankikarten und Verwaltung von Lernfortschritten in Verbindung mit Anki-Decks: 
+    Funktionale Anforderungen: 
+    1. Nutzer kann ein oder mehrere Anki-Decks importieren (JSON-Format, wie unten dargestellt) 
+       und danach die enthaltenen Anki-Karten erlernen, indem er die Vorderseite gezeigt bekommt, 
+       danach zur Lösung umdrehen kann und dann kategorisiert, 
+       wie schwer er diese Karte fand in 4 Kategorien: new, hard, easy, learned. 
+       Dabei werden die Karten in zufälliger Reihenfolge gezeigt. 
+    2. Nutzer kann Lernziele anlegen und beliebig viele importierte Decks einem Lernziel zuordnen. 
+    3. Nach Import werden folgende Daten angezeigt:
+     - Anzahl Karten 
+     - Karten pro Thema 
+     - Kartenstatus (neu, gelernt, fällig, überfällig) als Graph mit Legende 
+    4. Nutzer kann Lernsessions starten und stoppen und diese Decks zuordnen. 
+    5. Der Lernfortschritt wird berechnet als: 
+     - Prozent gelernter Karten pro Thema 
+     - Gesamtfortschritt über alle Themen 
+    6. Zeitaufwand und Kartenaktivität werden getracked und übersichtlich im UI dargestellt (täglich / wöchentlich) mit Beschriftung. 
+    7. Darstellung als Boxplot mit Beschriftung, sortiert nach Themen und farblich unterteilt mit Legende. 
+    
+    Technische Anforderungen: 
+    - Die App nutzt eine einzelne HTML-Datei, die CSS, das Frontend-Javascript sowie ein eingebettetes WebAssembly-Modul enthält. 
+    - Wasm-Core: Die rechenintensiven Aufgaben (Fortschrittsberechnung, Sortierung der Boxplot-Daten, Status-Filterung...) müssen 
+      im WebAssembly-Modul, geschrieben in Rust , implementiert sein. 
+    - JavaScript-Glue: JavaScript dient ausschließlich als Brücke für die DOM-Manipulation, 
+      das Event-Handling und den Datentransfer zwischen LocalStorage und dem Wasm-Speicher. 
+    - Saubere Trennung von: 
+       - Datenmodell 
+       - Logik 
+       - UI 
+    - Lokale Persistenz: Speicherung des Status in LocalStorage und beim Laden wird der State zur Verarbeitung an das Wasm-Modul übergeben. 
+    - Robuste Fehlerbehandlung bei Importen. 
+    Anki-Deck-JSON-Format: 
+    { 
+    "deckName": "Beispiel-Deck",
+    "cards": [
+      { "id": "1",
+        "front": "Frage",
+        "back": "Antwort",
+        "topic": "Grundlagen",
+        "status": "learned",
+        "lastReviewed": "2024-01-10" 
+      } 
+     ] 
+    } 
+    Antworte ausschließlich mit dem vollständigen Code. Stelle keine Rückfragen.
+    Begrenze dabei deine Antwort auf 2000 Zeilen Code maximal.
+
+
 
 # Ergebnisse:
 
@@ -77,10 +178,9 @@ Nur Unschönheiten in Boxplots sind nicht ganz optimal lösbar.
 
 ![Bild](Bilder/Cursor_Rust.png)
 
-Anfangs gibt es gar keine Importkontrollen!
+Anfangs gibt es gar keine Importkontrollen!  
 Im Thinking-Prozess wurde außerdem der Sinn hinter der Rust-Implementierung hinterfragt.  
-Die Umsetzung íst aber solide, allerdings fehlen jetzt  
-viele der "optionalen" Zusätze, die in der leichten Version noch vorhanden waren.  
+Die Umsetzung íst aber solide, allerdings fehlen jetzt einige der optionalen Zusätze, die in der ersten Version noch vorhanden waren.  
 Die Kontrollen lassen sich leicht ergänzen und Boxplots sind diesmal deutlich durchdachter.  
 
 
