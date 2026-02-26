@@ -183,7 +183,7 @@ Deshalb habe ich den Versuch abgebrochen.
 
 ![Bild](Bilder/Cursor_JS.png)
 
-Allgemein wurden alle Tests mit Cursor in der Desktopapp durchgeführt, mithilfe eines Cursor Agent Chats.
+Allgemein wurden alle Tests mit Cursor in der Desktop-App durchgeführt, mithilfe eines Cursor Agent Chats.
 Dabei wurde in der Durchführung zwischen 8 und 18 Gigabyte RAM belegt, je nach Prompt und Größe des Kontexts.
 Zur Realisierung der Ergebnisse brauchte Cursor zwischen 5 und 10 Minuten pro Prompt.
 
@@ -225,7 +225,7 @@ Dabei fiel schnell auf, dass Cursor die Anforderungen als zu erfüllendes Minimu
 und immer deutlich mehr geliefert hat. Allerdings ging dadurch auch die Komplexität und reine Länge  
 des Codes durch die Decke, was auch zu deutlich höherem Rechenaufwand führt.  
 Auch die Gedankengänge zum Hinterfragen des Prompts mit Rust zeigen deutlich,  
-wie Cursors Agents nicht nur stumpf abarbeiten, sondern auch die Logik der gesammten Aufgabe verstehen.  
+wie Cursors Agents nicht nur stumpf abarbeiten, sondern auch die Logik der gesamten Aufgabe verstehen.  
 Beim Vergleich beider Tests mit Cursor vielen auch einige Ähnlichkeiten vor allem in der UI-Gestaltung auf,  
 was mich vermuten lässt, dass Teile davon "hardcoded" sind und nicht direkt von der LLM entschieden wurden.  
 
