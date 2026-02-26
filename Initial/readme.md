@@ -315,14 +315,14 @@ Ein perfektes Modell nach 120 Sekunden warten.
 
 ### Unendlichkeit II
 
-![Bild](Edits/DeepSeek/V7/big_cornell_box.ppm)
-![Bild](Edits/DeepSeek/V7/cornell_box.ppm)
+![Bild](Edits/DeepSeek/V7/V7BoxSmall.png)
+![Bild](Edits/DeepSeek/V7/V7BoxBig.png)
 
 Diese zwei Bilder haben 15 und 5 Minuten zum Rendern gebraucht (Version 7 ohne Kompilierfehler)
 
 ### Zwei Monde
 
-![Bild](Edits/DeepSeek/V6/cornell_box.ppm)
+![Bild](Edits/DeepSeek/V6/V6Box.png)
 
 ## Technische Daten
 
