@@ -1,1 +1,9 @@
 V4 Prompt + Dokumentation:
+Sieh dir den ursprünglichen Prompt nochmal an und passe dahingehend deine Lösung nochmal an.
+Verbessere dabei den fehlerhaften Lernfortschritt und die Darstellungen von Karten, sowie die Buttons.
+Passe deine Antwort dahingehend weiter an und gib den vollständigen angepassten Code zurück. 
+Antworte nur mit Code.
+
+Kommentare:
+Code quasi identisch zur vorherigen Version und immer noch selbe Fehler vorhanden.
+Fehlerbehebung dreht sich im Kreis.
