@@ -178,10 +178,9 @@ Nur Unschönheiten in Boxplots sind nicht ganz optimal lösbar.
 
 ![Bild](Bilder/Cursor_Rust.png)
 
-Anfangs gibt es gar keine Importkontrollen!
+Anfangs gibt es gar keine Importkontrollen!  
 Im Thinking-Prozess wurde außerdem der Sinn hinter der Rust-Implementierung hinterfragt.  
-Die Umsetzung íst aber solide, allerdings fehlen jetzt  
-viele der "optionalen" Zusätze, die in der leichten Version noch vorhanden waren.  
+Die Umsetzung íst aber solide, allerdings fehlen jetzt einige der optionalen Zusätze, die in der ersten Version noch vorhanden waren.  
 Die Kontrollen lassen sich leicht ergänzen und Boxplots sind diesmal deutlich durchdachter.  
 
 
