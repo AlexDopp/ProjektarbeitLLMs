@@ -204,7 +204,8 @@ Mögliche Lösung des Standardproblems
 
 ## Länge von ChatGPT Code (Zeilen)
 
-Hierbei gilt das Ergebnis nach Codereparatur (für "Korrektes Ergebnis")
+Hierbei gilt das Ergebnis nach Codereparatur für "Korrektes Ergebnis" (✔ wenn eine Cornell-Box nach einfachem Fehlerfinden entstanden ist)
+Korrekt heißt bei ausführen des kompilierten Codes **ohne** menschliche Änderungen ist eine Cornell-Box entstanden
 
 | Version | Lines | Kompiliert | Korrekt | Korrektes Ergebnis |
 |:---------:|:-------:|:------------:|:---------:|:--------------------:|
@@ -256,6 +257,7 @@ Code generiert von DeepSeek ist meist stark Bloated.
 Dabei handelt er sich nicht um Erweiterungsmöglichkeiten oder ähnliches.
 Die Lesbarkeit wird durch Kommentare vor den meisten Zeilen stark erhöht.
 Dabei sind in den einzelnen Zeilen praktisch nie die Probleme, sondern nur in der Kombination mehrerer Zeilen die sich zanken.
+Die Ausführzeit von DeepSeek code ist meistens über 10 Sekunden (längstens knapp 15 Minuten).
 Zusätzlich fällt auf, dass DeepSeek häufig sehr viele Hilfsvariablen einführt.
 Diese Variablen tragen nicht immer zur tatsächlichen Problemlösung bei.
 Oft werden Berechnungen unnötig aufgesplittet, obwohl eine kompaktere Lösung möglich wäre.
@@ -337,6 +339,9 @@ Weiterhin hat Deepseek trotz des Versuchs mit Promptänderungen die Sprachwahl z
 
 
 ## Länge von DeepSeek Code (Zeilen)
+
+Hierbei gilt das Ergebnis nach Codereparatur für "Korrektes Ergebnis" (✔ wenn eine Cornell-Box nach einfachem Fehlerfinden entstanden ist)
+Korrekt heißt bei ausführen des kompilierten Codes **ohne** menschliche Änderungen ist eine Cornell-Box entstanden
 
 | Version | Lines | Kompiliert | Korrekt | Korrektes Ergebnis |
 |:---------:|:-------:|:------------:|:---------:|:--------------------:|
