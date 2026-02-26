@@ -11,6 +11,13 @@ stellvertretend für kostenlose LLMs [ChatGPT 5.2](https://developers.openai.com
 wobei Cursor intern je nach Aufgabe entscheidet, welches Model am besten dafür geeignet ist.  
 Die Verwendung dieser Modelle fand im Februar 2026 statt.  
 
+Preislich bewegt sich ChatGPT von einer kostenlosen Version bis hin zu einer 229€ pro Monat Version für Verbraucher  
+und für Businesses in etwa 25€ pro Nutzer pro Monat. Für Agenten mit GPT-Codex werden  
+in etwa 1,50€ / 6 € pro Millionen Tokens berechnet bei Eingabe / Ausgabe.  
+Cursor dagegen hat auch eine kostenlose Version, aber zur vollen Nutzung als Verbraucher ist ein monatlicher Plan  
+mit Preisen von 20$ bis 200$ benötigt. Für Unternehmen liegen die Kosten in etwa bei 40$ pro Nutzer pro Monat.  
+Bei der Verwendung von APIs bezieht Cursor die Preise direkt von den jeweiligen Anbietern der Modelle, [hier einsehbar](https://cursor.com/docs/models).  
+
 Grundlegend sollen in diesem Versuch beide Anbieter mit denselben Anforderungen eine .html erstellen,  
 die lokal im Browser eine ausführbare App implementiert. Die App selbst soll mittels eines festgelegten  
 Import-Formats Anki-Karten darstellen und dem Nutzer ermöglichen, seinen Fortschritt beim Lernen dieser  
@@ -144,9 +151,15 @@ Außerdem werde ich durch gezielte Iterationen versuchen, die LLMs zum Repariere
 | Cursor leicht | 1 | 3 | 6 |
 | Cursor schwer | 0 | 3 | 6 |
 
+**Zu Beginn** bezieht sich auf die erste Ausgabe nach dem initialen Prompt.  
+**"Selbstreflexion"** wurde durch einen weiteren Prompt mit Ermahnung an allgemeine Importkontrollen ausgelöst.  
+**Spezifische Hilfestellung** bedeutet, dass ich explizit die noch möglichen Fehlerquellen im Prompt benannt habe.  
+
 ## ChatGPT leicht:  
 
 ![Bild](Bilder/GPT_JS.png)
+
+Allgemein wurden alle Tests mit ChatGPT in der Browserversion durchgeführt und waren nach maximal 2 Minuten fertig realisiert.  
 
 Anfangs gibt es keine ordentlichen Importkontrollen und Fehler in der Boxplot-Darstellung.  
 Außerdem ist die Implementierung für "Lernziele" nur oberflächlich und nicht eingebunden in den Rest.  
@@ -169,6 +182,10 @@ Deshalb habe ich den Versuch abgebrochen.
 ## Cursor leicht:  
 
 ![Bild](Bilder/Cursor_JS.png)
+
+Allgemein wurden alle Tests mit Cursor in der Desktopapp durchgeführt, mithilfe eines Cursor Agent Chats.
+Dabei wurde in der Durchführung zwischen 8 und 18 Gigabyte RAM belegt, je nach Prompt und Größe des Kontexts.
+Zur Realisierung der Ergebnisse brauchte Cursor zwischen 5 und 10 Minuten pro Prompt.
 
 Anfangs gibt es keine ordentlichen Importkontrollen, aber sehr viele Details zur besseren Verwendung aus Usersicht.  
 Die Kontrollen lassen sich leicht ergänzen und auch kleinere Alignment-Fehler sind schnell behoben.  
@@ -207,6 +224,8 @@ Jede Iteration bei beiden Varianten war immer voll ausführbar und deutlich ansp
 Dabei fiel schnell auf, dass Cursor die Anforderungen als zu erfüllendes Minimum sah  
 und immer deutlich mehr geliefert hat. Allerdings ging dadurch auch die Komplexität und reine Länge  
 des Codes durch die Decke, was auch zu deutlich höherem Rechenaufwand führt.  
+Auch die Gedankengänge zum Hinterfragen des Prompts mit Rust zeigen deutlich,  
+wie Cursors Agents nicht nur stumpf abarbeiten, sondern auch die Logik der gesammten Aufgabe verstehen.  
 Beim Vergleich beider Tests mit Cursor vielen auch einige Ähnlichkeiten vor allem in der UI-Gestaltung auf,  
 was mich vermuten lässt, dass Teile davon "hardcoded" sind und nicht direkt von der LLM entschieden wurden.  
 
