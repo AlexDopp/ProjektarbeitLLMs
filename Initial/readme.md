@@ -154,7 +154,7 @@ Adaptivität: Wenn ein Problem mit einer minimalen Lösung nicht gut gelöst wer
 
 ## Ergebnisse bei Promptversionen
 
-### Des Perfekte
+### Das Perfekte
 
 ![Bild](SolutionsByGPT/Pictures/V4Box.png)
 
