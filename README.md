@@ -12,7 +12,7 @@ In "Prompts" sind alle verschiedenen Prompt Versionen, die verwendet wurden.
 
 Im "Iterativ" Teil werden ChatGPT und Cursor AI Agents mit 2 festgelegten Sprachen und  
 klar definierten Anforderungen auf ihre Codegenerierung unter großem Kontext getestet.  
-Die daraus enstandenen 4 Versionen mit ihren jeweiligen Iterationsschritten sind in 4 Ordner aufgeteilt  
+Die daraus entstandenen 4 Versionen mit ihren jeweiligen Iterationsschritten sind in 4 Ordner aufgeteilt  
 und in "Tests" liegen Edge-Case-Testfälle, die am Ende auf alle Ergebnisse einheitlich angewandt wurden.   
 
 Durchgeführt wurde dieses Projekt von Oktober 2025 bis März 2026.  
