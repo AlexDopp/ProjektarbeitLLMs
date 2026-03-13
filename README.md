@@ -1,5 +1,5 @@
 # Projektarbeit: LLMs in der Programmentwicklung  
-** Erstellt von Alexander Doppelbauer und Leon Friebolin, unter der Leitung von Prof. Dr. Carsten Sinz **  
+**Erstellt von Alexander Doppelbauer und Leon Friebolin, unter der Leitung von Prof. Dr. Carsten Sinz**  
 
 In diesem Projekt testen wir einige der bekanntesten LLMs auf ihre Programmierfähigkeiten und ihr Verständnis von komplexen Aufgaben.  
 Dabei wollen wir insbesondere die Ergebnisse im Kontext zukünftiger Entwicklungen interpretieren und uns einen Ausblick auf die Zukunft des Programmierens verschaffen.  
