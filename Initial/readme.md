@@ -1,4 +1,5 @@
 # Vorwort
+*Author: Leon Friebolin*  
 
 Für ChatGPT wurde die neuste mögliche Version zum Zeitpunkt der Erstellung verwendet.
 Bei DeepSeek die neueste Version des "Free" Plans vom 18.2.2026.
