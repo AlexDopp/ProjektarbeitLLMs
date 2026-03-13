@@ -1,4 +1,5 @@
 # Fragestellung und Vorgehen:  
+*Author: Alexander Doppelbauer*  
 
 Kann eine LLM die Arbeit eines Junior-Developers ersetzen und eine klar vorgegebene  
 Programmieraufgabe in zwei verschieden komplexen Sprachen vollständig realisieren?   
